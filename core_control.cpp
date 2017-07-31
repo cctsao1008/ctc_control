@@ -9,6 +9,7 @@
 */
 
 #include "core_common.h"
+#include <signal.h>
 
 DWORD WINAPI commander_thread_main(LPVOID lpParam);
 
@@ -20,6 +21,19 @@ static volatile bool thread_should_exit = false;    /**< daemon exit flag */
 static volatile bool thread_running = false;        /**< daemon status flag */
 
 HANDLE ghMutex;
+
+BOOL WINAPI console_ctrl_handler(DWORD event)
+{
+	if (event == CTRL_C_EVENT)
+		printf("Ctrl-C handled\n"); // do cleanup
+
+	OutputDebugString("CCS: console_ctrl_handler...");
+	printf("CCS: console_ctrl_handler...\n");
+	core_mqtt_close();
+	Sleep(1000);
+	exit(0);
+	return 1;
+}
 
 //int _tmain(int argc, _TCHAR* argv[])
 //int _tmain(int argc, char *argv[])
@@ -60,19 +74,38 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    printf("CCS: ctc control is running.\n");
+	printf("CCS: SetConsoleCtrlHandler\n");
+
+#if 1
+	if (!SetConsoleCtrlHandler((PHANDLER_ROUTINE)console_ctrl_handler, TRUE))
+	{
+		// unable to install handler... 
+		// display message to the user
+		printf("CCS: Unable to install handler!\n");
+		return (-1);
+	}
+#endif
 
     //OutputDebugString("CTC Control Service: ctc control call mqtt_init...");
     OutputDebugString("CCS: call mqtt_open...");
     //OutputDebugString("[CCS] call mqtt_init...");
     core_mqtt_open();
 
+	OutputDebugString("CCS: call core_python_open...");
     core_python_open();
+	core_python_close();
 
-    while (run) {
-        OutputDebugString("CCS: ctc control is sleeping...");
-        Sleep(2000);
-    }
+	printf("CCS: ctc control is running.\n");
+
+	//try {
+		while (run) {
+			OutputDebugString("CCS: ctc control is sleeping...");
+			Sleep(2000);
+		}
+	//}
+	//catch (const char* message) {
+
+	//}
 
     /* now initialized */
     thread_running = true;

@@ -27,5 +27,11 @@
     <ClCompile Include="core_service.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="core_logging.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core_actuator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

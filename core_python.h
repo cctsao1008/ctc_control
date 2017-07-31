@@ -11,3 +11,4 @@
 #pragma once
 
 int core_python_open(void);
+int core_python_close(void);

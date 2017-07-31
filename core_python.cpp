@@ -92,18 +92,21 @@ int core_python_open(void)
     }
     else {
         PyErr_Print();
-        fprintf(stderr, "Failed to load module - %s", "startup");
+        fprintf(stderr, "Failed to load module - %s\n", "startup");
         return 1;
     }
 
-    //if (Py_FinalizeEx() < 0) {
-        //exit(120);
-    //};
-
     Py_DECREF(pModule);
-    //Py_DECREF(pFunc);
 
-    //PyMem_RawFree(program);
+    PyMem_RawFree(program);
 
     return 0;
+}
+
+int core_python_close(void)
+{
+	if (Py_FinalizeEx() < 0)
+		return (-1);
+
+		return 0;
 }

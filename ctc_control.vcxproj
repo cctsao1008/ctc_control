@@ -85,6 +85,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="core_actuator.cpp" />
+    <ClCompile Include="core_logging.cpp" />
     <ClCompile Include="core_mqtt.cpp" />
     <ClCompile Include="core_control.cpp" />
     <ClCompile Include="core_python.cpp" />
