@@ -10,44 +10,62 @@
 
 #include "core_common.h"
 
-//Pippet
+extern int run;
+extern int vote;
 
-int core_actuator_thread_main(int argc, char *argv[])
+void* core_actuator_thread_main(void* arg)
 {
-	// put your code here.
+	printf("CCS: core_actuator_thread_main running...\n");
+	vote++;
+
+	while (run)
+	{
+		// put your code here.
+		Sleep(5000);
+	}
+
+	printf("CCS: core_actuator_thread_main exit.\n");
+	vote--;
+
+	return 0;
 }
 
-int syringe_pump_control(void* data)
-{
-	// call driver.
-}
-
-int xy_table_control(void* data)
-{
-	// call driver.
-}
-
-int z_axis_control(void* data)
-{
-	// call driver.
-}
-
-int magnetic_switch_control(void* data)
+int control_syringe_pump(void* data)
 {
 	// call driver.
 }
 
-int ac_temperature_control(void* data)
+int control_x_axis(void* data)
 {
 	// call driver.
 }
 
-int griper_2finger_control(void* data)
+int control_y_axis(void* data)
 {
 	// call driver.
 }
 
-int griper_3finger_control(void* data)
+int control_z_axis(void* data)
+{
+	// call driver.
+}
+
+int control_magnetic_switch(void* data)
+{
+	// call driver.
+}
+
+int control_ac_temperature(void* data)
+{
+	// call driver.
+}
+
+int control_griper_2finger(void* data)
+{
+	// call driver.
+}
+
+int control_griper_3finger(void* data)
 {
 	// call driver.
 }

@@ -33,5 +33,11 @@
     <ClCompile Include="core_actuator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="core_action.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core_diagnostic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

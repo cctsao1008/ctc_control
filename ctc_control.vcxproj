@@ -73,19 +73,21 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\Python36\include;D:\vs2013\ctc_project\ctc_control\lib\mosquitto\devel;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\vs2013\ctc_project\ctc_control\lib\pthreads-w32-2-9-1-release\include;D:\Python36\include;D:\vs2013\ctc_project\ctc_control\lib\mosquitto-1.4.14\devel;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>D:\vs2013\ctc_project\ctc_control\lib\mosquitto\devel;D:\Python36\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>mosquitto.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\vs2013\ctc_project\ctc_control\lib\pthreads-w32-2-9-1-release\lib\x86;D:\vs2013\ctc_project\ctc_control\lib\mosquitto-1.4.14\devel;D:\Python36\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>mosquitto.lib;pthreadVC2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="core_action.cpp" />
     <ClCompile Include="core_actuator.cpp" />
+    <ClCompile Include="core_diagnostic.cpp" />
     <ClCompile Include="core_logging.cpp" />
     <ClCompile Include="core_mqtt.cpp" />
     <ClCompile Include="core_control.cpp" />

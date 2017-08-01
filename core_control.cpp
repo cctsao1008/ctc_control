@@ -11,9 +11,10 @@
 #include "core_common.h"
 #include <signal.h>
 
-DWORD WINAPI commander_thread_main(LPVOID lpParam);
+//DWORD WINAPI core_control_thread_main(LPVOID lpParam);
 
-extern int run;
+int run = 1;
+int vote = 0;
 
 /* flags */
 static bool commander_initialized = false;
@@ -22,23 +23,65 @@ static volatile bool thread_running = false;        /**< daemon status flag */
 
 HANDLE ghMutex;
 
-BOOL WINAPI console_ctrl_handler(DWORD event)
+void WINAPI console_ctrl_handler(DWORD event)
 {
-	if (event == CTRL_C_EVENT)
-		printf("Ctrl-C handled\n"); // do cleanup
+    if (event == CTRL_C_EVENT)
+        printf("Ctrl-C handled\n"); // do cleanup
 
-	OutputDebugString("CCS: console_ctrl_handler...");
-	printf("CCS: console_ctrl_handler...\n");
-	core_mqtt_close();
+    OutputDebugString("CCS: console_ctrl_handler.");
+    printf("CCS: console_ctrl_handler.\n");
+    core_mqtt_close();
+	run = 0;
+
+	//Sleep(5000);
+
+#if 0
+	for (int i = 0; i < 30; i++)
+	{
+		//printf("%d\n", i);
+		printf(".", i);
+		Sleep(100);
+	}
+#else
+	while (vote)
+	{
+		printf("vote = %d\n", vote);
+		Sleep(200);
+	}
+
+	printf("stoping.\n");
+	for (int i = 0; i < 30; i++)
+	{
+		//printf("%d\n", i);
+		printf(".", i);
+		Sleep(100);
+	}
+	printf("\n");
+#endif
 	Sleep(1000);
-	exit(0);
-	return 1;
+    //exit(0);
+	thread_running = false;
+}
+
+void* core_control_thread_main(void* arg) {
+	printf("CCS: core_control_thread_main running...\n");
+
+	while (run) {
+		//printf("core_control_thread_main(%d)\n", *(unsigned int*)arg);
+		Sleep(500);
+	}
+
+	printf("CCS: core_control_thread_main exit.\n");
+
+	return NULL;
 }
 
 //int _tmain(int argc, _TCHAR* argv[])
 //int _tmain(int argc, char *argv[])
 int main(int argc, char *argv[])
 {
+	pthread_t pid[6];
+
 #if defined(WIN32) || defined(__CYGWIN__)
     if (argc == 2){
         if (!strcmp(argv[1], "run")){
@@ -59,6 +102,8 @@ int main(int argc, char *argv[])
     }
 #endif
 
+	pthread_mutex_t mutex;
+
     ghMutex = CreateMutex(
         NULL,              // default security attributes
         FALSE,             // initially not owned
@@ -74,41 +119,40 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-	printf("CCS: SetConsoleCtrlHandler\n");
+    printf("CCS: SetConsoleCtrlHandler\n");
 
-#if 1
-	if (!SetConsoleCtrlHandler((PHANDLER_ROUTINE)console_ctrl_handler, TRUE))
-	{
-		// unable to install handler... 
-		// display message to the user
-		printf("CCS: Unable to install handler!\n");
-		return (-1);
-	}
-#endif
+    if (!SetConsoleCtrlHandler((PHANDLER_ROUTINE)console_ctrl_handler, TRUE))
+    {
+        // unable to install handler... 
+        // display message to the user
+        printf("CCS: Unable to install handler!\n");
+        return (-1);
+    }
 
-    //OutputDebugString("CTC Control Service: ctc control call mqtt_init...");
     OutputDebugString("CCS: call mqtt_open...");
-    //OutputDebugString("[CCS] call mqtt_init...");
     core_mqtt_open();
 
-	OutputDebugString("CCS: call core_python_open...");
+    OutputDebugString("CCS: call core_python_open...");
     core_python_open();
-	core_python_close();
+    core_python_close();
 
-	printf("CCS: ctc control is running.\n");
+	unsigned int arg = 0;
 
-	//try {
-		while (run) {
-			OutputDebugString("CCS: ctc control is sleeping...");
-			Sleep(2000);
-		}
-	//}
-	//catch (const char* message) {
+	pthread_create(&pid[0], NULL, &core_control_thread_main, (void *)&arg);
+	pthread_create(&pid[1], NULL, &core_actuator_thread_main, (void *)&arg);
+	pthread_create(&pid[2], NULL, &core_action_thread_main, (void *)&arg);
+	pthread_create(&pid[3], NULL, &core_diagnostic_thread_main, (void *)&arg);
 
-	//}
+    printf("CCS: ctc control is running.\n");
 
-    /* now initialized */
-    thread_running = true;
+	/* now initialized */
+	thread_running = true;
+
+	while (thread_running) {
+        OutputDebugString("CCS: ctc control is sleeping...");
+		arg++;
+        Sleep(1000);
+    }
 
     core_mqtt_close();
 
@@ -117,6 +161,10 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+/*
+example code
+*/
+#if 0
 DWORD WINAPI commander_thread_main(LPVOID lpParam)
 {
     printf("CCS: commander_thread_main\n");
@@ -137,10 +185,6 @@ DWORD WINAPI commander_thread_main(LPVOID lpParam)
     return 0;
 }
 
-/*
-example code
-*/
-#if 0
 HANDLE                g_ServiceStopEvent = INVALID_HANDLE_VALUE;
 
 DWORD WINAPI ServiceWorkerThread(LPVOID lpParam)
@@ -167,10 +211,10 @@ DWORD WINAPI ServiceWorkerThread(LPVOID lpParam)
 #if 0
 /* control group 1 */
 CreateThread(
-	NULL,                   // default security attributes
-	0,                      // use default stack size  
-	commander_thread_main,  // thread function name
-	NULL,                   // argument to thread function 
-	0,                      // use default creation flags 
-	NULL);                  // returns the thread identifier 
+    NULL,                   // default security attributes
+    0,                      // use default stack size  
+    commander_thread_main,  // thread function name
+    NULL,                   // argument to thread function 
+    0,                      // use default creation flags 
+    NULL);                  // returns the thread identifier 
 #endif

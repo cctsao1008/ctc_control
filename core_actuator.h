@@ -10,3 +10,4 @@
 
 #pragma once
 
+void* core_actuator_thread_main(void* arg);

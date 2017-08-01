@@ -14,7 +14,7 @@
 
 #define SERVICE_NAME  "CTC Control Service"
 
-int run = 1;
+extern int run;
 
 SERVICE_STATUS_HANDLE service_handle = 0;
 static SERVICE_STATUS service_status;
