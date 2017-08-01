@@ -73,14 +73,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\vs2013\ctc_project\ctc_control\lib\pthreads-w32-2-9-1-release\include;D:\Python36\include;D:\vs2013\ctc_project\ctc_control\lib\mosquitto-1.4.14\devel;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>lib\pthreads-w32-2-9-1-release\include;D:\Python36\include;lib\mosquitto-1.4.14\devel;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>D:\vs2013\ctc_project\ctc_control\lib\pthreads-w32-2-9-1-release\lib\x86;D:\vs2013\ctc_project\ctc_control\lib\mosquitto-1.4.14\devel;D:\Python36\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>lib\pthreads-w32-2-9-1-release\lib\x86;lib\mosquitto-1.4.14\devel;D:\Python36\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>mosquitto.lib;pthreadVC2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
