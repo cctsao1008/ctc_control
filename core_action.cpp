@@ -44,3 +44,8 @@ int action_tool_control(void* data)
 {
 	// put your code here.
 }
+
+int action_centrifuge_control(void* data)
+{
+	// put your code here.
+}

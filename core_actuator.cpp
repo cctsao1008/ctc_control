@@ -30,43 +30,32 @@ void* core_actuator_thread_main(void* arg)
 	return 0;
 }
 
-int control_syringe_pump(void* data)
+int control_motor(void* data)
+{
+	// call driver.
+	// motion platform
+	// centrifuge
+	// syringe pump
+	// washer
+}
+
+int control_dio(void* data)
+{
+	// call driver.
+	// magnetic switch
+	// led
+	// buzzer
+	// buttom
+}
+
+int control_ac(void* data)
 {
 	// call driver.
 }
 
-int control_x_axis(void* data)
+int control_griper(void* data)
 {
 	// call driver.
+	// 2finger
+	// 3finger
 }
-
-int control_y_axis(void* data)
-{
-	// call driver.
-}
-
-int control_z_axis(void* data)
-{
-	// call driver.
-}
-
-int control_magnetic_switch(void* data)
-{
-	// call driver.
-}
-
-int control_ac_temperature(void* data)
-{
-	// call driver.
-}
-
-int control_griper_2finger(void* data)
-{
-	// call driver.
-}
-
-int control_griper_3finger(void* data)
-{
-	// call driver.
-}
-

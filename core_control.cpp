@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
     }
 #endif
 
-	pthread_mutex_t mutex;
+	//pthread_mutex_t mutex;
 
     ghMutex = CreateMutex(
         NULL,              // default security attributes

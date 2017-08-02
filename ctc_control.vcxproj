@@ -73,7 +73,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>lib\pthreads-w32-2-9-1-release\include;D:\Python36\include;lib\mosquitto-1.4.14\devel;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>module\micropython\windows\build;module\micropython\windows\msvc;module\micropython\windows;module\micropython;lib\mosquitto-1.4.14\devel;lib\pthreads-w32-2-9-1-release\include;D:\Python36\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
