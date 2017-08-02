@@ -8,7 +8,13 @@
 * @author Ricardo <tsao.ricardo@iac.com.tw>
 */
 
-#include <Python.h>
+#ifdef _DEBUG
+#undef _DEBUG
+#include <python.h>
+#define _DEBUG
+#else
+#include <python.h>
+#endif
 
 /* BEGIN - C API to present to our Python instance */
 // Methods

@@ -33,19 +33,23 @@ void* core_action_thread_main(void* arg)
 int action_pippet_control(void* data)
 {
 	// put your code here.
+	return 0;
 }
 
 int action_platform_motion(void* data)
 {
 	// put your code here.
+	return 0;
 }
 
 int action_tool_control(void* data)
 {
 	// put your code here.
+	return 0;
 }
 
 int action_centrifuge_control(void* data)
 {
 	// put your code here.
+	return 0;
 }

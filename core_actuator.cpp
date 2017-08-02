@@ -37,6 +37,7 @@ int control_motor(void* data)
 	// centrifuge
 	// syringe pump
 	// washer
+	return 0;
 }
 
 int control_dio(void* data)
@@ -46,11 +47,13 @@ int control_dio(void* data)
 	// led
 	// buzzer
 	// buttom
+	return 0;
 }
 
 int control_ac(void* data)
 {
 	// call driver.
+	return 0;
 }
 
 int control_griper(void* data)
@@ -58,4 +61,5 @@ int control_griper(void* data)
 	// call driver.
 	// 2finger
 	// 3finger
+	return 0;
 }
