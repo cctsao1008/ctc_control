@@ -53,17 +53,19 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>lib\pthreads-w32-2-9-1-release\include;lib\python-3.6.2-embed-win32;lib\mosquitto-1.4.14\devel;lib\Python36\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>module\cserial;lib\libmodbus v3.1.4\x86\include;lib\pthreads-w32-2-9-1-release\include;lib\python-3.6.2-embed-win32;lib\mosquitto-1.4.14\devel;lib\Python36\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>lib\pthreads-w32-2-9-1-release\lib\x86;lib\Python36;lib\mosquitto-1.4.14\devel;lib\python-3.6.2-embed-win32;lib\Python36\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>mosquitto.lib;pthreadVC2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>lib\libmodbus v3.1.4\x86\libs;lib\pthreads-w32-2-9-1-release\lib\x86;lib\Python36;lib\mosquitto-1.4.14\devel;lib\python-3.6.2-embed-win32;lib\Python36\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>mosquitto.lib;pthreadVC2.lib;modbus.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command> xcopy /d /y "$(ProjectDir)\lib\mosquitto-1.4.14\*.dll" "$(OutDir)"</Command>
+      <Command> xcopy /d /y "$(ProjectDir)\lib\mosquitto-1.4.14\*.dll" "$(OutDir)"
+ xcopy /d /y "$(ProjectDir)\lib\python-3.6.2-embed-win32\*.dll" "$(OutDir)"
+ xcopy /s /y "$(ProjectDir)\lib\python-3.6.2-embed-win32\pyc" "$(OutDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -89,7 +91,7 @@
     <PreBuildEvent>
       <Command> xcopy /d /y "$(ProjectDir)\lib\mosquitto-1.4.14\*.dll" "$(OutDir)"
  xcopy /d /y "$(ProjectDir)\lib\python-3.6.2-embed-win32\*.dll" "$(OutDir)"
- xcopy /S /y "$(ProjectDir)\lib\python-3.6.2-embed-win32\pyc" "$(OutDir)"</Command>
+ xcopy /s /y "$(ProjectDir)\lib\python-3.6.2-embed-win32\pyc" "$(OutDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -97,10 +99,16 @@
     <ClCompile Include="core_actuator.cpp" />
     <ClCompile Include="core_diagnostic.cpp" />
     <ClCompile Include="core_logging.cpp" />
+    <ClCompile Include="core_modbus.cpp" />
     <ClCompile Include="core_mqtt.cpp" />
     <ClCompile Include="core_control.cpp" />
     <ClCompile Include="core_python.cpp" />
+    <ClCompile Include="core_serialport.cpp" />
     <ClCompile Include="core_service.cpp" />
+    <ClCompile Include="module\cserial\c_serial.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="module\cserial\c_serial.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

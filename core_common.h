@@ -20,3 +20,5 @@
 #include "core_actuator.h"
 #include "core_action.h"
 #include "core_diagnostic.h"
+#include "core_modbus.h"
+#include "core_serialport.h"

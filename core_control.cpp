@@ -63,10 +63,19 @@ void WINAPI console_ctrl_handler(DWORD event)
 	thread_running = false;
 }
 
+int core_control_update(void* arg)
+{
+	//if (NULL != arg)
+	//	printf("CCS: core_control_update(%d)\n", *(unsigned int*)arg);
+
+	return 0;
+}
+
 void* core_control_thread_main(void* arg) {
 	printf("CCS: core_control_thread_main running...\n");
 
 	while (run) {
+		core_control_update(arg);
 		//printf("core_control_thread_main(%d)\n", *(unsigned int*)arg);
 		Sleep(500);
 	}
@@ -136,12 +145,16 @@ int main(int argc, char *argv[])
     core_python_open();
     core_python_close();
 
+	core_modbus_open();
+	core_serialport_open();
+
 	unsigned int arg = 0;
 
 	pthread_create(&pid[0], NULL, &core_control_thread_main, (void *)&arg);
 	pthread_create(&pid[1], NULL, &core_actuator_thread_main, (void *)&arg);
 	pthread_create(&pid[2], NULL, &core_action_thread_main, (void *)&arg);
-	pthread_create(&pid[3], NULL, &core_diagnostic_thread_main, (void *)&arg);
+	pthread_create(&pid[3], NULL, &core_diagnostic_thread_main, (void *)&arg); 
+	pthread_create(&pid[4], NULL, &core_modbus_thread_main, (void *)&arg);
 
     printf("CCS: ctc control is running.\n");
 

@@ -9,3 +9,6 @@
 */
 
 #pragma once
+
+int core_modbus_open(void);
+void* core_modbus_thread_main(void* arg);

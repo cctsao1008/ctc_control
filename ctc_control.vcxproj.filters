@@ -9,12 +9,18 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Source Files\module">
+      <UniqueIdentifier>{d36c48c3-8fb7-43e1-8a28-e3036c4080fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\module\cserial">
+      <UniqueIdentifier>{fbeecf67-778f-40c8-9806-ee56d6711866}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\driver">
+      <UniqueIdentifier>{8f2575fa-edb4-481b-9fd6-6ea46326d2f3}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Source Files\module">
-      <UniqueIdentifier>{d36c48c3-8fb7-43e1-8a28-e3036c4080fe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -42,5 +48,19 @@
     <ClCompile Include="core_diagnostic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="core_modbus.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="module\cserial\c_serial.c">
+      <Filter>Source Files\module\cserial</Filter>
+    </ClCompile>
+    <ClCompile Include="core_serialport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="module\cserial\c_serial.h">
+      <Filter>Source Files\module\cserial</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
