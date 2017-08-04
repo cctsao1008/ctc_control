@@ -1,0 +1,24 @@
+cserial (0.3) UNRELEASED; urgency=medium
+
+  * Bumped version after release
+
+ -- robert <robert@robert-macbook>  Sun, 04 Dec 2016 16:43:08 -0500
+
+cserial (0.2) unstable; urgency=medium
+
+  * Bumped version for release
+
+ -- robert <robert@robert-macbook>  Sun, 04 Dec 2016 16:37:53 -0500
+
+cserial (0.1) unstable; urgency=medium
+
+  * Initial release of CSerial
+  * Cross-platform abilities should be working
+
+ -- robert <robert@debian>  Sun, 21 Aug 2016 14:39:30 -0400
+
+cserial (0) unstable; urgency=low
+
+  * Initial Release.
+
+ -- robert <robert.middleton@rm5248.com>  Fri, 05 Aug 2016 21:44:19 -0400
