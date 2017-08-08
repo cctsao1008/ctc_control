@@ -11,3 +11,4 @@
 #pragma once
 
 int core_serialport_open(void);
+void* core_serialport_thread_main(void* arg);

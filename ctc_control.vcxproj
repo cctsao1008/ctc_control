@@ -103,6 +103,7 @@
     <ClCompile Include="core_mqtt.cpp" />
     <ClCompile Include="core_control.cpp" />
     <ClCompile Include="core_python.cpp" />
+    <ClCompile Include="core_scanner.cpp" />
     <ClCompile Include="core_serialport.cpp" />
     <ClCompile Include="core_service.cpp" />
     <ClCompile Include="module\cserial\c_serial.c" />

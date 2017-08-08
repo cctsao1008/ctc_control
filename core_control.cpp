@@ -31,65 +31,65 @@ void WINAPI console_ctrl_handler(DWORD event)
     OutputDebugString("CCS: console_ctrl_handler.");
     printf("CCS: console_ctrl_handler.\n");
     core_mqtt_close();
-	run = 0;
+    run = 0;
 
-	//Sleep(5000);
+    //Sleep(5000);
 
 #if 0
-	for (int i = 0; i < 30; i++)
-	{
-		//printf("%d\n", i);
-		printf(".", i);
-		Sleep(100);
-	}
+    for (int i = 0; i < 30; i++)
+    {
+        //printf("%d\n", i);
+        printf(".", i);
+        Sleep(100);
+    }
 #else
-	while (vote)
-	{
-		printf("vote = %d\n", vote);
-		Sleep(200);
-	}
+    while (vote)
+    {
+        printf("vote = %d\n", vote);
+        Sleep(200);
+    }
 
-	printf("stoping.\n");
-	for (int i = 0; i < 30; i++)
-	{
-		//printf("%d\n", i);
-		printf(".", i);
-		Sleep(100);
-	}
-	printf("\n");
+    printf("stoping.\n");
+    for (int i = 0; i < 30; i++)
+    {
+        //printf("%d\n", i);
+        printf(".", i);
+        Sleep(100);
+    }
+    printf("\n");
 #endif
-	Sleep(1000);
+    Sleep(1000);
     //exit(0);
-	thread_running = false;
+    thread_running = false;
 }
 
 int core_control_update(void* arg)
 {
-	//if (NULL != arg)
-	//	printf("CCS: core_control_update(%d)\n", *(unsigned int*)arg);
+    //if (NULL != arg)
+    //	printf("CCS: core_control_update(%d)\n", *(unsigned int*)arg);
 
-	return 0;
+    return 0;
 }
 
 void* core_control_thread_main(void* arg) {
-	printf("CCS: core_control_thread_main running...\n");
+    printf("CCS: core_control_thread_main running...\n");
 
-	while (run) {
-		core_control_update(arg);
-		//printf("core_control_thread_main(%d)\n", *(unsigned int*)arg);
-		Sleep(500);
-	}
+    while (run) {
+        core_control_update(arg);
+        //printf("core_control_thread_main(%d)\n", *(unsigned int*)arg);
+        Sleep(500);
+    }
 
-	printf("CCS: core_control_thread_main exit.\n");
+    printf("CCS: core_control_thread_main exit.\n");
 
-	return NULL;
+    return NULL;
 }
 
 //int _tmain(int argc, _TCHAR* argv[])
 //int _tmain(int argc, char *argv[])
 int main(int argc, char *argv[])
 {
-	pthread_t pid[6];
+    pthread_t pid;
 
 #if defined(WIN32) || defined(__CYGWIN__)
     if (argc == 2){
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
     }
 #endif
 
-	//pthread_mutex_t mutex;
+    //pthread_mutex_t mutex;
 
     ghMutex = CreateMutex(
         NULL,              // default security attributes
@@ -145,25 +145,27 @@ int main(int argc, char *argv[])
     core_python_open();
     core_python_close();
 
-	core_modbus_open();
-	core_serialport_open();
+    OutputDebugString("CCS: call core_modbus_open...");
+    core_modbus_open();
 
-	unsigned int arg = 0;
+    OutputDebugString("CCS: call core_serialport_open...");
+    core_serialport_open();
 
-	pthread_create(&pid[0], NULL, &core_control_thread_main, (void *)&arg);
-	pthread_create(&pid[1], NULL, &core_actuator_thread_main, (void *)&arg);
-	pthread_create(&pid[2], NULL, &core_action_thread_main, (void *)&arg);
-	pthread_create(&pid[3], NULL, &core_diagnostic_thread_main, (void *)&arg); 
-	pthread_create(&pid[4], NULL, &core_modbus_thread_main, (void *)&arg);
+    OutputDebugString("CCS: call core_scanner_open...");
+    core_scanner_open(NULL);
+
+    unsigned int arg = 0;
+
+    pthread_create(&pid, NULL, &core_control_thread_main, (void *)&arg);
 
     printf("CCS: ctc control is running.\n");
 
-	/* now initialized */
-	thread_running = true;
+    /* now initialized */
+    thread_running = true;
 
-	while (thread_running) {
+    while (thread_running) {
         OutputDebugString("CCS: ctc control is sleeping...");
-		arg++;
+        arg++;
         Sleep(1000);
     }
 

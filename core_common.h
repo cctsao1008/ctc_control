@@ -22,3 +22,5 @@
 #include "core_diagnostic.h"
 #include "core_modbus.h"
 #include "core_serialport.h"
+#include "core_scanner.h"
+

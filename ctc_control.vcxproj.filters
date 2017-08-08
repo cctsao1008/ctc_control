@@ -57,6 +57,9 @@
     <ClCompile Include="core_serialport.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="core_scanner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="module\cserial\c_serial.h">
