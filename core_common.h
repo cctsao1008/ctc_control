@@ -14,9 +14,12 @@
 #include <map>
 #include <time.h>
 #include <math.h>
+#include <vector>
+#include <sstream>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <iostream>
 #include "pthread.h"
 
 #include "core_service.h"
