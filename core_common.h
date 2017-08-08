@@ -11,7 +11,12 @@
 
 #include <windows.h>
 #include "stdio.h"
+#include <map>
 #include <time.h>
+#include <math.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 #include "pthread.h"
 
 #include "core_service.h"
