@@ -6,8 +6,8 @@
  * @author Joshua <jan.joshua@iac.com.tw>    *
  *********************************************/
 
-#ifndef _SHAKEMACHINE_H_
-#define _SHAKEMACHINE_H_
+#ifndef _CORE_SHAKEMACHINE_H_
+#define _CORE_SHAKEMACHINE_H_
 
 #include "c_serial.h"
 #include "core_common.h"
