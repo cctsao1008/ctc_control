@@ -53,7 +53,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>module\cserial;lib\libmodbus v3.1.4\x86\include;lib\pthreads-w32-2-9-1-release\include;lib\python-3.6.2-embed-win32;lib\mosquitto-1.4.14\devel;lib\Python36\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>module\tiny-json;module\cserial;lib\libmodbus v3.1.4\x86\include;lib\pthreads-w32-2-9-1-release\include;lib\python-3.6.2-embed-win32;lib\mosquitto-1.4.14\devel;lib\Python36\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -106,7 +106,9 @@
     <ClCompile Include="core_scanner.cpp" />
     <ClCompile Include="core_serialport.cpp" />
     <ClCompile Include="core_service.cpp" />
+    <ClCompile Include="driver\servo_sde\servo_sde.cpp" />
     <ClCompile Include="module\cserial\c_serial.c" />
+    <ClCompile Include="module\tiny-json\tiny-json.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="module\cserial\c_serial.h" />

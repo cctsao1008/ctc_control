@@ -77,7 +77,27 @@ void on_publish(struct mosquitto *mosq, void *userdata, int mid)
 void on_message(struct mosquitto *, void *, const struct mosquitto_message * msg)
 {
     OutputDebugString("CCS: on_message.");
-    printf("CCS: [%05d] topic = %s, payload = %s\n", count++, msg->topic, (char*)msg->payload);
+
+    char* data = (char*)(msg->payload);
+
+    if (strcmp(msg->topic, "control/cmd") == 0)
+    {
+        //for (int i = 0; i < (msg->payloadlen); i++)
+        //printf("%X ", *(char*)(msg->payload));
+
+        for (int i = 0; i < (msg->payloadlen); i++)
+            printf("%X ", data[i]);
+    }
+    else if (strcmp(msg->topic, "xxx") == 0)
+    {
+        // do something else
+    }
+    /* more else if clauses */
+    else /* default: */
+    {
+        printf("CCS: [%05d] topic = %s, payload = %s\n", count++, msg->topic, (char*)msg->payload);
+    }
+    
 }
 
 void core_mqtt_sub(void)
@@ -94,6 +114,7 @@ void core_mqtt_sub(void)
     mosquitto_subscribe(mosq, NULL, "control/msg1", 0);
     mosquitto_subscribe(mosq, NULL, "control/msg2", 0);
     mosquitto_subscribe(mosq, NULL, "control/msg3", 0);
+    mosquitto_subscribe(mosq, NULL, "control/cmd", 0);
 
     // button message
     mosquitto_subscribe(mosq, NULL, "control/btn", 0);
