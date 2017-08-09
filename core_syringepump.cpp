@@ -1,5 +1,5 @@
 /*********************************************
- * @file core_syringepump.cpp                *
+ * @file SyringePump.cpp                     *
  *                                           *
  * Syringe Pump Contorl                      *
  *                                           *
@@ -20,6 +20,7 @@ SyringePump::SyringePump(RS485Port* PortPtr)
 		_volume.insert(std::pair <unsigned int, double>(20, 0.0));
 		_speed = RPM197;
 		_rs485Port = PortPtr;
+		_ghMutex = _rs485Port->getMutex();
     }
     else
     {
@@ -35,6 +36,7 @@ SyringePump::SyringePump(std::map<unsigned int, double> Volume, unsigned int Spe
     	_volume = Volume;
     	_speed = Speed;
 		_rs485Port = PortPtr;
+		_ghMutex = _rs485Port->getMutex();
     }
     else
     {

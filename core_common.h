@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <iostream>
+#include "module\cserial.h"
 #include "pthread.h"
 
 #include "core_service.h"

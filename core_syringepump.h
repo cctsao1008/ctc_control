@@ -1,5 +1,5 @@
 /*********************************************
- * @file core_syringepump.h                  *
+ * @file SyringePump.cpp                     *
  *                                           *
  * Syringe Pump Contorl                      *
  *                                           *
