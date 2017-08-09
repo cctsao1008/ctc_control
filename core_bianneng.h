@@ -210,14 +210,17 @@ class RS485Port
 {
 public:
 	// Constructor
-    RS485Port();
-    RS485Port(c_serial_port_t *COM);
+    RS485Port(const char* COM);
 
     // Destructor
     ~RS485Port();
 
 	// setting
-	bool setCOMPort(c_serial_port_t* COM);
+	bool setRS485Port(c_serial_port_t* Port);
+
+	// getting
+	c_serial_port_t* getPortHandle();
+	HANDLE getMutex();
 
 	//Thread
 	bool initThread();
@@ -226,11 +229,12 @@ public:
 
 private:
 	// Port
+	const char*							_name;		// port name
 	c_serial_port_t*					_port;		// pointer to the COMPort class be used
 	/* variables used for manage the thread */
 	HANDLE	_hThread;
 	DWORD	_dwThreadId;
-	DWORD	 _dwThreadParam;
+	DWORD	_dwThreadParam;
 	/* variables used for passing message between thread and main process*/
 	Message					_msg;
 	uint8_t					_content[2];
@@ -238,6 +242,5 @@ private:
 	std::vector<Message>	_recieveQueue;
 	/* mutex lock */
 	HANDLE _ghMutex;
-
 };
 #endif // _CORE_BIANNENG_H_
