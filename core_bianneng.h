@@ -206,4 +206,38 @@ private:
 	uint8_t SQ_CMD[5];
 };
 
+class RS485Port
+{
+public:
+	// Constructor
+    RS485Port();
+    RS485Port(c_serial_port_t *COM);
+
+    // Destructor
+    ~RS485Port();
+
+	// setting
+	bool setCOMPort(c_serial_port_t* COM);
+
+	//Thread
+	bool initThread();
+	Message* getControlerMsg();
+	static DWORD WINAPI ReadWriteMsg(LPVOID ThreadParameter);
+
+private:
+	// Port
+	c_serial_port_t*					_port;		// pointer to the COMPort class be used
+	/* variables used for manage the thread */
+	HANDLE	_hThread;
+	DWORD	_dwThreadId;
+	DWORD	 _dwThreadParam;
+	/* variables used for passing message between thread and main process*/
+	Message					_msg;
+	uint8_t					_content[2];
+	Parameter				_threadParameter;
+	std::vector<Message>	_recieveQueue;
+	/* mutex lock */
+	HANDLE _ghMutex;
+
+};
 #endif // _CORE_BIANNENG_H_

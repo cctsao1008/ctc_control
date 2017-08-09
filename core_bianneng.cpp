@@ -9,6 +9,7 @@
 #include "core_common.h"
 #include "core_bianneng.h"
 
+/* BianNeng Class */
 BianNeng::BianNeng()
 {
 	// Initial class if it's needed 
@@ -232,4 +233,104 @@ Message* BianNeng::trans2SQCMD(const char* Address, const char* Content)
 	_msg.content = SQ_CMD;
 
 	return &_msg;
+}
+
+/* RS485Port Class */
+RS485Port::RS485Port()
+{
+    // Initial class if it's needed 
+}
+
+RS485Port::RS485Port(c_serial_port_t *COM)
+{
+    // Initial class if it's needed 
+}
+
+RS485Port::~RS485Port()
+{
+    // Release memory if it's needed
+}
+
+bool RS485Port::setCOMPort(c_serial_port_t *COM)
+{
+    _port = COM;
+    return true;
+}
+
+// Thread
+bool RS485Port::initThread()
+{
+    _threadParameter._ghMutex = &_ghMutex;
+    _threadParameter._port = _port;
+    _threadParameter._recieveQueue = &_recieveQueue;
+
+    _hThread = NULL;
+
+    _hThread = CreateThread(NULL,                       // default security attributes
+                                0,                      // use default stack size
+       &SyringePump::ReadWriteMsg,                      // thread function
+        (LPVOID)&_threadParameter,                      // argument to thread function
+                                0,                      // use default creation flags
+                            NULL);                      // returns the thread identifier
+
+    if (_hThread == NULL)
+    {
+        printf("[ERROR] COMPort: recieveMsg Thread Cannot Be Created\n");
+        return false;
+    }
+
+    printf("[INFO] COMPort: Create Thread Successed\n");
+
+    return true;
+}
+
+Message* RS485Port::getControlerMsg()
+{
+    if (!_recieveQueue.empty())
+    {
+        _content[0] = _recieveQueue.front().content[0];
+        _content[1] = _recieveQueue.front().content[1];
+        _msg.content = _content;
+        _msg.length = 2;
+        _recieveQueue.erase(_recieveQueue.begin());
+        return &_msg;
+    }
+
+    return NULL;
+}
+
+DWORD WINAPI RS485Port::ReadWriteMsg(LPVOID ThreadParameter)
+{
+    c_serial_port_t* port = ((Parameter*)ThreadParameter)->_port;
+    std::vector<Message>* recieveQueue = ((Parameter*)ThreadParameter)->_recieveQueue;
+    Message Reciece;
+    uint8_t content[2] = { '\x00' };
+    Reciece.content = content;
+    Reciece.length = 0;
+
+    while (true)
+    {
+        c_serial_get_available(port, &Reciece.length);
+
+        if (Reciece.length >= 2)
+        {
+            //printf("Available Bytes: %d\n", Reciece.length);
+            Reciece.length = 2;
+            c_serial_read_data(port, content, &Reciece.length, NULL);
+            /*
+            for (int i = 0; i < Reciece.length; i++)
+            {
+                printf("%.2X ", content[i]);
+            }
+            printf("\n");
+            */
+            WaitForSingleObject(((Parameter*)ThreadParameter)->_ghMutex, INFINITE);
+            recieveQueue->push_back(Reciece);
+            ReleaseMutex(((Parameter*)ThreadParameter)->_ghMutex);
+        }
+
+        Sleep(100);
+    }
+
+    return 0;
 }
