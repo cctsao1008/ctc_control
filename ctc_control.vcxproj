@@ -95,17 +95,16 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="core_action.cpp" />
-    <ClCompile Include="core_actuator.cpp" />
-    <ClCompile Include="core_diagnostic.cpp" />
-    <ClCompile Include="core_logging.cpp" />
-    <ClCompile Include="core_modbus.cpp" />
-    <ClCompile Include="core_mqtt.cpp" />
-    <ClCompile Include="core_control.cpp" />
-    <ClCompile Include="core_python.cpp" />
-    <ClCompile Include="core_scanner.cpp" />
-    <ClCompile Include="core_serialport.cpp" />
-    <ClCompile Include="core_service.cpp" />
+    <ClCompile Include="core\core_action.cpp" />
+    <ClCompile Include="core\core_actuator.cpp" />
+    <ClCompile Include="core\core_control.cpp" />
+    <ClCompile Include="core\core_logging.cpp" />
+    <ClCompile Include="core\core_modbus.cpp" />
+    <ClCompile Include="core\core_mqtt.cpp" />
+    <ClCompile Include="core\core_python.cpp" />
+    <ClCompile Include="core\core_scanner.cpp" />
+    <ClCompile Include="core\core_serialport.cpp" />
+    <ClCompile Include="core\core_service.cpp" />
     <ClCompile Include="driver\servo_sde\servo_sde.cpp" />
     <ClCompile Include="module\cserial\c_serial.c" />
     <ClCompile Include="module\tiny-json\tiny-json.c" />

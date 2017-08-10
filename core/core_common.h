@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <iostream>
-#include "module\cserial\c_serial.h"
+#include "c_serial.h"
 #include "pthread.h"
 
 #include "core_service.h"
