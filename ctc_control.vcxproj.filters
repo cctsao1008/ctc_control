@@ -39,9 +39,6 @@
     <ClCompile Include="module\cserial\c_serial.c">
       <Filter>Source Files\module\cserial</Filter>
     </ClCompile>
-    <ClCompile Include="driver\servo_sde\servo_sde.cpp">
-      <Filter>Source Files\driver\servo_sde</Filter>
-    </ClCompile>
     <ClCompile Include="module\tiny-json\tiny-json.c">
       <Filter>Source Files\module\tiny-json</Filter>
     </ClCompile>
@@ -78,6 +75,9 @@
     <ClCompile Include="module\log.c\src\log.c">
       <Filter>Source Files\module\log.c</Filter>
     </ClCompile>
+    <ClCompile Include="driver\servo_sde\drv_servo_sde.cpp">
+      <Filter>Source Files\driver\servo_sde</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="module\cserial\c_serial.h">
@@ -85,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="module\log.c\src\log.h">
       <Filter>Source Files\module\log.c</Filter>
+    </ClInclude>
+    <ClInclude Include="driver\servo_sde\drv_servo_sde.h">
+      <Filter>Source Files\driver\servo_sde</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -47,16 +47,16 @@ void WINAPI console_ctrl_handler(DWORD event)
 #else
     while (vote)
     {
-		log_info("vote = %d\n", vote);
+		log_info("vote = %d", vote);
         Sleep(500);
     }
 
-	log_info("stoping.\n");
-    for (int i = 0; i < 30; i++)
+	log_info("stoping......\n");
+    for (int i = 0; i < 60; i++)
     {
         //printf("%d\n", i);
-        printf(".", i);
-        Sleep(100);
+        printf(">", i);
+        Sleep(50);
     }
     printf("\n");
 #endif
@@ -74,7 +74,7 @@ int core_control_update(void* arg)
 }
 
 void* core_control_thread_main(void* arg) {
-	log_info("CCS: core_control_thread_main running...\n");
+	log_info("CCS: core_control_thread_main running.");
 
     while (run) {
         core_control_update(arg);
@@ -82,7 +82,7 @@ void* core_control_thread_main(void* arg) {
         Sleep(500);
     }
 
-	log_info("CCS: core_control_thread_main exit.\n");
+	log_info("CCS: core_control_thread_main exit.");
 
     return NULL;
 }
@@ -106,17 +106,17 @@ log_fatal("Hello %s", "world");
 #if defined(WIN32) || defined(__CYGWIN__)
     if (argc == 2){
         if (!strcmp(argv[1], "run")){
-			log_info("CCS: calling service_run...\n");
+			log_info("CCS: calling service_run.");
             core_service_run();
             return 0;
         }
         else if (!strcmp(argv[1], "install")){
-			log_info("CCS: calling service_install...\n");
+			log_info("CCS: calling service_install.");
             core_service_install();
             return 0;
         }
         else if (!strcmp(argv[1], "uninstall")){
-			log_info("CCS: calling service_uninstall...\n");
+			log_info("CCS: calling service_uninstall.");
             core_service_uninstall();
             return 0;
         }
@@ -134,19 +134,19 @@ log_fatal("Hello %s", "world");
 
     if (error == ERROR_ALREADY_EXISTS)
     {
-		log_info("CCS: ctc control is already running, exit...\n");
+		log_info("CCS: ctc control is already running, exit.");
         CloseHandle(ghMutex);
 
         return 0;
     }
 
-	log_info("CCS: SetConsoleCtrlHandler\n");
+	log_info("CCS: SetConsoleCtrlHandler.");
 
     if (!SetConsoleCtrlHandler((PHANDLER_ROUTINE)console_ctrl_handler, TRUE))
     {
         // unable to install handler... 
         // display message to the user
-		log_trace("CCS: Unable to install handler!\n");
+		log_trace("CCS: Unable to install handler!");
         return (-1);
     }
 
@@ -159,6 +159,7 @@ log_fatal("Hello %s", "world");
 
     OutputDebugString("CCS: call core_modbus_open...");
     core_modbus_open();
+	drv_servo_sde_open();
 
     OutputDebugString("CCS: call core_serialport_open...");
     core_serialport_open();
@@ -170,20 +171,20 @@ log_fatal("Hello %s", "world");
 
     pthread_create(&pid, NULL, &core_control_thread_main, (void *)&arg);
 
-	log_info("CCS: ctc control is running.\n");
+	log_info("CCS: ctc control is running.");
 
     /* now initialized */
     thread_running = true;
 
     while (thread_running) {
-        OutputDebugString("CCS: ctc control is sleeping...");
+        OutputDebugString("CCS: ctc control is sleeping.");
         arg++;
         Sleep(1000);
     }
 
     core_mqtt_close();
 
-    OutputDebugString("CCS: ctc control are going to exit...");
+    OutputDebugString("CCS: ctc control are going to exit.");
 
     return 0;
 }
