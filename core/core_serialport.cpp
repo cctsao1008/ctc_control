@@ -22,7 +22,7 @@ int core_serialport_open(void)
     */
     const char** port_list = c_serial_get_serial_ports_list();
     int x = 0;
-	log_info("CCS: Available ports:");
+	log_info("available ports:");
     while (port_list[x] != NULL){
 		log_info("%s", port_list[x]);
         x++;
@@ -35,7 +35,7 @@ int core_serialport_open(void)
     * This defaults to 9600-8-N-1
     */
     if (c_serial_new(&m_port[0], NULL) < 0){
-		log_error("CCS: Unable to create new serial port");
+		log_error("Unable to create new serial port.");
         return 1;
     }
 
@@ -45,7 +45,7 @@ int core_serialport_open(void)
     */
     if (c_serial_set_port_name(m_port[0], "COM65") < 0){
         //fprintf(stderr, "CCS: ERROR : can't set port name\n");
-		log_error("CCS: can't set port name");
+		log_error("can't set port name.");
     }
 
     /*
@@ -57,12 +57,12 @@ int core_serialport_open(void)
     c_serial_set_parity(m_port[0], CSERIAL_PARITY_NONE);
     c_serial_set_flow_control(m_port[0], CSERIAL_FLOW_NONE);
 
-	log_info("Baud rate is %d\n", c_serial_get_baud_rate(m_port[0]));
+	log_info("baud rate is %d.", c_serial_get_baud_rate(m_port[0]));
 
     status = c_serial_open(m_port[0]);
 
     if (status < 0){
-		log_error("Can't open serial port");
+		log_error("can't open serial port.");
         return 1;
     }
 
@@ -71,7 +71,7 @@ int core_serialport_open(void)
     * This defaults to 9600-8-N-1
     */
     if (c_serial_new(&m_port[1], NULL) < 0){
-		log_error("Unable to create new serial port");
+		log_error("unable to create new serial port.");
         return 1;
     }
 
@@ -80,7 +80,7 @@ int core_serialport_open(void)
     * COM1 on Windows)
     */
     if (c_serial_set_port_name(m_port[1], "COM6") < 0){
-		log_error("can't set port name");
+		log_error("can't set port name.");
     }
 
     /*
@@ -92,12 +92,12 @@ int core_serialport_open(void)
     c_serial_set_parity(m_port[1], CSERIAL_PARITY_NONE);
     c_serial_set_flow_control(m_port[1], CSERIAL_FLOW_NONE);
 
-	log_info("Baud rate is %d", c_serial_get_baud_rate(m_port[1]));
+	log_info("baud rate is %d.", c_serial_get_baud_rate(m_port[1]));
 
     status = c_serial_open(m_port[1]);
 
     if (status < 0){
-		log_error("Can't open serial port");
+		log_error("can't open serial port %s.", c_serial_get_port_name(m_port[1]));
         return 1;
     }
 
@@ -120,12 +120,12 @@ void* core_serialport_thread_tx(void* arg)
 
     while (run)
     {
-		log_info("CCS: core_serialport_thread_tx.");
+		log_info("core_serialport_thread_tx.");
         c_serial_write_data(m_port[0], (void *)tx_buf, &len);
         Sleep(500);
     }
 
-	log_info("CCS: core_serialport_thread_tx exit.");
+	log_info("core_serialport_thread_tx exit.");
 
     return 0;
 }
@@ -136,7 +136,7 @@ void* core_serialport_thread_rx(void* arg)
 
     unsigned int count = 0;
 
-	log_info("CCS: core_serialport_thread_rx.");
+	log_info("core_serialport_thread_rx.");
 
     while (run)
     {
@@ -144,7 +144,7 @@ void* core_serialport_thread_rx(void* arg)
 
         if (av > 0)
         {
-			log_info("CCS: core_serialport_thread_rx_%04d ( av = %d).", count++, av);
+			log_info("core_serialport_thread_rx_%04d ( av = %d).", count++, av);
             c_serial_read_data(m_port[0], rx_buf, &len, NULL);
 
             for (int i = 0; i < av; i++)
@@ -157,14 +157,14 @@ void* core_serialport_thread_rx(void* arg)
         Sleep(100);
     }
 
-	log_info("CCS: core_serialport_thread_rx exit.");
+	log_info("core_serialport_thread_rx exit.");
 
     return 0;
 }
 
 void* core_serialport_thread_main(void* arg)
 {
-	log_info("CCS: core_serialport_thread_main running.");
+	log_info("core_serialport_thread_main running.");
 
     //pthread_create(&pid[0], NULL, &core_serialport_thread_tx, (void *)&arg);
     //pthread_create(&pid[0], NULL, &core_serialport_thread_rx, (void *)&arg);
@@ -174,7 +174,7 @@ void* core_serialport_thread_main(void* arg)
         Sleep(1000);
     }
 
-	log_info("CCS: core_serialport_thread_main exit.");
+	log_info("core_serialport_thread_main exit.");
 
     return 0;
 }

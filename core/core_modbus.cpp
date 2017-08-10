@@ -13,7 +13,7 @@
 #include "stdio.h"
 //#include <windows.h>
 
-//#include "core_common.h"
+#include "core_common.h"
 //#include "modbus.h"
 
 #define MODBUS_SERIAL_DEV           "COM2"
@@ -45,7 +45,7 @@ extern int vote;
 
 int core_modbus_open(void)
 {
-    fprintf(stderr, "CCS: core_modbus_open\n");
+	log_info("core_modbus_open.");
 
     ctx = modbus_new_rtu(MODBUS_SERIAL_DEV,
         MODBUS_SERIAL_BAUDRATE,
@@ -54,7 +54,7 @@ int core_modbus_open(void)
         MODBUS_SERIAL_STOPBITS);
 
     if (ctx == NULL) {
-        fprintf(stderr, "Unable to create the libmodbus context\n");
+		log_error("Unable to create the libmodbus context.");
         exit(-1);
     }
 
@@ -68,8 +68,7 @@ int core_modbus_open(void)
         MODBUS_RO_REGISTERS, MODBUS_RW_REGISTERS);
 
     if (data_mapping == NULL) {
-        fprintf(stderr, "Failed to allocate the mapping: %s\n",
-            modbus_strerror(errno));
+		log_error("Failed to allocate the mapping: %s", modbus_strerror(errno));
         modbus_free(ctx);
         return -1;
     }
@@ -98,7 +97,7 @@ void* core_modbus_thread_main(void* arg)
     /* open serial interface */
     modbus_connect(ctx);
 
-    fprintf(stderr, "CCS : modbus connected\n");
+	log_info("modbus connected.");
 
 	vote++;
 
@@ -124,7 +123,7 @@ void* core_modbus_thread_main(void* arg)
 	vote--;
 
     //printf("CCS : core_modbus_thread_main exit. %s\n", modbus_strerror(errno));
-	printf("CCS : core_modbus_thread_main exit.\n");
+	log_info("core_modbus_thread_main exit.");
 
     modbus_mapping_free(data_mapping);
 
