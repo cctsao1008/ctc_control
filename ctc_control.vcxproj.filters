@@ -31,6 +31,9 @@
     <Filter Include="Source Files\core">
       <UniqueIdentifier>{957fb60e-ab02-4950-ac82-356d70460b81}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\module\log.c">
+      <UniqueIdentifier>{6f480618-d6c8-441d-80a8-2648183fab61}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="module\cserial\c_serial.c">
@@ -72,10 +75,16 @@
     <ClCompile Include="core\core_service.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
+    <ClCompile Include="module\log.c\src\log.c">
+      <Filter>Source Files\module\log.c</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="module\cserial\c_serial.h">
       <Filter>Source Files\module\cserial</Filter>
+    </ClInclude>
+    <ClInclude Include="module\log.c\src\log.h">
+      <Filter>Source Files\module\log.c</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

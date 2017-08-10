@@ -11,6 +11,8 @@
 #include "core_common.h"
 #include <signal.h>
 
+#include "log.h"
+
 //DWORD WINAPI core_control_thread_main(LPVOID lpParam);
 
 int run = 1;
@@ -29,7 +31,7 @@ void WINAPI console_ctrl_handler(DWORD event)
         printf("Ctrl-C handled\n"); // do cleanup
 
     OutputDebugString("CCS: console_ctrl_handler.");
-    printf("CCS: console_ctrl_handler.\n");
+	log_info("CCS: console_ctrl_handler.\n");
     core_mqtt_close();
     run = 0;
 
@@ -45,11 +47,11 @@ void WINAPI console_ctrl_handler(DWORD event)
 #else
     while (vote)
     {
-        printf("vote = %d\n", vote);
-        Sleep(200);
+		log_info("vote = %d\n", vote);
+        Sleep(500);
     }
 
-    printf("stoping.\n");
+	log_info("stoping.\n");
     for (int i = 0; i < 30; i++)
     {
         //printf("%d\n", i);
@@ -72,7 +74,7 @@ int core_control_update(void* arg)
 }
 
 void* core_control_thread_main(void* arg) {
-    printf("CCS: core_control_thread_main running...\n");
+	log_info("CCS: core_control_thread_main running...\n");
 
     while (run) {
         core_control_update(arg);
@@ -80,7 +82,7 @@ void* core_control_thread_main(void* arg) {
         Sleep(500);
     }
 
-    printf("CCS: core_control_thread_main exit.\n");
+	log_info("CCS: core_control_thread_main exit.\n");
 
     return NULL;
 }
@@ -91,20 +93,30 @@ int main(int argc, char *argv[])
 {
     pthread_t pid;
 
+/*
+log_trace("Hello %s", "world");
+log_debug("Hello %s", "world");
+log_info("Hello %s", "world");
+log_warn("Hello %s", "world");
+log_error("Hello %s", "world");
+log_fatal("Hello %s", "world");
+*/
+
+
 #if defined(WIN32) || defined(__CYGWIN__)
     if (argc == 2){
         if (!strcmp(argv[1], "run")){
-            printf("CCS: calling service_run...\n");
+			log_info("CCS: calling service_run...\n");
             core_service_run();
             return 0;
         }
         else if (!strcmp(argv[1], "install")){
-            printf("CCS: calling service_install...\n");
+			log_info("CCS: calling service_install...\n");
             core_service_install();
             return 0;
         }
         else if (!strcmp(argv[1], "uninstall")){
-            printf("CCS: calling service_uninstall...\n");
+			log_info("CCS: calling service_uninstall...\n");
             core_service_uninstall();
             return 0;
         }
@@ -122,19 +134,19 @@ int main(int argc, char *argv[])
 
     if (error == ERROR_ALREADY_EXISTS)
     {
-        printf("CCS: ctc control is already running, exit...\n");
+		log_info("CCS: ctc control is already running, exit...\n");
         CloseHandle(ghMutex);
 
         return 0;
     }
 
-    printf("CCS: SetConsoleCtrlHandler\n");
+	log_info("CCS: SetConsoleCtrlHandler\n");
 
     if (!SetConsoleCtrlHandler((PHANDLER_ROUTINE)console_ctrl_handler, TRUE))
     {
         // unable to install handler... 
         // display message to the user
-        printf("CCS: Unable to install handler!\n");
+		log_trace("CCS: Unable to install handler!\n");
         return (-1);
     }
 
@@ -158,7 +170,7 @@ int main(int argc, char *argv[])
 
     pthread_create(&pid, NULL, &core_control_thread_main, (void *)&arg);
 
-    printf("CCS: ctc control is running.\n");
+	log_info("CCS: ctc control is running.\n");
 
     /* now initialized */
     thread_running = true;

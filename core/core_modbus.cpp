@@ -8,12 +8,10 @@
 * @author Ricardo <tsao.ricardo@iac.com.tw>
 */
 
+#include "pthread.h"
 #include "modbus.h"
 #include "stdio.h"
-
-#include <windows.h>
-
-#include "pthread.h"
+//#include <windows.h>
 
 //#include "core_common.h"
 //#include "modbus.h"
@@ -102,6 +100,8 @@ void* core_modbus_thread_main(void* arg)
 
     fprintf(stderr, "CCS : modbus connected\n");
 
+	vote++;
+
     while (run) {
 #if 0
         ret = modbus_receive(ctx, query);
@@ -121,7 +121,10 @@ void* core_modbus_thread_main(void* arg)
         Sleep(2000);
     }
 
-    printf("CCS : core_modbus_thread_main exit. %s\n", modbus_strerror(errno));
+	vote--;
+
+    //printf("CCS : core_modbus_thread_main exit. %s\n", modbus_strerror(errno));
+	printf("CCS : core_modbus_thread_main exit.\n");
 
     modbus_mapping_free(data_mapping);
 
