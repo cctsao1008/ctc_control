@@ -34,6 +34,8 @@ int core_mqtt_open(void)
     //if (mosquitto_connect(mosq, "localhost", 1883, 60 == MOSQ_ERR_SUCCESS) {
     if (mosquitto_connect_async(mosq, "localhost", 1883, 60) == MOSQ_ERR_SUCCESS) {
         mosquitto_loop_start(mosq);
+
+#if 0
         core_mqtt_sub();
 
         CreateThread(
@@ -43,6 +45,7 @@ int core_mqtt_open(void)
             NULL,                   // argument to thread function 
             0,                      // use default creation flags 
             NULL);
+#endif
 
         OutputDebugString("CCS: mqtt broker connected...");
     }

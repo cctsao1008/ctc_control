@@ -10,5 +10,5 @@
 
 #pragma once
 
-int core_modbus_open(void);
+int core_modbus_open(void* handle);
 void* core_modbus_thread_main(void* arg);

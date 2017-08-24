@@ -22,9 +22,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\driver\servo_sde">
-      <UniqueIdentifier>{d3f3a6da-49ce-4ea1-a610-06558c42d2e2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\module\tiny-json">
       <UniqueIdentifier>{ebe63522-07d7-45da-a206-aad0510dde18}</UniqueIdentifier>
     </Filter>
@@ -34,6 +31,9 @@
     <Filter Include="Source Files\module\log.c">
       <UniqueIdentifier>{6f480618-d6c8-441d-80a8-2648183fab61}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\module\wingetopt">
+      <UniqueIdentifier>{751affd5-e58e-4bc8-af0c-ed782360d876}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="module\cserial\c_serial.c">
@@ -42,31 +42,13 @@
     <ClCompile Include="module\tiny-json\tiny-json.c">
       <Filter>Source Files\module\tiny-json</Filter>
     </ClCompile>
-    <ClCompile Include="core\core_action.cpp">
-      <Filter>Source Files\core</Filter>
-    </ClCompile>
     <ClCompile Include="core\core_actuator.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
     <ClCompile Include="core\core_control.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
-    <ClCompile Include="core\core_logging.cpp">
-      <Filter>Source Files\core</Filter>
-    </ClCompile>
-    <ClCompile Include="core\core_modbus.cpp">
-      <Filter>Source Files\core</Filter>
-    </ClCompile>
-    <ClCompile Include="core\core_mqtt.cpp">
-      <Filter>Source Files\core</Filter>
-    </ClCompile>
-    <ClCompile Include="core\core_python.cpp">
-      <Filter>Source Files\core</Filter>
-    </ClCompile>
     <ClCompile Include="core\core_scanner.cpp">
-      <Filter>Source Files\core</Filter>
-    </ClCompile>
-    <ClCompile Include="core\core_serialport.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
     <ClCompile Include="core\core_service.cpp">
@@ -75,8 +57,17 @@
     <ClCompile Include="module\log.c\src\log.c">
       <Filter>Source Files\module\log.c</Filter>
     </ClCompile>
-    <ClCompile Include="driver\servo_sde\drv_servo_sde.cpp">
-      <Filter>Source Files\driver\servo_sde</Filter>
+    <ClCompile Include="core\core_commander.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="driver\driver_rs485_p1.cpp">
+      <Filter>Source Files\driver</Filter>
+    </ClCompile>
+    <ClCompile Include="core\core_rsh.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="module\wingetopt\src\getopt.c">
+      <Filter>Source Files\module\wingetopt</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -86,8 +77,29 @@
     <ClInclude Include="module\log.c\src\log.h">
       <Filter>Source Files\module\log.c</Filter>
     </ClInclude>
-    <ClInclude Include="driver\servo_sde\drv_servo_sde.h">
-      <Filter>Source Files\driver\servo_sde</Filter>
+    <ClInclude Include="core\core_actuator.h">
+      <Filter>Source Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\core_common.h">
+      <Filter>Source Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\core_scanner.h">
+      <Filter>Source Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\core_service.h">
+      <Filter>Source Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\core_commander.h">
+      <Filter>Source Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="driver\driver_rs485_p1.h">
+      <Filter>Source Files\driver</Filter>
+    </ClInclude>
+    <ClInclude Include="core\core_rsh.h">
+      <Filter>Source Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="module\wingetopt\src\getopt.h">
+      <Filter>Source Files\module\wingetopt</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

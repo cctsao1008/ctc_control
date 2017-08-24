@@ -13,7 +13,7 @@ MODBUS_BEGIN_DECLS
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
 /* Win32 with MinGW, supplement to <errno.h> */
-#include <winsock2.h>
+//#include <winsock2.h>
 #if !defined(ECONNRESET)
 #define ECONNRESET   WSAECONNRESET
 #endif

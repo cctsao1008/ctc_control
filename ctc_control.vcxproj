@@ -53,7 +53,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>driver\servo_sde;core;module\log.c\src;module\tiny-json;module\cserial;lib\libmodbus v3.1.4\x86\include;lib\pthreads-w32-2-9-1-release\include;lib\python-3.6.2-embed-win32;lib\mosquitto-1.4.14\devel;lib\Python36\include;lib\MariaDB 10.1\include\mysql;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>driver;core;module\getopt\src;module\wingetopt\src;module\log.c\src;module\tiny-json;module\cserial;lib\libmodbus v3.1.4\x86\include;lib\pthreads-w32-2-9-1-release\include;lib\python-3.6.2-embed-win32;lib\mosquitto-1.4.14\devel;lib\Python36\include;lib\MariaDB 10.1\include\mysql;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -64,6 +64,7 @@
     </Link>
     <PreBuildEvent>
       <Command> xcopy /d /y "$(ProjectDir)\lib\mosquitto-1.4.14\*.dll" "$(OutDir)"
+ xcopy /d /y "$(ProjectDir)\lib\libmodbus v3.1.4\x86\libs\*.dll" "$(OutDir)"
  xcopy /d /y "$(ProjectDir)\lib\python-3.6.2-embed-win32\*.dll" "$(OutDir)"
  xcopy /d /s /y "$(ProjectDir)\lib\python-3.6.2-embed-win32\pyc" "$(OutDir)"</Command>
     </PreBuildEvent>
@@ -95,25 +96,29 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="core\core_action.cpp" />
+    <ClCompile Include="core\core_commander.cpp" />
     <ClCompile Include="core\core_actuator.cpp" />
     <ClCompile Include="core\core_control.cpp" />
-    <ClCompile Include="core\core_logging.cpp" />
-    <ClCompile Include="core\core_modbus.cpp" />
-    <ClCompile Include="core\core_mqtt.cpp" />
-    <ClCompile Include="core\core_python.cpp" />
+    <ClCompile Include="core\core_rsh.cpp" />
     <ClCompile Include="core\core_scanner.cpp" />
-    <ClCompile Include="core\core_serialport.cpp" />
     <ClCompile Include="core\core_service.cpp" />
-    <ClCompile Include="driver\servo_sde\drv_servo_sde.cpp" />
+    <ClCompile Include="driver\driver_rs485_p1.cpp" />
     <ClCompile Include="module\cserial\c_serial.c" />
     <ClCompile Include="module\log.c\src\log.c" />
     <ClCompile Include="module\tiny-json\tiny-json.c" />
+    <ClCompile Include="module\wingetopt\src\getopt.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="driver\servo_sde\drv_servo_sde.h" />
+    <ClInclude Include="core\core_commander.h" />
+    <ClInclude Include="core\core_actuator.h" />
+    <ClInclude Include="core\core_common.h" />
+    <ClInclude Include="core\core_rsh.h" />
+    <ClInclude Include="core\core_scanner.h" />
+    <ClInclude Include="core\core_service.h" />
+    <ClInclude Include="driver\driver_rs485_p1.h" />
     <ClInclude Include="module\cserial\c_serial.h" />
     <ClInclude Include="module\log.c\src\log.h" />
+    <ClInclude Include="module\wingetopt\src\getopt.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
