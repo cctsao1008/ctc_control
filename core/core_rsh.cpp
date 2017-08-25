@@ -41,9 +41,9 @@ char *builtin_str[] = {
 
 int(*builtin_func[]) (int argc, char *argv[]) = {
 	//
-	&nsh_core_example_main,
+	&rsh_core_example_main,
 	&rsh_core_commander_main,
-	&nsh_driver_rs485_p1_main,
+	&rsh_driver_rs485_p1_main,
 	//
 	&rsh_testopt,
     &rsh_help,

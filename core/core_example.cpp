@@ -65,7 +65,7 @@ void* core_example_thread_main(void* arg)
 	return 0;
 }
 
-int nsh_core_example_main(int argc, char *argv[])
+int rsh_core_example_main(int argc, char *argv[])
 {
 	if (argc < 2) {
 		log_info("[example] missing command");

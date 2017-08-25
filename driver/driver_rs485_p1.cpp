@@ -236,7 +236,7 @@ void* driver_rs485_p1_thread_main(void* arg)
 	return 0;
 }
 
-int nsh_driver_rs485_p1_main(int argc, char *argv[])
+int rsh_driver_rs485_p1_main(int argc, char *argv[])
 {
 	if (argc < 2) {
 		log_info("missing command");

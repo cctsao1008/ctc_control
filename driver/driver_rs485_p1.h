@@ -10,4 +10,4 @@
 
 #pragma once
 
-int nsh_driver_rs485_p1_main(int argc, char *argv[]);
+int rsh_driver_rs485_p1_main(int argc, char *argv[]);
