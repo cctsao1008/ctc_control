@@ -131,6 +131,24 @@ static double AO[32];
 
 static bool servo_enabled[7];
 
+int connect(modbus_t *ctx)
+{
+	modbus_connect(ctx);
+
+	if (modbus_connect(ctx) == -1) {
+		fprintf(stderr, "Connection failed\n");
+		modbus_free(ctx);
+		return (-1);
+	}
+}
+
+int disconnect(modbus_t *ctx)
+{
+	modbus_close(ctx);
+
+	return 0;
+}
+
 void* driver_rs485_p1_thread_main(void* arg)
 {
 	/* TIMER */
@@ -154,6 +172,11 @@ void* driver_rs485_p1_thread_main(void* arg)
 		MODBUS_SERIAL_DATABITS,
 		MODBUS_SERIAL_STOPBITS);
 
+	if (ctx[0] == NULL) {
+		fprintf(stderr, "Unable to allocate libmodbus context\n");
+		return 0;
+	}
+
 	/* for PID controller */
 	ctx[1] = modbus_new_rtu(MODBUS_SERIAL_DEV,
 		19200,
@@ -161,15 +184,24 @@ void* driver_rs485_p1_thread_main(void* arg)
 		MODBUS_SERIAL_DATABITS,
 		MODBUS_SERIAL_STOPBITS);
 
+	if (ctx[1] == NULL) {
+		fprintf(stderr, "Unable to allocate libmodbus context\n");
+		return 0;
+	}
+
 	modbus_set_debug(ctx[0], false);
 	modbus_set_debug(ctx[1], false);
 
 	/* TEMP */
 	modbus_set_slave(ctx[1], 20);
-	modbus_connect(ctx[1]);
+	
+	if (!connect(ctx[1]))
+		return 0;
+
 	AO[1] = 20.0;
 	modbus_write_register(ctx[1], 0x0, (int)AO[1] * 10);
-	modbus_close(ctx[1]);
+	//modbus_close(ctx[1]);
+	disconnect(ctx[1]);
 
 	/* SERVO */
 	servo_enabled[S1] = true;
@@ -221,12 +253,92 @@ void* driver_rs485_p1_thread_main(void* arg)
 
 			log_info("deltaTime5Hz = %ld", deltaTime5Hz);
 
-			executionTime5Hz = micros() - currentTime;
+			/* keep servo driver connection*/
+			modbus_connect(ctx[0]);
+
+			// Servo driver SDE-075A2 750W, MP X axis
+			if (servo_enabled[S1] == true)
+			{
+				//log_info("S1 ENABLED");
+				modbus_set_slave(ctx[0], 1);
+				modbus_read_registers(ctx[0], 0x0900, 1, data);
+			}
+
+			// Servo driver SDE-040A2 400W, MP Y axis
+			if (servo_enabled[S2] == true)
+			{
+				//log_info("S2 ENABLED");
+				modbus_set_slave(ctx[0], 2);
+				modbus_read_registers(ctx[0], 0x0900, 1, data);
+			}
+
+			// Servo driver SDE-010A2 100W, Guild Way
+			if (servo_enabled[S3] == true)
+			{
+				//log_info("S3 ENABLED");
+				modbus_set_slave(ctx[0], 3);
+				modbus_read_registers(ctx[0], 0x0900, 1, data);
+			}
+
+			// Servo driver SDE-020A2 200W, Centrifugal
+			if (servo_enabled[S4] == true)
+			{
+				//log_info("S4 ENABLED");
+				modbus_set_slave(ctx[0], 4);
+				//modbus_read_registers(ctx[0], 0x0900, 1, data);
+				int rc;
+				data[0] = 0;
+				rc = modbus_read_registers(ctx[0], 0x0100, 1, data);
+
+				//log_info("data = 0x%X, rc = %d", data[0], rc);
+
+				//if (rc != (-1))
+				//	log_info("0x0100 = 0x%X", data[0]);
+			}
+
+			modbus_close(ctx[0]);
+
+			//executionTime5Hz = micros() - currentTime;
 			//log_info("executionTime5Hz = %ld", executionTime5Hz);
+		}
+
+		if (frame_1Hz)
+		{
+			frame_1Hz = false;
+
+			currentTime = micros();
+			deltaTime1Hz = currentTime - previous1HzTime;
+			previous1HzTime = currentTime;
+
+			modbus_set_slave(ctx[1], 20);
+			modbus_connect(ctx[1]);
+			modbus_read_input_registers(ctx[1], 0x0, 1, data);
+			modbus_close(ctx[1]);
+
+			char str[10];
+#if 0
+			// real data
+			sprintf_s(str, "%3.1f", (float)data[0] * 0.1);
+			mosquitto_publish(mosq, NULL, AI_01, 64, str, 0, true);
+			//log_info("FT3400 PV = %3.1f", (float)data[0] * 0.1);
+#else
+			// fake data
+			//double tmp = (double)((rand() / (RAND_MAX + 1.0)) * (110.0 - 90.0) + 110.0); // 1~5 us
+			double tmp = 90.0 + (double)rand() / ((double)RAND_MAX / (110.00 - 90.0));
+			sprintf_s(str, "%3.1f", tmp * 0.1); // 9~27 us
+			//mosquitto_publish(mosq, NULL, AI_01, 64, str, 0, true); // 156~812 us
+			log_info("tmp = %3.1f", tmp * 0.1);
+#endif
+			executionTime1Hz = micros() - currentTime;
+			//log_info("deltaTime1Hz = %d us", deltaTime1Hz);
+			//log_info("executionTime1Hz = %d us", executionTime1Hz);
 		}
 
 		Sleep(1);
 	}
+
+	modbus_free(ctx[0]);
+	modbus_free(ctx[1]);
 
 	log_info("kill timer");
 	timeKillEvent(timer);
