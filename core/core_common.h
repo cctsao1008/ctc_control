@@ -43,3 +43,6 @@
 #include "core_serialport.h"
 #include "core_scanner.h"
 #include "core_rsh.h"
+#include "core_example.h"
+
+#include "driver_rs485_p1.h"

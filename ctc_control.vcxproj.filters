@@ -69,6 +69,12 @@
     <ClCompile Include="module\wingetopt\src\getopt.c">
       <Filter>Source Files\module\wingetopt</Filter>
     </ClCompile>
+    <ClCompile Include="core\core_scheduler.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\core_example.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="module\cserial\c_serial.h">
@@ -100,6 +106,12 @@
     </ClInclude>
     <ClInclude Include="module\wingetopt\src\getopt.h">
       <Filter>Source Files\module\wingetopt</Filter>
+    </ClInclude>
+    <ClInclude Include="core\core_scheduler.h">
+      <Filter>Source Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\core_example.h">
+      <Filter>Source Files\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

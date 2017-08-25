@@ -28,7 +28,9 @@ List of builtin commands, followed by their corresponding functions.
 */
 char *builtin_str[] = {
 	//
+	"example",
 	"commander",
+	"rs485_p1",
 	//
     "testopt",
     "help",
@@ -39,7 +41,9 @@ char *builtin_str[] = {
 
 int(*builtin_func[]) (int argc, char *argv[]) = {
 	//
+	&nsh_core_example_main,
 	&rsh_core_commander_main,
+	&nsh_driver_rs485_p1_main,
 	//
 	&rsh_testopt,
     &rsh_help,
@@ -359,13 +363,36 @@ int rsh_version(int argc, char *argv[])
 	//printf("rsh_version\n");
 	/* MQTT */
 	int mq_maj, mq_min, mq_rev;
-	char cmd[] = "testopt --area";
+	//char cmd[] = "testopt --area";
 
-	mosquitto_lib_version(&mq_maj, &mq_min, &mq_rev);
-	printf("mosquitto version %d.%d.%d\n", mq_maj, mq_min, mq_rev);
-	printf("libmodbus version %s (%06X)\n", LIBMODBUS_VERSION_STRING, LIBMODBUS_VERSION_HEX);
+	if (argc < 2) {
+		log_info("missing command");
+		return 0;
+	}
 
-	rsh_command(cmd);
+	if (!strcmp(argv[1], "all")) {
+		mosquitto_lib_version(&mq_maj, &mq_min, &mq_rev);
+		printf("mosquitto version %d.%d.%d\n", mq_maj, mq_min, mq_rev);
+		//printf("libmodbus version %s (%06X)\n", LIBMODBUS_VERSION_STRING, LIBMODBUS_VERSION_HEX);
+		printf("libmodbus version %s\n", LIBMODBUS_VERSION_STRING);
+
+		return 0;
+	}
+
+	if (!strcmp(argv[1], "libmodbus")) {
+		printf("libmodbus version %s\n", LIBMODBUS_VERSION_STRING);
+
+		return 0;
+	}
+
+	if (!strcmp(argv[1], "mosquitto")) {
+		mosquitto_lib_version(&mq_maj, &mq_min, &mq_rev);
+		printf("mosquitto version %d.%d.%d\n", mq_maj, mq_min, mq_rev);
+
+		return 0;
+	}
+
+	//rsh_command(cmd);
 
 	return 0;
 }

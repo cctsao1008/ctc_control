@@ -264,53 +264,6 @@ static uint8_t mqtt_publisher(modbus_t *ctx)
 
 }
 
-#if 0
-static uint8_t rs485_port1_update(modbus_t *ctx)
-{
-    uint64_t currentTime;
-
-    if (NULL == ctx)
-        return (-1);
-
-    if (frame_1Hz)
-    {
-        frame_1Hz = false;
-
-        currentTime = micros();
-        deltaTime1Hz = currentTime - previous1HzTime;
-        previous1HzTime = currentTime;
-
-        // put your code here.
-        modbus_connect(ctx);
-        modbus_read_input_registers(ctx, 0x0, 1, data);
-        modbus_close(ctx);
-
-        //mosquitto_publish(mosq, NULL, "CONTROL/SENSOR/AI_01", sizeof(data[0]), (const void*)&data[0], 0, true);
-
-        char str[10];
-#if 0
-        sprintf_s(str, "%3.1f", (float)data[0] * 0.1);
-        mosquitto_publish(mosq, NULL, AI_01, 64, str, 0, true);
-        printf("tmp = %3.1f\n", (float)data[0] * 0.1);
-#else
-        // fake data
-        double tmp = (double)((rand() / (RAND_MAX + 1.0)) * (250.0 - 100.0) + 100.0);
-        sprintf_s(str, "%3.1f", tmp * 0.1);
-        mosquitto_publish(mosq, NULL, AI_01, 64, str, 0, true);
-        //log_info("tmp = %3.1f", tmp * 0.1);
-#endif
-        executionTime1Hz = micros() - currentTime;
-        log_info("deltaTime1Hz = %d us", deltaTime1Hz);
-        log_info("executionTime1Hz = %d us", executionTime1Hz);
-    }
-}
-#endif
-
-static void rs485_port2_update(modbus_t *ctx)
-{
-
-}
-
 void* core_commander_thread_main(void* arg)
 {
     /* TIME */
@@ -523,9 +476,31 @@ void* core_commander_thread_main(void* arg)
 
 int rsh_core_commander_main(int argc, char *argv[])
 {
+	int c;
+
+	optind = 0;
+
 	if (argc < 2) {
 		log_info("missing command");
-		return 1;
+		return 0;
+	}
+
+	while ((c = getopt(argc, argv, "tm:")) != -1) {
+		switch (c) {
+
+		case 't':
+			log_info("getopt t, %s", argv[2]);
+			break;
+
+		case 'm':
+			log_info("getopt m");
+			break;
+
+		default:
+			log_info("getopt default");
+			//usage(nullptr);
+			return 0;
+		}
 	}
 
 	if (!strcmp(argv[1], "start")) {
@@ -581,6 +556,41 @@ int rsh_core_commander_main(int argc, char *argv[])
 			log_info("not running");
 			return 1;
 		}
+	}
+
+	if (!strcmp(argv[1], "pub")) {
+		log_info("[commander] pub, argc = %d", argc);
+
+		if (argc < 3)
+		{
+			log_info("error");
+
+			return 0;
+		}
+
+#if 0
+		printf("params = \n");
+
+		for (int i = 2; i < argc; i++)
+		{
+			printf("(%d) %s\n", i, argv[i]);
+		}
+#else
+		char topic[128] = { 0 };
+		char payload[128] = { 0 };
+
+		for (int i = 2; i < argc; i++)
+		{
+			if (!strcmp(argv[i], "-t"))
+				strcpy_s(topic, argv[i + 1]);
+
+			if (!strcmp(argv[i], "-m"))
+				strcpy_s(payload, argv[i + 1]);
+
+		}
+
+		mosquitto_publish(mosq, NULL, topic, sizeof(payload), payload, 0, true);
+#endif
 	}
 
 	return 0;
