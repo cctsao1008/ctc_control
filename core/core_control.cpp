@@ -24,17 +24,18 @@ HANDLE ghMutex;
 
 void WINAPI console_ctrl_handler(DWORD event)
 {
-    if (event == CTRL_C_EVENT)
-		log_warn("Ctrl-C handled\n"); // do cleanup
+    //if (event == CTRL_C_EVENT)
+	//	log_warn("Ctrl-C handler\n"); // do cleanup
 
-    OutputDebugString("console_ctrl_handler.");
-	log_warn("console_ctrl_handler.");
+    //OutputDebugString("console_ctrl_handler.");
+	//log_warn("console_ctrl_handler.");
     run = 0;
 
     //Sleep(5000);
 
-#if 0
-    for (int i = 0; i < 30; i++)
+#if 1
+	printf("\n");
+    for (int i = 0; i < 20; i++)
     {
         //printf("%d\n", i);
         printf(".", i);
@@ -43,7 +44,7 @@ void WINAPI console_ctrl_handler(DWORD event)
 #else
     while (vote)
     {
-		log_info("vote = %d", vote);
+		//log_info("vote = %d", vote);
         Sleep(500);
     }
 
@@ -112,7 +113,7 @@ int main(int argc, char *argv[])
         return (-1);
     }
 
-	strcpy_s(command, "core_commander_main start");
+	strcpy_s(command, "commander start");
 	rsh_command(command);
 
 
@@ -132,7 +133,10 @@ int main(int argc, char *argv[])
 		// Perform any shutdown/cleanup.
     }
 
+	strcpy_s(command, "core_commander_main stop");
+	rsh_command(command);
 	log_info("ctc control are going to exit.");
+	Sleep(3000);
 
     return 0;
 }

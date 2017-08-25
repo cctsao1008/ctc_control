@@ -516,7 +516,7 @@ void* core_commander_thread_main(void* arg)
 
 	thread_running = false;
 
-    log_info("core_commander_thread_main exit.");
+    //log_info("core_commander_thread_main exit.");
 
     return 0;
 }
@@ -552,16 +552,16 @@ int rsh_core_commander_main(int argc, char *argv[])
 			return 0;
 		}
 
-		thread_should_exit = true;
-
 		timeKillEvent(timer);
 
-		while (thread_running) {
-			Sleep(200);
-			printf(".");
-		}
+		thread_should_exit = true;
 
-		log_info("terminated.");
+		//while (thread_running) {
+		//	Sleep(200);
+		//	printf(".");
+		//}
+
+		//log_info("terminated.");
 
 		return 0;
 	}

@@ -28,7 +28,7 @@ List of builtin commands, followed by their corresponding functions.
 */
 char *builtin_str[] = {
 	//
-	"core_commander_main",
+	"commander",
 	//
     "testopt",
     "help",
@@ -427,7 +427,7 @@ int rsh_execute(int argc, char *argv[])
 
     if (argv[0] == NULL) {
         // An empty command was entered.
-        return 1;
+        return 0;
     }
 
     for (i = 0; i < rsh_num_builtins(); i++) {
@@ -559,5 +559,5 @@ void rsh_loop(void)
 
         free(line);
         free(argv);
-    } while (status);
+    } while (!status);
 }
