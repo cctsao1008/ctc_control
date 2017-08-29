@@ -1,9 +1,9 @@
 /**
-* @file driver_rs485_p1.cpp
+* @file rs485p1.cpp
 *
-* driver_rs485_p1
+* rs485p1
 *
-*   driver_rs485_p1.
+*   rs485p1.
 *
 * @author Ricardo <tsao.ricardo@iac.com.tw>
 */
@@ -45,15 +45,6 @@ static pthread_t pid;
 static bool commander_initialized = false;
 static volatile bool thread_should_exit = false;	/**< daemon exit flag */
 static volatile bool thread_running = false;		/**< daemon status flag */
-
-static uint64_t micros(void) {
-	LARGE_INTEGER freq, tick;
-
-	QueryPerformanceFrequency(&freq);
-	QueryPerformanceCounter(&tick);
-
-	return (tick.QuadPart * 1000000 / freq.QuadPart);
-}
 
 static void WINAPI timer_handler(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dwl, DWORD dw2)
 {
@@ -120,26 +111,22 @@ static void WINAPI timer_handler(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dw
 static double AI[32];
 static double AO[32];
 
-/* SERVO SDE */
-#define S1 0
-#define S2 1
-#define S3 2
-#define S4 3
-#define S5 4
-#define S6 5
-#define S7 6
+/* SERVO  */
+enum { SERVO_1 = 1, SERVO_2, SERVO_3, SERVO_4, SERVO_MAX };
 
-static bool servo_enabled[7];
+static bool servo_enabled[SERVO_MAX];
 
 int connect(modbus_t *ctx)
 {
-	modbus_connect(ctx);
+	//modbus_connect(ctx);
 
 	if (modbus_connect(ctx) == -1) {
 		fprintf(stderr, "Connection failed\n");
 		modbus_free(ctx);
 		return (-1);
 	}
+
+	return 0;
 }
 
 int disconnect(modbus_t *ctx)
@@ -149,7 +136,44 @@ int disconnect(modbus_t *ctx)
 	return 0;
 }
 
-void* driver_rs485_p1_thread_main(void* arg)
+int read_register(modbus_t *ctx, int slave, int addr, uint16_t *dest)
+{
+	int rc;
+
+	modbus_connect(ctx);
+	modbus_set_slave(ctx, slave);
+	rc = modbus_read_registers(ctx, addr, 1, dest);
+	modbus_close(ctx);
+
+	return 0;
+}
+
+int read_input_register(modbus_t *ctx, int slave, int addr, uint16_t *dest)
+{
+	int rc;
+
+	modbus_connect(ctx);
+	modbus_set_slave(ctx, slave);
+	rc = modbus_read_input_registers(ctx, addr, 1, dest);
+	modbus_close(ctx);
+
+	return 0;
+}
+
+
+int write_register(modbus_t *ctx, int slave, int addr, int value)
+{
+	int rc;
+
+	modbus_connect(ctx);
+	modbus_set_slave(ctx, slave);
+	rc = modbus_write_register(ctx, addr, value);
+	modbus_close(ctx);
+
+	return 0;
+}
+
+void* rs485p1_thread_main(void* arg)
 {
 	/* TIMER */
 	MMRESULT timer;
@@ -195,25 +219,31 @@ void* driver_rs485_p1_thread_main(void* arg)
 	/* TEMP */
 	modbus_set_slave(ctx[1], 20);
 	
-	if (!connect(ctx[1]))
-		return 0;
+	//if (connect(ctx[1]) != 0)
+	//{
+	//	fprintf(stderr, "connect failed.\n");
+	//	return 0;
+	//}
+
+	//modbus_connect(ctx[1]);
 
 	AO[1] = 20.0;
-	modbus_write_register(ctx[1], 0x0, (int)AO[1] * 10);
+	write_register(ctx[1], 20, 0x0, (int)AO[1] * 10);
+	//modbus_write_register(ctx[1], 0x0, (int)AO[1] * 10);
 	//modbus_close(ctx[1]);
-	disconnect(ctx[1]);
+	//disconnect(ctx[1]);
 
-	/* SERVO */
-	servo_enabled[S1] = true;
-	servo_enabled[S2] = true;
-	servo_enabled[S3] = true;
-	servo_enabled[S4] = true;
+	/* ENABLE SERVO */
+	servo_enabled[SERVO_1] = true;
+	servo_enabled[SERVO_2] = true;
+	servo_enabled[SERVO_3] = true;
+	servo_enabled[SERVO_4] = true;
 
 	modbus_set_response_timeout(ctx[0], 0, 100000UL);
 	//modbus_set_response_timeout(ctx[0], 1, 0);
 
 	/* S4 : DI contact control */
-	modbus_set_slave(ctx[0], 4);
+	modbus_set_slave(ctx[0], SERVO_4);
 	modbus_connect(ctx[0]);
 	modbus_write_register(ctx[0], 0x061E, 0x0040);
 	modbus_read_registers(ctx[0], 0x0630, 1, data);
@@ -251,40 +281,41 @@ void* driver_rs485_p1_thread_main(void* arg)
 			deltaTime5Hz = currentTime - previous5HzTime;
 			previous5HzTime = currentTime;
 
-			log_info("deltaTime5Hz = %ld", deltaTime5Hz);
+			//log_info("deltaTime5Hz = %ld", deltaTime5Hz);
 
 			/* keep servo driver connection*/
 			modbus_connect(ctx[0]);
 
 			// Servo driver SDE-075A2 750W, MP X axis
-			if (servo_enabled[S1] == true)
+			if (servo_enabled[SERVO_1] == true)
 			{
 				//log_info("S1 ENABLED");
-				modbus_set_slave(ctx[0], 1);
+				modbus_set_slave(ctx[0], SERVO_1);
 				modbus_read_registers(ctx[0], 0x0900, 1, data);
 			}
 
 			// Servo driver SDE-040A2 400W, MP Y axis
-			if (servo_enabled[S2] == true)
+			if (servo_enabled[SERVO_2] == true)
 			{
 				//log_info("S2 ENABLED");
-				modbus_set_slave(ctx[0], 2);
+				modbus_set_slave(ctx[0], SERVO_2);
 				modbus_read_registers(ctx[0], 0x0900, 1, data);
 			}
 
 			// Servo driver SDE-010A2 100W, Guild Way
-			if (servo_enabled[S3] == true)
+			if (servo_enabled[SERVO_3] == true)
 			{
 				//log_info("S3 ENABLED");
-				modbus_set_slave(ctx[0], 3);
+				modbus_set_slave(ctx[0], SERVO_3);
 				modbus_read_registers(ctx[0], 0x0900, 1, data);
 			}
 
 			// Servo driver SDE-020A2 200W, Centrifugal
-			if (servo_enabled[S4] == true)
+			if (servo_enabled[SERVO_4] == true)
 			{
 				//log_info("S4 ENABLED");
-				modbus_set_slave(ctx[0], 4);
+#if 0
+				modbus_set_slave(ctx[0], SERVO_4);
 				//modbus_read_registers(ctx[0], 0x0900, 1, data);
 				int rc;
 				data[0] = 0;
@@ -294,6 +325,9 @@ void* driver_rs485_p1_thread_main(void* arg)
 
 				//if (rc != (-1))
 				//	log_info("0x0100 = 0x%X", data[0]);
+#else
+				//read_servo_register(ctx[0], SERVO_4, 0x0100, 1, data);
+#endif
 			}
 
 			modbus_close(ctx[0]);
@@ -304,22 +338,24 @@ void* driver_rs485_p1_thread_main(void* arg)
 
 		if (frame_1Hz)
 		{
+			int rc = 0;
 			frame_1Hz = false;
 
 			currentTime = micros();
 			deltaTime1Hz = currentTime - previous1HzTime;
 			previous1HzTime = currentTime;
 
-			modbus_set_slave(ctx[1], 20);
-			modbus_connect(ctx[1]);
-			modbus_read_input_registers(ctx[1], 0x0, 1, data);
-			modbus_close(ctx[1]);
+			//rc = modbus_set_slave(ctx[1], 20);
+			//rc = modbus_connect(ctx[1]);
+			//rc = modbus_read_input_registers(ctx[1], 0x0, 1, data);
+			//modbus_close(ctx[1]);
+			read_input_register(ctx[1], 20, 0x0, data);
 
 			char str[10];
-#if 0
+#if 1
 			// real data
 			sprintf_s(str, "%3.1f", (float)data[0] * 0.1);
-			mosquitto_publish(mosq, NULL, AI_01, 64, str, 0, true);
+			//mosquitto_publish(mosq, NULL, AI_01, 64, str, 0, true);
 			//log_info("FT3400 PV = %3.1f", (float)data[0] * 0.1);
 #else
 			// fake data
@@ -348,7 +384,7 @@ void* driver_rs485_p1_thread_main(void* arg)
 	return 0;
 }
 
-int rsh_driver_rs485_p1_main(int argc, char *argv[])
+int rsh_rs485p1_main(int argc, char *argv[])
 {
 	if (argc < 2) {
 		log_info("missing command");
@@ -365,7 +401,7 @@ int rsh_driver_rs485_p1_main(int argc, char *argv[])
 
 		thread_should_exit = false;
 
-		pthread_create(&pid, NULL, &driver_rs485_p1_thread_main, NULL);
+		pthread_create(&pid, NULL, &rs485p1_thread_main, NULL);
 
 		return 0;
 	}
@@ -387,6 +423,50 @@ int rsh_driver_rs485_p1_main(int argc, char *argv[])
 		log_info("[example] terminated.");
 
 		return 0;
+	}
+
+	/* commands needing the app to run below */
+	if (!thread_running) {
+		log_info("rs485p1 not started");
+		return 1;
+	}
+
+	if (!strcmp(argv[1], "ac")) {
+		log_info("[commander] pub, argc = %d", argc);
+
+		if (argc < 3)
+		{
+			log_info("error");
+
+			return 0;
+		}
+
+#if 0
+		printf("params = \n");
+
+		for (int i = 2; i < argc; i++)
+		{
+			printf("(%d) %s\n", i, argv[i]);
+		}
+#else
+		char topic[128] = { 0 };
+		char payload[128] = { 0 };
+
+		for (int i = 2; i < argc; i++)
+		{
+			if (!strcmp(argv[i], "-w"))
+			{
+				printf("www");
+			}
+
+			if (!strcmp(argv[i], "-r"))
+			{
+				printf("rrr");
+			}
+		}
+
+		//mosquitto_publish(mosq, NULL, topic, sizeof(payload), payload, 0, true);
+#endif
 	}
 
 	return 0;
