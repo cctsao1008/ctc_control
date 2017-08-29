@@ -23,3 +23,5 @@ uint64_t micros(void) {
 
 	return (tick.QuadPart * 1000000 / freq.QuadPart);
 }
+
+

@@ -39,7 +39,7 @@ void WINAPI console_ctrl_handler(DWORD event)
     {
         //printf("%d\n", i);
         printf(".", i);
-        Sleep(100);
+        Sleep(20);
     }
 #else
     while (vote)
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
     /* now initialized */
     thread_running = true;
 
-	Sleep(1000);
+	Sleep(100);
 
     while (thread_running) {
 		// Load config files, if any.

@@ -49,7 +49,7 @@ static void WINAPI timer_handler(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dw
 
 static void message_handler(struct mosquitto *, void *, const struct mosquitto_message * msg)
 {
-    log_info("mqtt message handler");
+    //log_info("mqtt message handler");
 
     char* data = (char*)(msg->payload);
 
@@ -60,7 +60,7 @@ static void message_handler(struct mosquitto *, void *, const struct mosquitto_m
     else if(strcmp(msg->topic, AO_01) == 0)
     {
         // do something else
-        log_info("AO_01");
+        //log_info("AO_01");
 
         double val = 0;
         
@@ -72,7 +72,7 @@ static void message_handler(struct mosquitto *, void *, const struct mosquitto_m
             else
             {
                 AO[1] = val;
-                log_info("val = %4.1f", val);
+                //log_info("val = %4.1f", val);
             }
         }
         else {

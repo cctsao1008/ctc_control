@@ -47,7 +47,7 @@ int(*builtin_func[]) (int argc, char *argv[]) = {
 	//
 	&rsh_testopt,
     &rsh_help,
-	&rsh_python,
+	&rsh_core_python_main,
 	&rsh_version,
     &rsh_exit
 };
@@ -347,14 +347,6 @@ int rsh_help(int argc, char *argv[])
 
     printf("Use the man command for information on other programs.\n");
     return 1;
-}
-
-//
-int rsh_python(int argc, char *argv[])
-{
-	printf("python\n");
-
-	return 0;
 }
 
 int rsh_command(const char *cmd);

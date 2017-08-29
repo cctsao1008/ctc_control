@@ -10,5 +10,6 @@
 
 #pragma once
 
-int core_python_open(void);
-int core_python_close(void);
+int rsh_core_python_main(int argc, char *argv[]);
+
+
