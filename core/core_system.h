@@ -1,14 +1,18 @@
 /**
-* @file core_globel.h
+* @file core_system.h
 *
-* core_globel
+* core_system
 *
-*   core_globel.
+*   core_system.
 *
 * @author Ricardo <tsao.ricardo@iac.com.tw>
 */
 
 #pragma once
+
+#include "core_common.h"
+
+uint64_t micros(void);
 
 /* rs485 p1*/
 extern int rpm;

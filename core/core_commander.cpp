@@ -42,15 +42,6 @@ static mosquitto *mosq;
 static double AI[32];
 static double AO[32];
 
-static uint64_t micros(void) {
-    LARGE_INTEGER freq, tick;
-
-    QueryPerformanceFrequency(&freq);
-    QueryPerformanceCounter(&tick);
-
-    return (tick.QuadPart * 1000000 / freq.QuadPart);
-}
-
 static void WINAPI timer_handler(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dwl, DWORD dw2)
 {
 	
@@ -120,6 +111,11 @@ static uint8_t mqtt_publisher(modbus_t *ctx)
 
 }
 
+void CALLBACK timer_cb(HWND hwnd, UINT uMsg, UINT timerId, DWORD dwTime)
+{
+  printf("Hello");
+}
+
 void* core_commander_thread_main(void* arg)
 {
 	/* TIMER */
@@ -154,7 +150,7 @@ void* core_commander_thread_main(void* arg)
 	thread_running = true;
 
 	while (!thread_should_exit)
-    {
+    {          
         Sleep(1);
     }
 

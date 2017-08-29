@@ -100,11 +100,12 @@
     <ClCompile Include="core\core_actuator.cpp" />
     <ClCompile Include="core\core_control.cpp" />
     <ClCompile Include="core\core_example.cpp" />
+    <ClCompile Include="core\core_system.cpp" />
     <ClCompile Include="core\core_rsh.cpp" />
     <ClCompile Include="core\core_scanner.cpp" />
     <ClCompile Include="core\core_scheduler.cpp" />
     <ClCompile Include="core\core_service.cpp" />
-    <ClCompile Include="driver\driver_rs485_p1.cpp" />
+    <ClCompile Include="driver\rs485p1.cpp" />
     <ClCompile Include="module\cserial\c_serial.c" />
     <ClCompile Include="module\log.c\src\log.c" />
     <ClCompile Include="module\wingetopt\src\getopt.c" />
@@ -114,11 +115,12 @@
     <ClInclude Include="core\core_actuator.h" />
     <ClInclude Include="core\core_common.h" />
     <ClInclude Include="core\core_example.h" />
+    <ClInclude Include="core\core_system.h" />
     <ClInclude Include="core\core_rsh.h" />
     <ClInclude Include="core\core_scanner.h" />
     <ClInclude Include="core\core_scheduler.h" />
     <ClInclude Include="core\core_service.h" />
-    <ClInclude Include="driver\driver_rs485_p1.h" />
+    <ClInclude Include="driver\rs485p1.h" />
     <ClInclude Include="module\cserial\c_serial.h" />
     <ClInclude Include="module\log.c\src\log.h" />
     <ClInclude Include="module\wingetopt\src\getopt.h" />

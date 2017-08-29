@@ -1,9 +1,9 @@
 /**
-* @file driver_rs485_p1.cpp
+* @file rs485p1.cpp
 *
-* driver_rs485_p1
+* rs485p1
 *
-*   driver_rs485_p1.
+*   rs485p1.
 *
 * @author Ricardo <tsao.ricardo@iac.com.tw>
 */
@@ -45,15 +45,6 @@ static pthread_t pid;
 static bool commander_initialized = false;
 static volatile bool thread_should_exit = false;	/**< daemon exit flag */
 static volatile bool thread_running = false;		/**< daemon status flag */
-
-static uint64_t micros(void) {
-	LARGE_INTEGER freq, tick;
-
-	QueryPerformanceFrequency(&freq);
-	QueryPerformanceCounter(&tick);
-
-	return (tick.QuadPart * 1000000 / freq.QuadPart);
-}
 
 static void WINAPI timer_handler(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dwl, DWORD dw2)
 {
@@ -182,7 +173,7 @@ int write_register(modbus_t *ctx, int slave, int addr, int value)
 	return 0;
 }
 
-void* driver_rs485_p1_thread_main(void* arg)
+void* rs485p1_thread_main(void* arg)
 {
 	/* TIMER */
 	MMRESULT timer;
@@ -365,7 +356,7 @@ void* driver_rs485_p1_thread_main(void* arg)
 			// real data
 			sprintf_s(str, "%3.1f", (float)data[0] * 0.1);
 			//mosquitto_publish(mosq, NULL, AI_01, 64, str, 0, true);
-			log_info("FT3400 PV = %3.1f", (float)data[0] * 0.1);
+			//log_info("FT3400 PV = %3.1f", (float)data[0] * 0.1);
 #else
 			// fake data
 			//double tmp = (double)((rand() / (RAND_MAX + 1.0)) * (110.0 - 90.0) + 110.0); // 1~5 us
@@ -393,7 +384,7 @@ void* driver_rs485_p1_thread_main(void* arg)
 	return 0;
 }
 
-int rsh_driver_rs485_p1_main(int argc, char *argv[])
+int rsh_rs485p1_main(int argc, char *argv[])
 {
 	if (argc < 2) {
 		log_info("missing command");
@@ -410,7 +401,7 @@ int rsh_driver_rs485_p1_main(int argc, char *argv[])
 
 		thread_should_exit = false;
 
-		pthread_create(&pid, NULL, &driver_rs485_p1_thread_main, NULL);
+		pthread_create(&pid, NULL, &rs485p1_thread_main, NULL);
 
 		return 0;
 	}
@@ -432,6 +423,50 @@ int rsh_driver_rs485_p1_main(int argc, char *argv[])
 		log_info("[example] terminated.");
 
 		return 0;
+	}
+
+	/* commands needing the app to run below */
+	if (!thread_running) {
+		log_info("rs485p1 not started");
+		return 1;
+	}
+
+	if (!strcmp(argv[1], "ac")) {
+		log_info("[commander] pub, argc = %d", argc);
+
+		if (argc < 3)
+		{
+			log_info("error");
+
+			return 0;
+		}
+
+#if 0
+		printf("params = \n");
+
+		for (int i = 2; i < argc; i++)
+		{
+			printf("(%d) %s\n", i, argv[i]);
+		}
+#else
+		char topic[128] = { 0 };
+		char payload[128] = { 0 };
+
+		for (int i = 2; i < argc; i++)
+		{
+			if (!strcmp(argv[i], "-w"))
+			{
+				printf("www");
+			}
+
+			if (!strcmp(argv[i], "-r"))
+			{
+				printf("rrr");
+			}
+		}
+
+		//mosquitto_publish(mosq, NULL, topic, sizeof(payload), payload, 0, true);
+#endif
 	}
 
 	return 0;

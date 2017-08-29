@@ -17,15 +17,6 @@ static bool commander_initialized = false;
 static volatile bool thread_should_exit = false;	/**< daemon exit flag */
 static volatile bool thread_running = false;		/**< daemon status flag */
 
-static uint64_t micros(void) {
-	LARGE_INTEGER freq, tick;
-
-	QueryPerformanceFrequency(&freq);
-	QueryPerformanceCounter(&tick);
-
-	return (tick.QuadPart * 1000000 / freq.QuadPart);
-}
-
 static void WINAPI timer_handler(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dwl, DWORD dw2)
 {
 	log_info("[example] timer handler");
