@@ -47,4 +47,4 @@
 #include "core_system.h"
 
 #include "rs485p1.h"
-#include "driver_rs485_p2.h"
+//#include "driver_rs485_p2.h"
