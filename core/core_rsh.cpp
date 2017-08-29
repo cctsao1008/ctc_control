@@ -30,7 +30,7 @@ char *builtin_str[] = {
 	//
 	"example",
 	"commander",
-	"rs485_p1",
+	"rs485p1",
 	//
     "testopt",
     "help",
