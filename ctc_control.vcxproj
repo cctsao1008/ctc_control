@@ -107,7 +107,6 @@
     <ClCompile Include="driver\driver_rs485_p1.cpp" />
     <ClCompile Include="module\cserial\c_serial.c" />
     <ClCompile Include="module\log.c\src\log.c" />
-    <ClCompile Include="module\tiny-json\tiny-json.c" />
     <ClCompile Include="module\wingetopt\src\getopt.c" />
   </ItemGroup>
   <ItemGroup>

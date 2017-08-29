@@ -1,40 +1,40 @@
 /*********************************************
- * @file SyringePump.cpp                     *
+ * @file core_microscope_xy.cpp              *
  *                                           *
- * Syringe Pump Contorl                      *
+ * Microscope XY Table Contorl               *
  *                                           *
  * @author Joshua <jan.joshua@iac.com.tw>    *
  *********************************************/
-
 #include "stdafx.h"
 #include "core_common.h"
 #include "core_bianneng.h"
-#include "core_syringepump.h"
+#include "core_microscope_xy.h"
 
 // Constructor
-SyringePump::SyringePump(RS485Port* PortPtr)
+MicroscopeXY::MicroscopeXY(RS485Port* PortPtr)
 {
-    if(initDriver())
-    {
-		_volume.insert(std::pair <unsigned int, double>(5, 0.0));
-		_volume.insert(std::pair <unsigned int, double>(20, 0.0));
-		_speed = RPM197;
+	if (initDriver())
+	{
+		_position.X = 0;
+		_position.Y = 0;
+		_position.Z = 0;
 		_rs485Port = PortPtr;
-		_ghMutex = _rs485Port->getMutex();
-    }
-    else
-    {
-    	// Error Message
-    }
-    
+		_ghMutex = _rs485Port->getMutex();;
+	}
+	else
+	{
+		// Error Message
+	}
+
 }
 
-SyringePump::SyringePump(std::map<unsigned int, double> Volume, unsigned int Speed, RS485Port* PortPtr)
+MicroscopeXY::MicroscopeXY(Position Pos, RS485Port* PortPtr)
 {
-    if(initDriver())
+	if(initDriver())
     {
-    	_volume = Volume;
-    	_speed = Speed;
+    	_position.X = Pos.X;
+    	_position.Y = Pos.Y;
+    	_position.Z = Pos.Z;
 		_rs485Port = PortPtr;
 		_ghMutex = _rs485Port->getMutex();
     }
@@ -42,56 +42,190 @@ SyringePump::SyringePump(std::map<unsigned int, double> Volume, unsigned int Spe
     {
     	// Error Message
     }
-    
+}
+
+MicroscopeXY::MicroscopeXY(double X, double Y, RS485Port* PortPtr)
+{
+	if(initDriver())
+    {
+    	_position.X = X;
+    	_position.Y = Y;
+    	_position.Z = 0;
+		_rs485Port = PortPtr;
+		_ghMutex = _rs485Port->getMutex();
+    }
+    else
+    {
+    	// Error Message
+    }
 }
 
 // Destructor
-SyringePump::~SyringePump()
+MicroscopeXY::~MicroscopeXY() 
 {
 	// Release memory if it's needed
 } 
 
 // Information
-const double SyringePump::getVolume(unsigned int Size)
+Position MicroscopeXY::getPositon() const
 {
-	return _volume.find(Size)->second;
+	return _position;
 }
 
-const unsigned int SyringePump::getSpeed()
+double MicroscopeXY::getX() const
+{
+	return _position.X;
+}
+
+double MicroscopeXY::getY() const
+{
+	return _position.Y;
+}
+
+double MicroscopeXY::getSpeed() const
 {
 	return _speed;
 }
 
 // Action
-bool SyringePump::absorbVolume(double Volume)
+bool MicroscopeXY::move2Pos(Position Pos)
 {
-	uint8_t address = '\x00';
-	Message* msgPtr = NULL;
+	double xLength = _position.X - Pos.X;
+	uint8_t xDirection;
+	double yLength = _position.Y - Pos.Y;
+	uint8_t yDirection;
 
-	if (Volume < 0)
+	WaitForSingleObject(_ghMutex, INFINITE);
+	if (xLength > 0)
 	{
-		printf("[ERROR] SyringePump : In absorbVolume(), Volume should be bigger than 0 and smaller than 20ml");
-		return false;
-	}
-	else if (Volume <= 0.13)
-	{
-		unsigned int pulse = (unsigned int) (Volume / 0.0004154);
-		address = _address.find(5)->second;
-		_volume.find(5)->second += Volume;
-		msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), _address.find(5)->second, PositiveExecute, NumberToString(pulse).c_str(), "120", "0");
-	}
-	else if (Volume <= 20.0)
-	{
-		unsigned int pulse = (unsigned int)(Volume / 0.0016616);
-		address = _address.find(20)->second;
-		_volume.find(20)->second += Volume;
-		msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), _address.find(20)->second, PositiveExecute, NumberToString(pulse).c_str(), "120", "0");
+		xDirection = NegativeExecute;
 	}
 	else
 	{
-		printf("[ERROR] SyringePump : In absorbVolume(), Volume should be bigger than 0 and smaller than 20ml");
+		xLength = 0 - xLength;
+		xDirection = PositiveExecute;
+	}
+
+	if (!moveX(xLength, xDirection)) // If motor did not move successfully
+	{
+		// Error Message
 		return false;
 	}
+	ReleaseMutex(_ghMutex);
+	Sleep(500);
+
+	WaitForSingleObject(_ghMutex, INFINITE);
+	if (yLength > 0)
+	{
+		yDirection = NegativeExecute;
+	}
+	else
+	{
+		yLength = 0 - yLength;
+		yDirection = PositiveExecute;
+	}
+
+	if (!moveY(yLength, yDirection)) // If motor did not move successfully
+	{
+		// Error Message
+		return false;
+	}
+	ReleaseMutex(_ghMutex);
+	Sleep(500);
+
+	return true;
+}
+
+bool MicroscopeXY::move2Pos(double X, double Y)
+{
+	double xLength = _position.X - X;
+	uint8_t xDirection;
+	double yLength = _position.Y - Y;
+	uint8_t yDirection;
+
+	WaitForSingleObject(_ghMutex, INFINITE);
+	if (xLength > 0)
+	{
+		xDirection = NegativeExecute;
+	}
+	else
+	{
+		xLength = 0 - xLength;
+		xDirection = PositiveExecute;
+	}
+	
+	if (!moveX(xLength, xDirection)) // If motor did not move successfully
+	{
+		// Error Message
+		return false;
+	}
+	ReleaseMutex(_ghMutex);
+	Sleep(500);
+
+	WaitForSingleObject(_ghMutex, INFINITE);
+	if (yLength > 0)
+	{
+		yDirection = NegativeExecute;
+	}
+	else
+	{
+		yLength = 0 - yLength;
+		yDirection = PositiveExecute;
+	}
+
+	if (!moveY(yLength, yDirection)) // If motor did not move successfully
+	{
+		// Error Message
+		return false;
+	}
+	ReleaseMutex(_ghMutex);
+	Sleep(500);
+
+	return true;
+}
+
+// Modifier
+bool MicroscopeXY::initDriver()
+{
+	if(false) // If motor driver cannot be init
+	{
+		// Error Message
+		return false;
+	}
+
+	return true;
+}
+
+bool MicroscopeXY::setSpeed(double Speed)
+{
+	if(false) // If motor driver cannot set speed successfully
+	{
+		// Error Message
+		return false;
+	}
+
+	return true;
+}
+
+// Combined with the driver
+bool MicroscopeXY::moveX(double X, uint8_t Direction)
+{
+	uint8_t address = '\x00';
+	int steps = (int)X * 40000.0;
+	Message* msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), address, Direction, NumberToString(steps).c_str(), "0", "0");
+
+	/*
+	if (Direction == PositiveExecute && (_position.X + X) > 90.0)
+	{
+		printf("ShakeMachine: moveArm Error, Over 90.0 degree\n");
+		return false;
+	}
+	else if (Direction == NegativeExecute && (_armPosition - Degree) < 0.0)
+	{
+		printf("ShakeMachine: moveArm Error, Over 90.0 degree\n");
+		return false;
+	}
+	*/
 
 	Message* feedback = NULL;
 	SYSTEMTIME msgSend;
@@ -100,7 +234,7 @@ bool SyringePump::absorbVolume(double Volume)
 	//WaitForSingleObject(_ghMutex, INFINITE); // try
 	if (c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length) < 0)
 	{
-		printf("SyringePump: absorbVolume TX ERROR\n");
+		printf("MicroscopeXY: moveX TX ERROR\n");
 	}
 	else
 	{ 
@@ -147,7 +281,7 @@ bool SyringePump::absorbVolume(double Volume)
 
 			if (feedback->content[0] == (uint8_t) '\xB0' && feedback->content[1] == address)
 			{
-				printf("Address %.2X absorbVolume Finished\n", address);
+				printf("Address %.2X moveX Finished\n", address);
 				break;
 			}
 			delete[] feedback->content;
@@ -161,10 +295,10 @@ bool SyringePump::absorbVolume(double Volume)
 			if (dwCurrent - dwMsgSend > 500)
 			{
 				printf("Address %.2X not recieve B1\n", address);
-				printf("SyringePump: absorbVolume TX Timeout\n");
+				printf("MicroscopeXY: moveX TX Timeout\n");
 				if (c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length) < 0)
 				{
-					printf("SyringePump: absorbVolume TX ERROR\n");
+					printf("MicroscopeXY: moveX TX ERROR\n");
 				}
 				else
 				{
@@ -180,40 +314,27 @@ bool SyringePump::absorbVolume(double Volume)
 	}
 	delete[]  msgPtr->content;
 	
-
 	return true;
 }
 
-bool SyringePump::drainVolume(double Volume)
+bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 {
 	uint8_t address = '\x00';
-	Message* msgPtr = NULL;
+	int steps = (int)Y * 40000.0;
+	Message* msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), address, Direction, NumberToString(steps).c_str(), "0", "0");
 
-	if (Volume < 0)
+	/*
+	if (Direction == PositiveExecute && (_position.X + X) > 90.0)
 	{
-		printf("[ERROR] SyringePump : In drainVolume(), Volume should be bigger than 0 and smaller than 20ml");
-		return false;
+	printf("ShakeMachine: moveArm Error, Over 90.0 degree\n");
+	return false;
 	}
-	else if (Volume <= 0.13)
+	else if (Direction == NegativeExecute && (_armPosition - Degree) < 0.0)
 	{
-		unsigned int pulse = (unsigned int)(Volume / 0.0004154);
-		address = _address.find(5)->second;
-		_volume.find(5)->second -= Volume;
-		msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), _address.find(5)->second, NegativeExecute, NumberToString(pulse).c_str(), "120", "0");
+	printf("ShakeMachine: moveArm Error, Over 90.0 degree\n");
+	return false;
 	}
-	else if (Volume <= 20.0)
-	{
-		unsigned int pulse = (unsigned int)(Volume / 0.0016616);
-		address = _address.find(20)->second;
-		_volume.find(20)->second -= Volume;
-		msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), _address.find(20)->second, NegativeExecute, NumberToString(pulse).c_str(), "120", "0");
-		
-	}
-	else
-	{
-		printf("[ERROR] SyringePump : In drainVolume(), Volume should be bigger than 0 and smaller than 20ml");
-		return false;
-	}
+	*/
 
 	Message* feedback = NULL;
 	SYSTEMTIME msgSend;
@@ -222,12 +343,12 @@ bool SyringePump::drainVolume(double Volume)
 	//WaitForSingleObject(_ghMutex, INFINITE); // try
 	if (c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length) < 0)
 	{
-		printf("SyringePump: drainVolume TX ERROR\n");
+		printf("MicroscopeXY: moveY TX ERROR\n");
 	}
 	else
-	{
+	{ 
 		GetLocalTime(&msgSend);
-		printf("Address %.2X Message Send at %02d:%02d:%02d.%03d\n", address, msgSend.wHour, msgSend.wMinute, msgSend.wSecond, msgSend.wMilliseconds);
+		printf("Address %.2X Message Send at %02d:%02d:%02d.%03d\n",address, msgSend.wHour, msgSend.wMinute, msgSend.wSecond, msgSend.wMilliseconds);
 	}
 	//ReleaseMutex(_ghMutex); // try
 
@@ -269,13 +390,12 @@ bool SyringePump::drainVolume(double Volume)
 
 			if (feedback->content[0] == (uint8_t) '\xB0' && feedback->content[1] == address)
 			{
-				printf("Address %.2X drainVolume Finished\n", address);
+				printf("Address %.2X moveY Finished\n", address);
 				break;
 			}
 			delete[] feedback->content;
 			delete feedback;
 		}
-		
 		///*
 		//WaitForSingleObject(_ghMutex, INFINITE); // try
 		if (!controlRecieved)
@@ -284,10 +404,10 @@ bool SyringePump::drainVolume(double Volume)
 			if (dwCurrent - dwMsgSend > 500)
 			{
 				printf("Address %.2X not recieve B1\n", address);
-				printf("SyringePump: drainbVolume TX Timeout\n");
+				printf("MicroscopeXY: moveY TX Timeout\n");
 				if (c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length) < 0)
 				{
-					printf("SyringePump: drainVolume TX ERROR\n");
+					printf("MicroscopeXY: moveY TX ERROR\n");
 				}
 				else
 				{
@@ -302,52 +422,6 @@ bool SyringePump::drainVolume(double Volume)
 		Sleep(100);
 	}
 	delete[]  msgPtr->content;
-
+	
 	return true;
 }
-
-bool SyringePump::pipetteVolume(double Volume, unsigned int Times)
-{
-	while(Times-- > 0)
-	{
-		printf("Volume: %f, Pipette %d\n", Volume, (20 - Times));// try
-		WaitForSingleObject(_ghMutex, INFINITE);
-		if(!absorbVolume(Volume))
-		{
-			// Error Message
-			return false;
-		}
-		ReleaseMutex(_ghMutex);
-		Sleep(100);
-
-		//printf("Volume: %f\n", Volume); // try
-		WaitForSingleObject(_ghMutex, INFINITE);
-		if (!drainVolume(Volume))
-		{
-			// Error Message
-			return false;
-		}
-		ReleaseMutex(_ghMutex);
-		Sleep(100);
-	}
-
-	printf("Volume: %f Pipetting Finished\n", Volume);
-
-	return true;
-}
-
-// Modifier
-bool SyringePump::initDriver()
-{
-	_address.insert(std::pair <unsigned int, uint8_t>(5,  '\x01'));
-	_address.insert(std::pair <unsigned int, uint8_t>(20, '\x00'));
-
-	return true;
-}
-
-bool SyringePump::setSpeed(unsigned int Speed)
-{
-	_speed = Speed;
-	return true;
-}
-

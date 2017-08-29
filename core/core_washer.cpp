@@ -1,7 +1,7 @@
 /*********************************************
- * @file SyringePump.cpp                     *
+ * @file Washer.cpp                    		 *
  *                                           *
- * Syringe Pump Contorl                      *
+ * Washer Contorl     	 		             *
  *                                           *
  * @author Joshua <jan.joshua@iac.com.tw>    *
  *********************************************/
@@ -9,32 +9,28 @@
 #include "stdafx.h"
 #include "core_common.h"
 #include "core_bianneng.h"
-#include "core_syringepump.h"
+#include "core_washer.h"
 
 // Constructor
-SyringePump::SyringePump(RS485Port* PortPtr)
+Washer::Washer(RS485Port* PortPtr)
 {
-    if(initDriver())
-    {
-		_volume.insert(std::pair <unsigned int, double>(5, 0.0));
-		_volume.insert(std::pair <unsigned int, double>(20, 0.0));
-		_speed = RPM197;
+	if (initDriver())
+	{
+		_armPosition = 0.0;
+		_rotateSpeed = RPM197;
+		_shakeSpeed = RPM197;
 		_rs485Port = PortPtr;
 		_ghMutex = _rs485Port->getMutex();
-    }
-    else
-    {
-    	// Error Message
-    }
-    
+	}
 }
 
-SyringePump::SyringePump(std::map<unsigned int, double> Volume, unsigned int Speed, RS485Port* PortPtr)
+Washer::Washer(double Pos, double RotateSpeed, double ShakeSpeed, RS485Port* PortPtr)
 {
     if(initDriver())
     {
-    	_volume = Volume;
-    	_speed = Speed;
+		_armPosition = Pos;
+		_rotateSpeed = RotateSpeed;
+    	_shakeSpeed  = ShakeSpeed;
 		_rs485Port = PortPtr;
 		_ghMutex = _rs485Port->getMutex();
     }
@@ -46,172 +42,43 @@ SyringePump::SyringePump(std::map<unsigned int, double> Volume, unsigned int Spe
 }
 
 // Destructor
-SyringePump::~SyringePump()
+Washer::~Washer ()
 {
 	// Release memory if it's needed
 } 
 
 // Information
-const double SyringePump::getVolume(unsigned int Size)
+double Washer::getPositon() const
 {
-	return _volume.find(Size)->second;
+	return _armPosition;
 }
 
-const unsigned int SyringePump::getSpeed()
+double Washer::getRotateSpeed() const
 {
-	return _speed;
+	return _rotateSpeed;
+}
+
+double Washer::getShakeSpeed() const
+{
+	return _shakeSpeed;
 }
 
 // Action
-bool SyringePump::absorbVolume(double Volume)
+// Direction: 1 => positive, 2 => negative
+bool Washer::moveArm(double Degree, uint8_t Direction)
 {
 	uint8_t address = '\x00';
-	Message* msgPtr = NULL;
-
-	if (Volume < 0)
-	{
-		printf("[ERROR] SyringePump : In absorbVolume(), Volume should be bigger than 0 and smaller than 20ml");
-		return false;
-	}
-	else if (Volume <= 0.13)
-	{
-		unsigned int pulse = (unsigned int) (Volume / 0.0004154);
-		address = _address.find(5)->second;
-		_volume.find(5)->second += Volume;
-		msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), _address.find(5)->second, PositiveExecute, NumberToString(pulse).c_str(), "120", "0");
-	}
-	else if (Volume <= 20.0)
-	{
-		unsigned int pulse = (unsigned int)(Volume / 0.0016616);
-		address = _address.find(20)->second;
-		_volume.find(20)->second += Volume;
-		msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), _address.find(20)->second, PositiveExecute, NumberToString(pulse).c_str(), "120", "0");
-	}
-	else
-	{
-		printf("[ERROR] SyringePump : In absorbVolume(), Volume should be bigger than 0 and smaller than 20ml");
-		return false;
-	}
-
-	Message* feedback = NULL;
-	SYSTEMTIME msgSend;
-	clock_t dwMsgSend = clock();
-
-	//WaitForSingleObject(_ghMutex, INFINITE); // try
-	if (c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length) < 0)
-	{
-		printf("SyringePump: absorbVolume TX ERROR\n");
-	}
-	else
-	{ 
-		GetLocalTime(&msgSend);
-		printf("Address %.2X Message Send at %02d:%02d:%02d.%03d\n",address, msgSend.wHour, msgSend.wMinute, msgSend.wSecond, msgSend.wMilliseconds);
-	}
-	//ReleaseMutex(_ghMutex); // try
-
-	bool controlRecieved = false;
-	while (true)
-	{
-		feedback = _rs485Port->getControlerMsg(address);
-
-		if (feedback != NULL)
-		{
-			//WaitForSingleObject(_ghMutex, INFINITE); // try
-			printf("Address %.2X recieve: ", address);
-			for (int i = 0; i < feedback->length; i++)
-			{
-				printf("%.2X ", feedback->content[i]);
-			}
-			SYSTEMTIME systemtime;
-			GetLocalTime(&systemtime);
-			printf(" currentDateTime() = %02d:%02d:%02d.%03d\n", systemtime.wHour, systemtime.wMinute, systemtime.wSecond, systemtime.wMilliseconds);
-			//ReleaseMutex(_ghMutex); // try
-
-			/*
-			if (feedback->content[0] == (uint8_t) '\xB5' && feedback->content[1] == address)
-			{
-				WaitForSingleObject(_ghMutex, INFINITE); // try
-				printf("Resend Command\n");
-				c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length);
-				ReleaseMutex(_ghMutex); // try
-				continue;
-			}
-			*/
-
-			if (feedback->content[0] == (uint8_t) '\xB1' && feedback->content[1] == address)
-			{
-				controlRecieved = true;
-				printf("Address %.2X Controler Received\n", address);
-				continue;
-			}
-
-			if (feedback->content[0] == (uint8_t) '\xB0' && feedback->content[1] == address)
-			{
-				printf("Address %.2X absorbVolume Finished\n", address);
-				break;
-			}
-			delete[] feedback->content;
-			delete feedback;
-		}
-		///*
-		//WaitForSingleObject(_ghMutex, INFINITE); // try
-		if (!controlRecieved)
-		{
-			clock_t dwCurrent = clock();
-			if (dwCurrent - dwMsgSend > 500)
-			{
-				printf("Address %.2X not recieve B1\n", address);
-				printf("SyringePump: absorbVolume TX Timeout\n");
-				if (c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length) < 0)
-				{
-					printf("SyringePump: absorbVolume TX ERROR\n");
-				}
-				else
-				{
-					dwMsgSend = clock();
-					GetLocalTime(&msgSend);
-					printf("Address %.2X Message Send at %02d:%02d:%02d.%03d\n", address, msgSend.wHour, msgSend.wMinute, msgSend.wSecond, msgSend.wMilliseconds);
-				}
-			}
-		}
-		//ReleaseMutex(_ghMutex); // try
-		//*/
-		Sleep(100);
-	}
-	delete[]  msgPtr->content;
+	int steps = (int)Degree * 100.0 / 1.8;
+	Message* msgPtr = trans2RTCMD(NumberToString(_shakeSpeed).c_str(), address, Direction, NumberToString(steps).c_str(), "0", "0");
 	
-
-	return true;
-}
-
-bool SyringePump::drainVolume(double Volume)
-{
-	uint8_t address = '\x00';
-	Message* msgPtr = NULL;
-
-	if (Volume < 0)
+	if (Direction == PositiveExecute && (_armPosition + Degree) > 90.0)
 	{
-		printf("[ERROR] SyringePump : In drainVolume(), Volume should be bigger than 0 and smaller than 20ml");
+		printf("Washer: moveArm Error, Over 90.0 degree\n");
 		return false;
 	}
-	else if (Volume <= 0.13)
+	else if (Direction == NegativeExecute && (_armPosition - Degree) < 0.0)
 	{
-		unsigned int pulse = (unsigned int)(Volume / 0.0004154);
-		address = _address.find(5)->second;
-		_volume.find(5)->second -= Volume;
-		msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), _address.find(5)->second, NegativeExecute, NumberToString(pulse).c_str(), "120", "0");
-	}
-	else if (Volume <= 20.0)
-	{
-		unsigned int pulse = (unsigned int)(Volume / 0.0016616);
-		address = _address.find(20)->second;
-		_volume.find(20)->second -= Volume;
-		msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), _address.find(20)->second, NegativeExecute, NumberToString(pulse).c_str(), "120", "0");
-		
-	}
-	else
-	{
-		printf("[ERROR] SyringePump : In drainVolume(), Volume should be bigger than 0 and smaller than 20ml");
+		printf("Washer: moveArm Error, Over 90.0 degree\n");
 		return false;
 	}
 
@@ -222,7 +89,7 @@ bool SyringePump::drainVolume(double Volume)
 	//WaitForSingleObject(_ghMutex, INFINITE); // try
 	if (c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length) < 0)
 	{
-		printf("SyringePump: drainVolume TX ERROR\n");
+		printf("ShakeMachine: moveArm TX ERROR\n");
 	}
 	else
 	{
@@ -252,11 +119,11 @@ bool SyringePump::drainVolume(double Volume)
 			/*
 			if (feedback->content[0] == (uint8_t) '\xB5' && feedback->content[1] == address)
 			{
-				WaitForSingleObject(_ghMutex, INFINITE); // try
-				printf("Resend Command\n");
-				c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length);
-				ReleaseMutex(_ghMutex); // try
-				continue;
+			WaitForSingleObject(_ghMutex, INFINITE); // try
+			printf("Resend Command\n");
+			c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length);
+			ReleaseMutex(_ghMutex); // try
+			continue;
 			}
 			*/
 
@@ -269,13 +136,21 @@ bool SyringePump::drainVolume(double Volume)
 
 			if (feedback->content[0] == (uint8_t) '\xB0' && feedback->content[1] == address)
 			{
-				printf("Address %.2X drainVolume Finished\n", address);
+				if (Direction == PositiveExecute)
+				{
+					_armPosition += Degree;
+					printf("Address %.2X moveArm Positive Finished\n", address);
+				}
+				else
+				{
+					_armPosition -= Degree;
+					printf("Address %.2X moveArm Negative Finished\n", address);
+				}
 				break;
 			}
 			delete[] feedback->content;
 			delete feedback;
 		}
-		
 		///*
 		//WaitForSingleObject(_ghMutex, INFINITE); // try
 		if (!controlRecieved)
@@ -284,10 +159,10 @@ bool SyringePump::drainVolume(double Volume)
 			if (dwCurrent - dwMsgSend > 500)
 			{
 				printf("Address %.2X not recieve B1\n", address);
-				printf("SyringePump: drainbVolume TX Timeout\n");
+				printf("Washer: moveArm TX Timeout\n");
 				if (c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length) < 0)
 				{
-					printf("SyringePump: drainVolume TX ERROR\n");
+					printf("Washer: moveArm TX ERROR\n");
 				}
 				else
 				{
@@ -306,13 +181,113 @@ bool SyringePump::drainVolume(double Volume)
 	return true;
 }
 
-bool SyringePump::pipetteVolume(double Volume, unsigned int Times)
+bool Washer::rotateGripper(double Circle, uint8_t Direction)
+{
+	uint8_t address = '\x00';
+	int steps = (int)Circle * 400.0 / 60.0;
+	Message* msgPtr = trans2RTCMD(NumberToString(_shakeSpeed).c_str(), address, Direction, NumberToString(steps).c_str(), "0", "0");
+
+	/*
+	if (Direction == PositiveExecute && (_position + Degree) > 90.0)
+	{
+		printf("ShakeMachine: moveArm Error, Over 90.0 degree");
+		return false;
+	}
+	else if (Direction == NegativeExecute && (_position - Degree) < 0.0)
+	{
+		printf("ShakeMachine: moveArm Error, Over 90.0 degree");
+		return false;
+	}
+	*/
+
+	Message* feedback = NULL;
+	SYSTEMTIME msgSend;
+	clock_t dwMsgSend = clock();
+
+	if (c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length) < 0)
+	{
+		printf("Washer: rotateGripper TX ERROR\n");
+	}
+	else
+	{
+		GetLocalTime(&msgSend);
+		printf("Address %.2X Message Send at %02d:%02d:%02d.%03d\n", address, msgSend.wHour, msgSend.wMinute, msgSend.wSecond, msgSend.wMilliseconds);
+	}
+
+	bool controlRecieved = false;
+	while (true)
+	{
+		feedback = _rs485Port->getControlerMsg(address);
+
+		if (feedback != NULL)
+		{
+			printf("Address %.2X recieve: ", address);
+			for (int i = 0; i < feedback->length; i++)
+			{
+				printf("%.2X ", feedback->content[i]);
+			}
+			SYSTEMTIME systemtime;
+			GetLocalTime(&systemtime);
+			printf(" currentDateTime() = %02d:%02d:%02d.%03d\n", systemtime.wHour, systemtime.wMinute, systemtime.wSecond, systemtime.wMilliseconds);
+
+			if (feedback->content[0] == (uint8_t) '\xB1' && feedback->content[1] == address)
+			{
+				controlRecieved = true;
+				printf("Address %.2X Controler Received\n", address);
+				continue;
+			}
+
+			if (feedback->content[0] == (uint8_t) '\xB0' && feedback->content[1] == address)
+			{
+				if (Direction == PositiveExecute)
+				{
+					_gripperPosition += Circle;
+					printf("Address %.2X rotateGripper Positive Finished\n", address);
+				}
+				else
+				{
+					_gripperPosition -= Circle;
+					printf("Address %.2X rotateGripper Negative Finished\n", address);
+				}
+				break;
+			}
+			delete[] feedback->content;
+			delete feedback;
+		}
+
+		if (!controlRecieved)
+		{
+			clock_t dwCurrent = clock();
+			if (dwCurrent - dwMsgSend > 500)
+			{
+				printf("Address %.2X not recieve B1\n", address);
+				printf("Washer: rotateGripper TX Timeout\n");
+				if (c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length) < 0)
+				{
+					printf("Washer: rotateGripper TX ERROR\n");
+				}
+				else
+				{
+					dwMsgSend = clock();
+					GetLocalTime(&msgSend);
+					printf("Address %.2X Message Send at %02d:%02d:%02d.%03d\n", address, msgSend.wHour, msgSend.wMinute, msgSend.wSecond, msgSend.wMilliseconds);
+				}
+			}
+		}
+		Sleep(100);
+	}
+	delete[]  msgPtr->content;
+
+	return true;
+}
+
+bool Washer::shakeMachine(double Degree, unsigned int Times)
 {
 	while(Times-- > 0)
 	{
-		printf("Volume: %f, Pipette %d\n", Volume, (20 - Times));// try
+		printf("Degree: %f, Pipette %d\n", Degree, (5 - Times));// try
 		WaitForSingleObject(_ghMutex, INFINITE);
-		if(!absorbVolume(Volume))
+		if (!moveArm(Degree, PositiveExecute))
 		{
 			// Error Message
 			return false;
@@ -320,9 +295,8 @@ bool SyringePump::pipetteVolume(double Volume, unsigned int Times)
 		ReleaseMutex(_ghMutex);
 		Sleep(100);
 
-		//printf("Volume: %f\n", Volume); // try
 		WaitForSingleObject(_ghMutex, INFINITE);
-		if (!drainVolume(Volume))
+		if (!moveArm(Degree, NegativeExecute))
 		{
 			// Error Message
 			return false;
@@ -331,23 +305,25 @@ bool SyringePump::pipetteVolume(double Volume, unsigned int Times)
 		Sleep(100);
 	}
 
-	printf("Volume: %f Pipetting Finished\n", Volume);
-
 	return true;
 }
 
 // Modifier
-bool SyringePump::initDriver()
+bool Washer::initDriver()
 {
-	_address.insert(std::pair <unsigned int, uint8_t>(5,  '\x01'));
-	_address.insert(std::pair <unsigned int, uint8_t>(20, '\x00'));
-
 	return true;
 }
 
-bool SyringePump::setSpeed(unsigned int Speed)
+bool Washer::setRotateSpeed(double RotateSpeed)
 {
-	_speed = Speed;
+	_rotateFreq = RotateSpeed;
+	_rotateSpeed = RotateSpeed;
 	return true;
 }
 
+bool Washer::setShakeSpeed(double ShakeSpeed)
+{
+	_shakeFreq  = (int) ShakeSpeed * 100.0 / 1.8;
+	_shakeSpeed = ShakeSpeed;
+	return true;
+}

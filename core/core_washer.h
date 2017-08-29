@@ -1,29 +1,29 @@
 /*********************************************
- * @file core_shakemachine.h                 *
+ * @file Washer.h                    		 *
  *                                           *
- * Shake Machine Contorl                     *
+ * Washer Contorl     	 		             *
  *                                           *
  * @author Joshua <jan.joshua@iac.com.tw>    *
  *********************************************/
 
-#ifndef _CORE_SHAKEMACHINE_H_
-#define _CORE_SHAKEMACHINE_H_
+#ifndef _CORE_WASHER_H_
+#define _CORE_WASHER_H_
 
 #include "c_serial.h"
 #include "core_common.h"
 #include "core_bianneng.h"
 
-class ShakeMachine : public BianNeng
+class Washer : public BianNeng
 {
 
 public:
 
     // Constructor
-	ShakeMachine(RS485Port* PortPtr);
-	ShakeMachine(double Pos, double RotateSpeed, double ShakeSpeed, RS485Port* PortPtr);
+	Washer(RS485Port* PortPtr);
+	Washer(double Pos, double RotateSpeed, double ShakeSpeed, RS485Port* PortPtr);
 
     // Destructor
-    ~ShakeMachine();
+    ~Washer();
 
     // Information
     double getPositon() const;
@@ -54,4 +54,4 @@ private:
 	HANDLE _ghMutex;
 };
 
-#endif // _SHAKEMACHINE_H_
+#endif // CORE_WASHER_H_
