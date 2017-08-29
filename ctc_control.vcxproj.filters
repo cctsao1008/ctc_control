@@ -69,6 +69,9 @@
     <ClCompile Include="core\core_example.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
+    <ClCompile Include="driver\driver_rs485_p2.cpp">
+      <Filter>Source Files\driver</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="module\cserial\c_serial.h">
@@ -106,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="core\core_example.h">
       <Filter>Source Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="driver\driver_rs485_p2.h">
+      <Filter>Source Files\driver</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

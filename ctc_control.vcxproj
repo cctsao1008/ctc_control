@@ -105,6 +105,7 @@
     <ClCompile Include="core\core_scheduler.cpp" />
     <ClCompile Include="core\core_service.cpp" />
     <ClCompile Include="driver\driver_rs485_p1.cpp" />
+    <ClCompile Include="driver\driver_rs485_p2.cpp" />
     <ClCompile Include="module\cserial\c_serial.c" />
     <ClCompile Include="module\log.c\src\log.c" />
     <ClCompile Include="module\wingetopt\src\getopt.c" />
@@ -119,6 +120,7 @@
     <ClInclude Include="core\core_scheduler.h" />
     <ClInclude Include="core\core_service.h" />
     <ClInclude Include="driver\driver_rs485_p1.h" />
+    <ClInclude Include="driver\driver_rs485_p2.h" />
     <ClInclude Include="module\cserial\c_serial.h" />
     <ClInclude Include="module\log.c\src\log.h" />
     <ClInclude Include="module\wingetopt\src\getopt.h" />

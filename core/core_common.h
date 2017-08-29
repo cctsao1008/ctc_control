@@ -46,3 +46,4 @@
 #include "core_example.h"
 
 #include "driver_rs485_p1.h"
+#include "driver_rs485_p2.h"
