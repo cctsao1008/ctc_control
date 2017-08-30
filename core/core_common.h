@@ -32,6 +32,14 @@
 #include "mosquitto.h"
 #include "tiny-json.h"
 
+#ifdef _DEBUG
+#undef _DEBUG
+#include <python.h>
+#define _DEBUG
+#else
+#include <python.h>
+#endif
+
 // core functions
 #include "core_service.h"
 #include "core_rsh.h"

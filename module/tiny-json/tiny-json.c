@@ -39,8 +39,8 @@ json_t const* json_getProperty( json_t const* obj, char const* property ) {
 /* Search a property by its name in a JSON object and return its value. */
 char const* json_getPropertyValue( json_t const* obj, char const* property ) {
 	json_t const* field = json_getProperty( obj, property );
+	jsonType_t type = json_getType( field );
 	if ( !field ) return 0;
-        jsonType_t type = json_getType( field );
         if ( JSON_ARRAY >= type ) return 0;
 	return json_getValue( field );
 }
@@ -57,10 +57,10 @@ static bool isEndOfPrimitive( char ch );
 
 /* Parse a string to get a json. */
 json_t const* json_create( char* str, json_t mem[], unsigned int qty ) {
+	jsonPool_t pool = { .mem = mem, .qty = qty };
+	json_t* obj = poolInit(&pool);
     char* ptr = goBlank( str );
     if ( !ptr || *ptr != '{' ) return 0;
-    jsonPool_t pool = { .mem = mem, .qty = qty };
-    json_t* obj = poolInit( &pool );
     obj->name    = 0;
     obj->sibling = 0;
     obj->u.child = 0;
