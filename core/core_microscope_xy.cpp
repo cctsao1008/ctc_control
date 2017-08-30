@@ -5,7 +5,7 @@
  *                                           *
  * @author Joshua <jan.joshua@iac.com.tw>    *
  *********************************************/
-#include "stdafx.h"
+
 #include "core_common.h"
 
 // Constructor

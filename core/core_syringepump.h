@@ -9,7 +9,6 @@
 #ifndef _SYRINGEPUMP_H_
 #define _SYRINGEPUMP_H_
 
-#include "c_serial.h"
 #include "core_common.h"
 
 class SyringePump : public BianNeng

@@ -9,7 +9,6 @@
 #ifndef _CORE_MICROSCOPE_XY_H_
 #define _CORE_MICROSCOPE_XY_H_
 
-#include "c_serial.h"
 #include "core_common.h"
 
 typedef struct _position 

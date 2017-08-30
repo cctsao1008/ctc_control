@@ -43,6 +43,9 @@
     <Filter Include="Source Files\module\config">
       <UniqueIdentifier>{e14907e5-a7de-4fd9-880d-3abfe3d2248d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\module\bianneng">
+      <UniqueIdentifier>{e78be052-6480-4ee6-8345-2d3db5413d61}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="module\cserial\c_serial.c">
@@ -95,6 +98,21 @@
     </ClCompile>
     <ClCompile Include="module\config\config.cpp">
       <Filter>Source Files\module\config</Filter>
+    </ClCompile>
+    <ClCompile Include="module\rs485\rs485p2.cpp">
+      <Filter>Source Files\module\rs485</Filter>
+    </ClCompile>
+    <ClCompile Include="module\bianneng\bianneng.cpp">
+      <Filter>Source Files\module\bianneng</Filter>
+    </ClCompile>
+    <ClCompile Include="core\core_microscope_xy.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\core_syringepump.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\core_washer.cpp">
+      <Filter>Source Files\core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

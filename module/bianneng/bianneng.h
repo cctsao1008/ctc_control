@@ -164,6 +164,9 @@ typedef struct _parameter {
 	HANDLE*					_ghMutex;
 	c_serial_port_t*		_port;
 	std::vector<Message>*	_recieveQueue;
+	std::vector<uint8_t>* _unknownAnswer;				  // try
+	std::vector<uint8_t>* _unknownAddress;				  // try
+	std::map<uint8_t, std::vector<Message>>* _recieveMap; // try
 } Parameter;
 
 /**
@@ -182,28 +185,28 @@ class BianNeng
 
 public:
 
-    // Constructor
-    BianNeng();
+	// Constructor
+	BianNeng();
 
-    // Destructor
-    ~BianNeng();
+	// Destructor
+	~BianNeng();
 
-    // Command Transfer
-    void Chararray2Hexarray(const char * Input, uint8_t * Output, int Length);
+	// Command Transfer
+	void Chararray2Hexarray(const char * Input, uint8_t * Output, int Length);
 	uint8_t countCRC(uint8_t * Data, int Length);
-	Message* trans2RTCMD(const char* Prescaler, const char* Address, char Direction
-						, const char* TotalPulse, const char* AcceleratePulse, const char* BreakPulse);
-    Message* trans2PRCMD(const char* Prescaler, const char* Address, const char* TotalPulse
-                        , const char* AcceleratePulse, const char* BreakPulse
-                        , const char* PositiveStay, const char* NegativeStay);
-    Message* trans2SQCMD(const char* Address, const char* Content);
+	Message* trans2RTCMD(const char* Prescaler, const uint8_t Address, char Direction
+		, const char* TotalPulse, const char* AcceleratePulse, const char* BreakPulse);
+	Message* trans2PRCMD(const char* Prescaler, const uint8_t Address, const char* TotalPulse
+		, const char* AcceleratePulse, const char* BreakPulse
+		, const char* PositiveStay, const char* NegativeStay);
+	Message* trans2SQCMD(const uint8_t Address, const char* Content);
 
 private:
 	// Private Variable
 	Message _msg;
-	uint8_t RT_CMD[17];
-	uint8_t PR_CMD[21];
-	uint8_t SQ_CMD[5];
+	uint8_t* RT_CMD;
+	uint8_t* PR_CMD;
+	uint8_t* SQ_CMD;
 };
 
 #endif // _CORE_BIANNENG_H_

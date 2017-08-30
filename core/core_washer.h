@@ -9,7 +9,6 @@
 #ifndef _CORE_WASHER_H_
 #define _CORE_WASHER_H_
 
-#include "c_serial.h"
 #include "core_common.h"
 
 class Washer : public BianNeng
