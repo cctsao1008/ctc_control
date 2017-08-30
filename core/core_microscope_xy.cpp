@@ -7,8 +7,6 @@
  *********************************************/
 #include "stdafx.h"
 #include "core_common.h"
-#include "core_bianneng.h"
-#include "core_microscope_xy.h"
 
 // Constructor
 MicroscopeXY::MicroscopeXY(RS485Port* PortPtr)

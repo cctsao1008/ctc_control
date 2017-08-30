@@ -54,8 +54,13 @@
 #include "core_example.h"
 #include "core_system.h"
 
+#include "core_washer.h"
+#include "core_syringepump.h"
+#include "core_microscope_xy.h"
+
 #include "scanner.h"
 #include "rs485p1.h"
-//#include "driver_rs485_p2.h"
+#include "rs485p2.h"
+#include "bianneng.h"
 
 #pragma warning(disable:4996)

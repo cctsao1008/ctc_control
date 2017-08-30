@@ -8,8 +8,6 @@
 
 #include "stdafx.h"
 #include "core_common.h"
-#include "core_bianneng.h"
-#include "core_syringepump.h"
 
 // Constructor
 SyringePump::SyringePump(RS485Port* PortPtr)

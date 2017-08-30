@@ -8,8 +8,6 @@
 
 #include "stdafx.h"
 #include "core_common.h"
-#include "core_bianneng.h"
-#include "core_washer.h"
 
 // Constructor
 Washer::Washer(RS485Port* PortPtr)

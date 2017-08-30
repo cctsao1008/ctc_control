@@ -11,7 +11,6 @@
 
 #include "c_serial.h"
 #include "core_common.h"
-#include "core_bianneng.h"
 
 class SyringePump : public BianNeng
 {
