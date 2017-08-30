@@ -37,6 +37,12 @@
     <Filter Include="Source Files\module\log">
       <UniqueIdentifier>{6f480618-d6c8-441d-80a8-2648183fab61}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\module\interpreter">
+      <UniqueIdentifier>{44880424-1ebd-4fd7-9a5d-83365d2ff120}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\module\config">
+      <UniqueIdentifier>{e14907e5-a7de-4fd9-880d-3abfe3d2248d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="module\cserial\c_serial.c">
@@ -83,6 +89,12 @@
     </ClCompile>
     <ClCompile Include="module\scanner\scanner.cpp">
       <Filter>Source Files\module\scanner</Filter>
+    </ClCompile>
+    <ClCompile Include="module\interpreter\interpreter.cpp">
+      <Filter>Source Files\module\interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="module\config\config.cpp">
+      <Filter>Source Files\module\config</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

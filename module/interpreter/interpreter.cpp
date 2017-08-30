@@ -1,9 +1,9 @@
 /**
-* @file core_template.cpp
+* @file interpreter.cpp
 *
-* core_template
+* interpreter
 *
-*   core_template.
+*   interpreter.
 *
 * @author Ricardo <tsao.ricardo@iac.com.tw>
 */

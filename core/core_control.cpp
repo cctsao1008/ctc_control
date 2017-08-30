@@ -185,7 +185,9 @@ int load_param(const char * filename, char * content)
 		//free(buffer);
 	}
 	else {
-		printf("failed\n");
+		printf("error : file not found (Debug\\ctc-config.json)\n");
+		//fclose(pf);
+		return 0;
 	}
 
 	json_t mem[32];

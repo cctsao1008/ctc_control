@@ -1,9 +1,9 @@
 /**
-* @file core_template.cpp
+* @file config.cpp
 *
-* core_template
+* config
 *
-*   core_template.
+*   config.
 *
 * @author Ricardo <tsao.ricardo@iac.com.tw>
 */

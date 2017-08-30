@@ -105,7 +105,9 @@
     <ClCompile Include="core\core_rsh.cpp" />
     <ClCompile Include="core\core_scheduler.cpp" />
     <ClCompile Include="core\core_service.cpp" />
+    <ClCompile Include="module\config\config.cpp" />
     <ClCompile Include="module\cserial\c_serial.c" />
+    <ClCompile Include="module\interpreter\interpreter.cpp" />
     <ClCompile Include="module\log.c\src\log.c" />
     <ClCompile Include="module\rs485\rs485p1.cpp" />
     <ClCompile Include="module\scanner\scanner.cpp" />
