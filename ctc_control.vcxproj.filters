@@ -46,6 +46,18 @@
     <Filter Include="Source Files\module\bianneng">
       <UniqueIdentifier>{e78be052-6480-4ee6-8345-2d3db5413d61}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\module\syringepump">
+      <UniqueIdentifier>{4c2f2450-2f6f-477c-9641-8b2ba7fa363c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\module\example">
+      <UniqueIdentifier>{40d6d8a0-6d83-4005-ba50-423ff96bb70d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\module\washer">
+      <UniqueIdentifier>{f833ab94-ecad-4571-b276-0eee13351123}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\module\microscope_xy">
+      <UniqueIdentifier>{9b640081-595e-4330-a835-ba0c82d3e598}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="module\cserial\c_serial.c">
@@ -75,13 +87,7 @@
     <ClCompile Include="core\core_scheduler.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
-    <ClCompile Include="core\core_example.cpp">
-      <Filter>Source Files\core</Filter>
-    </ClCompile>
     <ClCompile Include="core\core_system.cpp">
-      <Filter>Source Files\core</Filter>
-    </ClCompile>
-    <ClCompile Include="core\core_python.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
     <ClCompile Include="module\tiny-json\tiny-json.c">
@@ -105,14 +111,17 @@
     <ClCompile Include="module\bianneng\bianneng.cpp">
       <Filter>Source Files\module\bianneng</Filter>
     </ClCompile>
-    <ClCompile Include="core\core_microscope_xy.cpp">
-      <Filter>Source Files\core</Filter>
+    <ClCompile Include="module\syringepump\syringepump.cpp">
+      <Filter>Source Files\module\syringepump</Filter>
     </ClCompile>
-    <ClCompile Include="core\core_syringepump.cpp">
-      <Filter>Source Files\core</Filter>
+    <ClCompile Include="module\example\example.cpp">
+      <Filter>Source Files\module\example</Filter>
     </ClCompile>
-    <ClCompile Include="core\core_washer.cpp">
-      <Filter>Source Files\core</Filter>
+    <ClCompile Include="module\washer\washer.cpp">
+      <Filter>Source Files\module\washer</Filter>
+    </ClCompile>
+    <ClCompile Include="module\microscope_xy\microscope_xy.cpp">
+      <Filter>Source Files\module\microscope_xy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -143,17 +152,38 @@
     <ClInclude Include="core\core_scheduler.h">
       <Filter>Source Files\core</Filter>
     </ClInclude>
-    <ClInclude Include="core\core_example.h">
-      <Filter>Source Files\core</Filter>
-    </ClInclude>
     <ClInclude Include="core\core_system.h">
-      <Filter>Source Files\core</Filter>
-    </ClInclude>
-    <ClInclude Include="core\core_python.h">
       <Filter>Source Files\core</Filter>
     </ClInclude>
     <ClInclude Include="module\tiny-json\tiny-json.h">
       <Filter>Source Files\module\tiny-json</Filter>
+    </ClInclude>
+    <ClInclude Include="module\config.h">
+      <Filter>Source Files\module</Filter>
+    </ClInclude>
+    <ClInclude Include="module\interpreter.h">
+      <Filter>Source Files\module</Filter>
+    </ClInclude>
+    <ClInclude Include="module\rs485p1.h">
+      <Filter>Source Files\module</Filter>
+    </ClInclude>
+    <ClInclude Include="module\rs485p2.h">
+      <Filter>Source Files\module</Filter>
+    </ClInclude>
+    <ClInclude Include="module\scanner.h">
+      <Filter>Source Files\module</Filter>
+    </ClInclude>
+    <ClInclude Include="module\example.h">
+      <Filter>Source Files\module</Filter>
+    </ClInclude>
+    <ClInclude Include="module\microscope_xy.h">
+      <Filter>Source Files\module</Filter>
+    </ClInclude>
+    <ClInclude Include="module\syringepump.h">
+      <Filter>Source Files\module</Filter>
+    </ClInclude>
+    <ClInclude Include="module\washer.h">
+      <Filter>Source Files\module</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -9,3 +9,5 @@
 */
 
 #pragma once
+
+int rsh_interpreter_main(int argc, char *argv[]);

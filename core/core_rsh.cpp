@@ -49,7 +49,7 @@ int(*builtin_func[]) (int argc, char *argv[]) = {
 	//
 	&rsh_testopt,
     &rsh_help,
-	&rsh_core_python_main,
+	&rsh_interpreter_main,
 	&rsh_version,
     &rsh_exit
 };

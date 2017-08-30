@@ -9,8 +9,8 @@
 #ifndef _RS485P2_H_
 #define _RS485P2_H_
 
-#include "core_syringepump.h"
 #include "core_common.h"
+#include "syringepump.h"
 
 class RS485Port
 {

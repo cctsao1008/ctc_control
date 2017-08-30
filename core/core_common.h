@@ -41,26 +41,27 @@
 #endif
 
 // core functions
+#include "core_system.h"
 #include "core_service.h"
 #include "core_rsh.h"
 //#include "core_mqtt.h"
-#include "core_python.h"
+//#include "core_python.h"
 #include "core_actuator.h"
 #include "core_commander.h"
-#include "core_diagnostic.h"
+//#include "core_diagnostic.h"
 //#include "core_modbus.h"
-#include "core_serialport.h"
+//#include "core_serialport.h"
 #include "core_rsh.h"
-#include "core_example.h"
-#include "core_system.h"
 
-#include "core_washer.h"
-#include "core_syringepump.h"
-#include "core_microscope_xy.h"
-
+#include "washer.h"
+#include "syringepump.h"
+#include "microscope_xy.h"
 #include "scanner.h"
 #include "rs485p1.h"
 #include "rs485p2.h"
 #include "bianneng.h"
+#include "interpreter.h"
+#include "config.h"
+#include "example.h"
 
 #pragma warning(disable:4996)
