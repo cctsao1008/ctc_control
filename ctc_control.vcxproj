@@ -53,7 +53,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>driver;core;module\getopt\src;module\wingetopt\src;module\log.c\src;module\tiny-json;module\cserial;lib\libmodbus v3.1.4\x86\include;lib\pthreads-w32-2-9-1-release\include;lib\python-3.6.2-embed-win32;lib\mosquitto-1.4.14\devel;lib\Python36\include;lib\MariaDB 10.1\include\mysql;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>driver;core;module\getopt\src;module;module\wingetopt\src;module\log.c\src;module\tiny-json;module\cserial;lib\libmodbus v3.1.4\x86\include;lib\pthreads-w32-2-9-1-release\include;lib\python-3.6.2-embed-win32;lib\mosquitto-1.4.14\devel;lib\Python36\include;lib\MariaDB 10.1\include\mysql;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -103,12 +103,13 @@
     <ClCompile Include="core\core_python.cpp" />
     <ClCompile Include="core\core_system.cpp" />
     <ClCompile Include="core\core_rsh.cpp" />
-    <ClCompile Include="core\core_scanner.cpp" />
     <ClCompile Include="core\core_scheduler.cpp" />
     <ClCompile Include="core\core_service.cpp" />
-    <ClCompile Include="driver\rs485p1.cpp" />
     <ClCompile Include="module\cserial\c_serial.c" />
     <ClCompile Include="module\log.c\src\log.c" />
+    <ClCompile Include="module\rs485\rs485p1.cpp" />
+    <ClCompile Include="module\scanner\scanner.cpp" />
+    <ClCompile Include="module\tiny-json\tiny-json.c" />
     <ClCompile Include="module\wingetopt\src\getopt.c" />
   </ItemGroup>
   <ItemGroup>
@@ -119,12 +120,11 @@
     <ClInclude Include="core\core_python.h" />
     <ClInclude Include="core\core_system.h" />
     <ClInclude Include="core\core_rsh.h" />
-    <ClInclude Include="core\core_scanner.h" />
     <ClInclude Include="core\core_scheduler.h" />
     <ClInclude Include="core\core_service.h" />
-    <ClInclude Include="driver\rs485p1.h" />
     <ClInclude Include="module\cserial\c_serial.h" />
     <ClInclude Include="module\log.c\src\log.h" />
+    <ClInclude Include="module\tiny-json\tiny-json.h" />
     <ClInclude Include="module\wingetopt\src\getopt.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

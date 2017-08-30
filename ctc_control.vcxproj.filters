@@ -15,9 +15,6 @@
     <Filter Include="Source Files\module\cserial">
       <UniqueIdentifier>{fbeecf67-778f-40c8-9806-ee56d6711866}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\driver">
-      <UniqueIdentifier>{8f2575fa-edb4-481b-9fd6-6ea46326d2f3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -25,11 +22,20 @@
     <Filter Include="Source Files\core">
       <UniqueIdentifier>{957fb60e-ab02-4950-ac82-356d70460b81}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\module\log.c">
-      <UniqueIdentifier>{6f480618-d6c8-441d-80a8-2648183fab61}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\module\wingetopt">
       <UniqueIdentifier>{751affd5-e58e-4bc8-af0c-ed782360d876}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\module\tiny-json">
+      <UniqueIdentifier>{fc70f50a-0d93-473e-aed6-5871b9832289}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\module\rs485">
+      <UniqueIdentifier>{a882e10d-e74e-4472-965e-f30fe051c158}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\module\scanner">
+      <UniqueIdentifier>{8d19f9dc-bc77-4bde-836d-09dcf4595467}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\module\log">
+      <UniqueIdentifier>{6f480618-d6c8-441d-80a8-2648183fab61}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -42,14 +48,11 @@
     <ClCompile Include="core\core_control.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
-    <ClCompile Include="core\core_scanner.cpp">
-      <Filter>Source Files\core</Filter>
-    </ClCompile>
     <ClCompile Include="core\core_service.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
     <ClCompile Include="module\log.c\src\log.c">
-      <Filter>Source Files\module\log.c</Filter>
+      <Filter>Source Files\module\log</Filter>
     </ClCompile>
     <ClCompile Include="core\core_commander.cpp">
       <Filter>Source Files\core</Filter>
@@ -66,14 +69,20 @@
     <ClCompile Include="core\core_example.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
-    <ClCompile Include="driver\rs485p1.cpp">
-      <Filter>Source Files\driver</Filter>
-    </ClCompile>
     <ClCompile Include="core\core_system.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
     <ClCompile Include="core\core_python.cpp">
       <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="module\tiny-json\tiny-json.c">
+      <Filter>Source Files\module\tiny-json</Filter>
+    </ClCompile>
+    <ClCompile Include="module\rs485\rs485p1.cpp">
+      <Filter>Source Files\module\rs485</Filter>
+    </ClCompile>
+    <ClCompile Include="module\scanner\scanner.cpp">
+      <Filter>Source Files\module\scanner</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -81,15 +90,12 @@
       <Filter>Source Files\module\cserial</Filter>
     </ClInclude>
     <ClInclude Include="module\log.c\src\log.h">
-      <Filter>Source Files\module\log.c</Filter>
+      <Filter>Source Files\module\log</Filter>
     </ClInclude>
     <ClInclude Include="core\core_actuator.h">
       <Filter>Source Files\core</Filter>
     </ClInclude>
     <ClInclude Include="core\core_common.h">
-      <Filter>Source Files\core</Filter>
-    </ClInclude>
-    <ClInclude Include="core\core_scanner.h">
       <Filter>Source Files\core</Filter>
     </ClInclude>
     <ClInclude Include="core\core_service.h">
@@ -110,14 +116,14 @@
     <ClInclude Include="core\core_example.h">
       <Filter>Source Files\core</Filter>
     </ClInclude>
-    <ClInclude Include="driver\rs485p1.h">
-      <Filter>Source Files\driver</Filter>
-    </ClInclude>
     <ClInclude Include="core\core_system.h">
       <Filter>Source Files\core</Filter>
     </ClInclude>
     <ClInclude Include="core\core_python.h">
       <Filter>Source Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="module\tiny-json\tiny-json.h">
+      <Filter>Source Files\module\tiny-json</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

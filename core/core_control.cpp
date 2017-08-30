@@ -62,6 +62,44 @@ void WINAPI console_ctrl_handler(DWORD event)
     thread_running = false;
 }
 
+/** Print the value os a json object or array.
+* @param json The handler of the json object or array. */
+static void dump(json_t const* json) {
+
+	jsonType_t const type = json_getType(json);
+	if (type != JSON_OBJ && type != JSON_ARRAY) {
+		puts("error");
+		return;
+	}
+
+	printf("%s", type == JSON_OBJ ? " {" : " [");
+
+	json_t const* child;
+	for (child = json_getChild(json); child != 0; child = json_getSibling(child)) {
+
+		jsonType_t propertyType = json_getType(child);
+		char const* name = json_getName(child);
+		if (name) printf(" \"%s\": ", name);
+
+		if (propertyType == JSON_OBJ || propertyType == JSON_ARRAY)
+			dump(child);
+
+		else {
+			char const* value = json_getValue(child);
+			if (value) {
+				bool const text = JSON_TEXT == json_getType(child);
+				char const* fmt = text ? " \"%s\"" : " %s";
+				printf(fmt, value);
+				bool const last = !json_getSibling(child);
+				if (!last) putchar(',');
+			}
+		}
+	}
+
+	printf("%s \n\n", type == JSON_OBJ ? " }" : " ]");
+
+}
+
 int main(int argc, char *argv[])
 {
 	char command[64] = {0};
@@ -121,6 +159,31 @@ int main(int argc, char *argv[])
 
     /* now initialized */
     thread_running = true;
+
+	char str[] = "{\n"
+		"\t\"firstName\": \"Bidhan\",\n"
+		"\t\"lastName\": \"Chatterjee\",\n"
+		"\t\"age\": 40,\n"
+		"\t\"address\": {\n"
+		"\t\t\"streetAddress\": \"144 J B Hazra Road\",\n"
+		"\t\t\"city\": \"Burdwan\",\n"
+		"\t\t\"state\": \"Paschimbanga\",\n"
+		"\t\t\"postalCode\": \"713102\"\n"
+		"\t},\n"
+		"\t\"phoneList\": [\n"
+		"\t\t{ \"type\": \"personal\", \"number\": \"09832209761\" },\n"
+		"\t\t{ \"type\": \"fax\", \"number\": \"91-342-2567692\" }\n"
+		"\t]\n"
+		"}\n";
+	puts(str);
+	json_t mem[32];
+	json_t const* json = json_create(str, mem, sizeof mem / sizeof *mem);
+	if (!json) {
+		puts("Error json create.");
+		return EXIT_FAILURE;
+	}
+	puts("Print JSON:");
+	dump(json);
 
 	Sleep(100);
 

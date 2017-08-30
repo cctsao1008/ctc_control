@@ -30,6 +30,7 @@
 #include "modbus.h"
 #include "getopt.h"
 #include "mosquitto.h"
+#include "tiny-json.h"
 
 // core functions
 #include "core_service.h"
@@ -41,10 +42,10 @@
 #include "core_diagnostic.h"
 //#include "core_modbus.h"
 #include "core_serialport.h"
-#include "core_scanner.h"
 #include "core_rsh.h"
 #include "core_example.h"
 #include "core_system.h"
 
+#include "scanner.h"
 #include "rs485p1.h"
 //#include "driver_rs485_p2.h"
