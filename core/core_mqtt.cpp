@@ -20,8 +20,6 @@ extern int run;
 
 static struct mosquitto *mosq;
 
-//#pragma warning( disable : 4996 )
-
 static unsigned long count = 0;
 
 int core_mqtt_open(void)

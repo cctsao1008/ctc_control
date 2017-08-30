@@ -100,6 +100,146 @@ static void dump(json_t const* json) {
 
 }
 
+int load_param(const char * filename, char * content)
+{
+#if 0
+	char str[] = "{\n"
+		"\t\"firstName\": \"Bidhan\",\n"
+		"\t\"lastName\": \"Chatterjee\",\n"
+		"\t\"age\": 40,\n"
+		"\t\"address\": {\n"
+		"\t\t\"streetAddress\": \"144 J B Hazra Road\",\n"
+		"\t\t\"city\": \"Burdwan\",\n"
+		"\t\t\"state\": \"Paschimbanga\",\n"
+		"\t\t\"postalCode\": \"713102\"\n"
+		"\t},\n"
+		"\t\"phoneList\": [\n"
+		"\t\t{ \"type\": \"personal\", \"number\": \"09832209761\" },\n"
+		"\t\t{ \"type\": \"fax\", \"number\": \"91-342-2567692\" }\n"
+		"\t]\n"
+		"}\n";
+	puts(str);
+	json_t mem[32];
+	json_t const* json = json_create(str, mem, sizeof mem / sizeof *mem);
+	if (!json) {
+		puts("Error json create.");
+		return EXIT_FAILURE;
+	}
+	puts("Print JSON:");
+	dump(json);
+#endif
+
+	char str[] = "{\n"
+		"\t\"firstName\": \"Bidhan\",\n"
+		"\t\"lastName\": \"Chatterjee\",\n"
+		"\t\"age\": 40,\n"
+		"\t\"address\": {\n"
+		"\t\t\"streetAddress\": \"144 J B Hazra Road\",\n"
+		"\t\t\"city\": \"Burdwan\",\n"
+		"\t\t\"state\": \"Paschimbanga\",\n"
+		"\t\t\"postalCode\": \"713102\"\n"
+		"\t},\n"
+		"\t\"phoneList\": [\n"
+		"\t\t{ \"type\": \"personal\", \"number\": \"09832209761\" },\n"
+		"\t\t{ \"type\": \"fax\", \"number\": \"91-342-2567692\" }\n"
+		"\t]\n"
+		"}\n";
+	//puts(str);
+
+
+
+	FILE *pf;
+	long fsize;
+	char * buffer;
+	size_t result;
+
+	//f = fopen("D:\\vs2013\\ctc_project\\ctc_control_gitlab\\Debug\\ctc-config.json", "r");
+	pf = fopen("Debug\\ctc-config.json", "r");
+
+	if (pf) {
+		printf("passed\n");
+
+		// obtain file size:
+		fseek(pf, 0, SEEK_END);
+		fsize = ftell(pf);
+		rewind(pf);
+
+		printf("fsize = %d\n", fsize);
+
+		// allocate memory to contain the whole file:
+		buffer = (char*)malloc(sizeof(char)*fsize);
+		//if (buffer == NULL) { fputs("Memory error", stderr); exit(2); }
+		if (buffer == NULL) { fputs("Memory error\n", stderr); }
+
+		// copy the file into the buffer:
+		result = fread(buffer, 1, fsize, pf);
+		printf("result = %d\n\n", result);
+		//puts(buffer);
+		//if (result != lSize) { fputs("Reading error", stderr); exit(3); }
+		if (result != fsize) { fputs("Reading error\n", stderr); }
+
+		/* the whole file is now loaded in the memory buffer. */
+
+		// terminate
+		fclose(pf);
+		//free(buffer);
+	}
+	else {
+		printf("failed\n");
+	}
+
+	json_t mem[32];
+	//json_t const* json = json_create(str, mem, sizeof mem / sizeof *mem);
+	json_t const* json = json_create(buffer, mem, sizeof mem / sizeof *mem);
+	if (!json) {
+		puts("Error json create.");
+		//return EXIT_FAILURE;
+	}
+
+	json_t const* firstName = json_getProperty(json, "firstName");
+	if (!firstName || JSON_TEXT != json_getType(firstName)) {
+		puts("Error, the first name property is not found.");
+		//return EXIT_FAILURE;
+	}
+	char const* firstNameVal = json_getValue(firstName);
+	printf("Fist Name: %s.\n", firstNameVal);
+
+	char const* lastName = json_getPropertyValue(json, "lastName");
+	if (!lastName) {
+		puts("Error, the last name property is not found.");
+		//return EXIT_FAILURE;
+	}
+	printf("Last Name: %s.\n", lastName);
+
+	json_t const* age = json_getProperty(json, "age");
+	if (!age || JSON_INTEGER != json_getType(age)) {
+		puts("Error, the age property is not found.");
+		//return EXIT_FAILURE;
+	}
+	int const ageVal = (int)json_getInteger(age);
+	printf("Age: %d.\n", ageVal);
+
+	json_t const* phoneList = json_getProperty(json, "phoneList");
+	if (!phoneList || JSON_ARRAY != json_getType(phoneList)) {
+		puts("Error, the phone list property is not found.");
+		//return EXIT_FAILURE;
+	}
+
+	json_t const* phone;
+	for (phone = json_getChild(phoneList); phone != 0; phone = json_getSibling(phone)) {
+		if (JSON_OBJ == json_getType(phone)) {
+			char const* phoneNumber = json_getPropertyValue(phone, "number");
+			if (phoneNumber) printf("Number: %s.\n", phoneNumber);
+		}
+	}
+
+	printf("\n\n");
+	//strcpy(content, buffer);
+	free(buffer);
+
+	return 0;
+}
+
 int main(int argc, char *argv[])
 {
 	char command[64] = {0};
@@ -160,30 +300,7 @@ int main(int argc, char *argv[])
     /* now initialized */
     thread_running = true;
 
-	char str[] = "{\n"
-		"\t\"firstName\": \"Bidhan\",\n"
-		"\t\"lastName\": \"Chatterjee\",\n"
-		"\t\"age\": 40,\n"
-		"\t\"address\": {\n"
-		"\t\t\"streetAddress\": \"144 J B Hazra Road\",\n"
-		"\t\t\"city\": \"Burdwan\",\n"
-		"\t\t\"state\": \"Paschimbanga\",\n"
-		"\t\t\"postalCode\": \"713102\"\n"
-		"\t},\n"
-		"\t\"phoneList\": [\n"
-		"\t\t{ \"type\": \"personal\", \"number\": \"09832209761\" },\n"
-		"\t\t{ \"type\": \"fax\", \"number\": \"91-342-2567692\" }\n"
-		"\t]\n"
-		"}\n";
-	puts(str);
-	json_t mem[32];
-	json_t const* json = json_create(str, mem, sizeof mem / sizeof *mem);
-	if (!json) {
-		puts("Error json create.");
-		return EXIT_FAILURE;
-	}
-	puts("Print JSON:");
-	dump(json);
+	load_param(NULL, NULL);
 
 	Sleep(100);
 

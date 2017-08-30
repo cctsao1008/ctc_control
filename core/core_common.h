@@ -49,3 +49,5 @@
 #include "scanner.h"
 #include "rs485p1.h"
 //#include "driver_rs485_p2.h"
+
+#pragma warning(disable:4996)

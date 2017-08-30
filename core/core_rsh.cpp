@@ -507,7 +507,6 @@ char *rsh_read_line(void)
     }
 }
 
-#pragma warning( disable : 4996 )
 #define RSH_TOK_BUFSIZE 64
 #define RSH_TOK_DELIM " \t\r\n\a"
 /**
