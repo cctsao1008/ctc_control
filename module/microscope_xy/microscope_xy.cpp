@@ -242,6 +242,7 @@ bool MicroscopeXY::moveX(double X, uint8_t Direction)
 	//ReleaseMutex(_ghMutex); // try
 
 	bool controlRecieved = false;
+	unsigned int timeout = 0;
 	while (true)
 	{
 		feedback = _rs485Port->getControlerMsg(address);
@@ -292,6 +293,17 @@ bool MicroscopeXY::moveX(double X, uint8_t Direction)
 			clock_t dwCurrent = clock();
 			if (dwCurrent - dwMsgSend > 500)
 			{
+				if (timeout > 5)
+				{
+					printf("Address %.2X Timeout too many times\n", address);
+					printf("Please check COM Port\n");
+					return false;
+				}
+				else
+				{
+					timeout += 1;
+				}
+
 				printf("Address %.2X not recieve B1\n", address);
 				printf("MicroscopeXY: moveX TX Timeout\n");
 				if (c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length) < 0)
@@ -351,6 +363,7 @@ bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 	//ReleaseMutex(_ghMutex); // try
 
 	bool controlRecieved = false;
+	unsigned int timeout = 0;
 	while (true)
 	{
 		feedback = _rs485Port->getControlerMsg(address);
@@ -398,6 +411,17 @@ bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 		//WaitForSingleObject(_ghMutex, INFINITE); // try
 		if (!controlRecieved)
 		{
+			if (timeout > 5)
+			{
+				printf("Address %.2X Timeout too many times\n", address);
+				printf("Please check COM Port\n");
+				return false;
+			}
+			else
+			{
+				timeout += 1;
+			}
+
 			clock_t dwCurrent = clock();
 			if (dwCurrent - dwMsgSend > 500)
 			{

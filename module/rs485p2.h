@@ -52,6 +52,20 @@ private:
 	HANDLE _ghMutex;
 };
 
+/**
+Arguments For Thread
+*/
+typedef struct _argument 
+{
+	int _argc;
+	char** _argv;
+
+} Argument;
+
+void rs485p2_memory_clean(Argument* ThreadParameter);
+
+DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter);
+
 int rsh_rs485p2_main(int argc, char *argv[]);
 
 #endif // _RS485P2_H_

@@ -275,12 +275,35 @@ static SyringePump syringepump = SyringePump(&rs485p2);
 static Washer washer = Washer(&rs485p2);
 static MicroscopeXY microscopexy = MicroscopeXY(&rs485p2);
 
-int rsh_rs485p2_main(int argc, char *argv[])
+
+void rs485p2_memory_clean(Argument* ThreadParameter)
 {
+	for (int i = 0; i < (ThreadParameter)->_argc; i++)
+	{
+		delete[](ThreadParameter)->_argv[i];
+	}
+	delete[](ThreadParameter)->_argv;
+}
+
+DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
+{
+	int argc = ((Argument *)ThreadParameter)->_argc;
+	char** argv = ((Argument *)ThreadParameter)->_argv;
+	
 	log_info("[commander] pub, argc = %d", argc);
 
-	if (argc < 2) {
+	/*
+	for (int i = 0; i < argc; i++)
+	{
+		printf("%s ", argv[i]);
+	}
+	printf("\n");
+	*/
+
+	if (argc < 2) 
+	{
 		log_info("missing command");
+		rs485p2_memory_clean((Argument *)ThreadParameter);
 		return 0;
 	}
 
@@ -290,7 +313,7 @@ int rsh_rs485p2_main(int argc, char *argv[])
 		if (argc != 8)
 		{
 			log_info("error");
-
+			rs485p2_memory_clean((Argument *)ThreadParameter);
 			return 0;
 		}
 
@@ -300,7 +323,7 @@ int rsh_rs485p2_main(int argc, char *argv[])
 			printf("%.2X ", msg->content[i]);
 		}
 		printf("\n");
-
+		rs485p2_memory_clean((Argument *)ThreadParameter);
 		return 0;
 	}
 
@@ -310,7 +333,7 @@ int rsh_rs485p2_main(int argc, char *argv[])
 		if (argc < 3)
 		{
 			log_info("error");
-
+			rs485p2_memory_clean((Argument *)ThreadParameter);
 			return 0;
 		}
 
@@ -318,6 +341,7 @@ int rsh_rs485p2_main(int argc, char *argv[])
 		if (!strcmp(argv[2], "AB"))
 		{
 			syringepump.absorbVolume(atof(argv[3]));
+			rs485p2_memory_clean((Argument *)ThreadParameter);
 			return 0;
 		}
 
@@ -325,13 +349,14 @@ int rsh_rs485p2_main(int argc, char *argv[])
 		if (!strcmp(argv[2], "DR"))
 		{
 			syringepump.drainVolume(atof(argv[3]));
+			rs485p2_memory_clean((Argument *)ThreadParameter);
 			return 0;
 		}
 
 		if (argc != 5)
 		{
 			log_info("error");
-
+			rs485p2_memory_clean((Argument *)ThreadParameter);
 			return 0;
 		}
 
@@ -339,6 +364,7 @@ int rsh_rs485p2_main(int argc, char *argv[])
 		if (!strcmp(argv[2], "PIP"))
 		{
 			syringepump.pipetteVolume(atof(argv[3]), atoi(argv[4]));
+			rs485p2_memory_clean((Argument *)ThreadParameter);
 			return 0;
 		}
 
@@ -351,7 +377,7 @@ int rsh_rs485p2_main(int argc, char *argv[])
 		if (argc != 5)
 		{
 			log_info("error");
-
+			rs485p2_memory_clean((Argument *)ThreadParameter);
 			return 0;
 		}
 
@@ -359,6 +385,7 @@ int rsh_rs485p2_main(int argc, char *argv[])
 		if (!strcmp(argv[2], "MA"))
 		{
 			washer.moveArm(atof(argv[3]), (uint8_t)atoi(argv[4]));
+			rs485p2_memory_clean((Argument *)ThreadParameter);
 			return 0;
 		}
 
@@ -373,9 +400,10 @@ int rsh_rs485p2_main(int argc, char *argv[])
 		if (!strcmp(argv[2], "RG"))
 		{
 			washer.rotateGripper(atof(argv[3]), (uint8_t)atoi(argv[4]));
+			rs485p2_memory_clean((Argument *)ThreadParameter);
 			return 0;
 		}
-
+		rs485p2_memory_clean((Argument *)ThreadParameter);
 		return 0;
 	}
 
@@ -385,7 +413,7 @@ int rsh_rs485p2_main(int argc, char *argv[])
 		if (argc != 5)
 		{
 			log_info("error");
-
+			rs485p2_memory_clean((Argument *)ThreadParameter);
 			return 0;
 		}
 
@@ -393,10 +421,50 @@ int rsh_rs485p2_main(int argc, char *argv[])
 		if (!strcmp(argv[2], "MV"))
 		{
 			microscopexy.move2Pos(atof(argv[3]), atof(argv[4]));
+			rs485p2_memory_clean((Argument *)ThreadParameter);
 			return 0;
 		}
-
+		rs485p2_memory_clean((Argument *)ThreadParameter);
 		return 0;
+	}
+	rs485p2_memory_clean((Argument *)ThreadParameter);
+	return 0;
+}
+
+int rsh_rs485p2_main(int argc, char *argv[])
+{
+	HANDLE hThread = NULL;
+	Argument *threadParameter = new Argument;
+
+	threadParameter->_argc = argc;
+	threadParameter->_argv = new char *[argc];
+
+	for (int i = 0; i < argc; i++)
+	{
+		int length = 0;
+		while (argv[i][length] != '\0')
+		{
+			length++;
+		}
+		threadParameter->_argv[i] = new char[(length + 1)];
+
+		for (int j = 0; j < (length + 1); j++)
+		{
+			threadParameter->_argv[i][j] = argv[i][j];
+		}
+	}
+	
+	hThread = CreateThread(NULL,                       // default security attributes
+							  0,					   // use default stack size
+		   &rs485p2_thread_main,                       // thread function
+	   (LPVOID) threadParameter,                       // argument to thread function
+							  0,                       // use default creation flags
+						   NULL);                      // returns the thread identifier
+	
+	if (hThread == NULL)
+	{
+		fprintf(stderr, "[ERROR]: rsh_rs485p2_main: rs485p2_thread_main Thread Cannot Be Created\n");
+		return false;
 	}
 
 	return 0;

@@ -96,6 +96,7 @@ bool Washer::moveArm(double Degree, uint8_t Direction)
 	//ReleaseMutex(_ghMutex); // try
 
 	bool controlRecieved = false;
+	unsigned int timeout = 0;
 	while (true)
 	{
 		feedback = _rs485Port->getControlerMsg(address);
@@ -152,6 +153,17 @@ bool Washer::moveArm(double Degree, uint8_t Direction)
 		//WaitForSingleObject(_ghMutex, INFINITE); // try
 		if (!controlRecieved)
 		{
+			if (timeout > 5)
+			{
+				printf("Address %.2X Timeout too many times\n", address);
+				printf("Please check COM Port\n");
+				return false;
+			}
+			else
+			{
+				timeout += 1;
+			}
+
 			clock_t dwCurrent = clock();
 			if (dwCurrent - dwMsgSend > 500)
 			{
@@ -212,6 +224,7 @@ bool Washer::rotateGripper(double Circle, uint8_t Direction)
 	}
 
 	bool controlRecieved = false;
+	unsigned int timeout = 0;
 	while (true)
 	{
 		feedback = _rs485Port->getControlerMsg(address);
@@ -254,6 +267,17 @@ bool Washer::rotateGripper(double Circle, uint8_t Direction)
 
 		if (!controlRecieved)
 		{
+			if (timeout > 5)
+			{
+				printf("Address %.2X Timeout too many times\n", address);
+				printf("Please check COM Port\n");
+				return false;
+			}
+			else
+			{
+				timeout += 1;
+			}
+
 			clock_t dwCurrent = clock();
 			if (dwCurrent - dwMsgSend > 500)
 			{
@@ -282,7 +306,7 @@ bool Washer::shakeMachine(double Degree, unsigned int Times)
 {
 	while(Times-- > 0)
 	{
-		printf("Degree: %f, Pipette %d\n", Degree, (5 - Times));// try
+		printf("Degree: %f, Shake Cycle: %d\n", Degree, (5 - Times));// try
 		WaitForSingleObject(_ghMutex, INFINITE);
 		if (!moveArm(Degree, PositiveExecute))
 		{

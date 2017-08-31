@@ -46,8 +46,6 @@ static bool commander_initialized = false;
 static volatile bool thread_should_exit = false;	/**< daemon exit flag */
 static volatile bool thread_running = false;		/**< daemon status flag */
 
-rs485p1 rs485p1_data;
-
 static void WINAPI timer_handler(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dwl, DWORD dw2)
 {
 	static uint64_t currentTime;
@@ -352,13 +350,11 @@ void* rs485p1_thread_main(void* arg)
 			//rc = modbus_read_input_registers(ctx[1], 0x0, 1, data);
 			//modbus_close(ctx[1]);
 			read_input_register(ctx[1], 20, 0x0, data);
-			rs485p1_data.tc.pv = data[0];
 
 			char str[10];
 #if 1
 			// real data
 			sprintf_s(str, "%3.1f", (float)data[0] * 0.1);
-			write_register(ctx[1], 20, 0x0, (int)rs485p1_data.tc.sv * 10);
 			//mosquitto_publish(mosq, NULL, AI_01, 64, str, 0, true);
 			//log_info("FT3400 PV = %3.1f", (float)data[0] * 0.1);
 #else
@@ -458,29 +454,14 @@ int rsh_rs485p1_main(int argc, char *argv[])
 
 		for (int i = 2; i < argc; i++)
 		{
-			if (!strcmp(argv[i], "--get"))
+			if (!strcmp(argv[i], "-w"))
 			{
-				log_info("val = %4.1f", rs485p1_data.tc.pv * 0.1f);
+				printf("www");
 			}
 
-			if (!strcmp(argv[i], "--set"))
+			if (!strcmp(argv[i], "-r"))
 			{
-				double val = 0;
-
-				if (argv[i + 1] != NULL) {
-					val = atof((const char*)argv[i + 1]);
-
-					if ((val < 8) || (val > 25))
-						log_error("invalid input, val = %4.1f", val);
-					else
-					{
-						rs485p1_data.tc.sv = val;
-						log_info("val = %4.1f", val);
-					}
-				}
-				else {
-					log_error("invalid input, not a number!");
-				}
+				printf("rrr");
 			}
 		}
 
