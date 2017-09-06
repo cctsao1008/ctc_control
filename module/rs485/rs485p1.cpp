@@ -505,13 +505,11 @@ void* rs485p1_thread_main(void* arg)
 			//rc = modbus_read_input_registers(ctx[1], 0x0, 1, data);
 			//modbus_close(ctx[1]);
 			read_input_register(ctx[1], 20, 0x0, data);
-			rs485p1_data.tc.pv = data[0];
 
 			char str[10];
 #if 0
 			// real data
 			sprintf_s(str, "%3.1f", (float)data[0] * 0.1);
-			write_register(ctx[1], 20, 0x0, (int)rs485p1_data.tc.sv * 10);
 			//mosquitto_publish(mosq, NULL, AI_01, 64, str, 0, true);
 			//log_info("FT3400 PV = %3.1f", (float)data[0] * 0.1);
 #else
@@ -616,12 +614,12 @@ int rsh_rs485p1_main(int argc, char *argv[])
 
 		for (int i = 2; i < argc; i++)
 		{
-			if (!strcmp(argv[i], "--get"))
+			if (!strcmp(argv[i], "-w"))
 			{
-				log_info("val = %4.1f", rs485p1_data.tc.pv * 0.1f);
+				printf("www");
 			}
 
-			if (!strcmp(argv[i], "--set"))
+			if (!strcmp(argv[i], "-r"))
 			{
 				double val = 0;
 
