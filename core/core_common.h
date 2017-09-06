@@ -9,9 +9,11 @@
 * @author Ricardo <tsao.ricardo@iac.com.tw>
 */
 
+#include <Winsock2.h>
 #include <windows.h>
 #include <Mmsystem.h>
 #pragma comment(lib, "Winmm.lib")
+#include <Winsock2.h>
 
 
 #include <map>
@@ -31,6 +33,7 @@
 #include "getopt.h"
 #include "mosquitto.h"
 #include "tiny-json.h"
+#include "lcmlite.h"
 
 #ifdef _DEBUG
 #undef _DEBUG

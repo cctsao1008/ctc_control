@@ -130,7 +130,7 @@ void* core_commander_thread_main(void* arg)
 
     /* MQTT */
     mosquitto_lib_init();
-    mosq = mosquitto_new("ctc_control", true, NULL);
+    mosq = mosquitto_new("ctrl.commander", true, NULL);
 
     //if (mosquitto_connect(mosq, "localhost", 1883, 60 == MOSQ_ERR_SUCCESS) {
     //if (mosquitto_connect_async(mosq, "10.101.4.35", 1883, 60) == MOSQ_ERR_SUCCESS) {

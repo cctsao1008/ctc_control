@@ -20,8 +20,8 @@
 #define COUNT_5HZ     200       // Number of 1000 Hz frames for   5 Hz Loop
 #define COUNT_1HZ     1000      // Number of 1000 Hz frames for   1 Hz Loop
 
-extern int run;
-
+//extern int run;
+enum { INIT, F1000HZ, F200HZ, F100HZ, F050HZ, F010HZ, F005HZ, F001HZ };
 static uint16_t frameCounter = 0;
 
 static bool frame_200Hz = false;
@@ -46,6 +46,9 @@ static bool commander_initialized = false;
 static volatile bool thread_should_exit = false;	/**< daemon exit flag */
 static volatile bool thread_running = false;		/**< daemon status flag */
 
+/* MQTT */
+static mosquitto *mosq;
+
 rs485p1 rs485p1_data;
 
 static void WINAPI timer_handler(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dwl, DWORD dw2)
@@ -65,27 +68,27 @@ static void WINAPI timer_handler(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dw
 	previous1000HzTime = currentTime;
 
 	/* frame_200HZ */
-	if ((frameCounter % COUNT_200HZ) == 0 && frame_200Hz != true)
+	if ((frameCounter % COUNT_200HZ) == 0)
 		frame_200Hz = true;
 
 	/* frame_100HZ */
-	if ((frameCounter % COUNT_100HZ) == 0 && frame_100Hz != true)
+	if ((frameCounter % COUNT_100HZ) == 0)
 		frame_100Hz = true;
 
 	/* frame_50HZ */
-	if ((frameCounter % COUNT_50HZ) == 0 && frame_50Hz != true)
+	if ((frameCounter % COUNT_50HZ) == 0)
 		frame_50Hz = true;
 
 	/* frame_10HZ */
-	if ((frameCounter % COUNT_10HZ) == 0 && frame_10Hz != true)
+	if ((frameCounter % COUNT_10HZ) == 0)
 		frame_10Hz = true;
 
 	/* frame_5HZ */
-	if ((frameCounter % COUNT_5HZ) == 0 && frame_5Hz != true)
+	if ((frameCounter % COUNT_5HZ) == 0)
 		frame_5Hz = true;
 
 	/* frame_1HZ */
-	if ((frameCounter % COUNT_1HZ) == 0 && frame_1Hz != true)
+	if ((frameCounter % COUNT_1HZ) == 0)
 		frame_1Hz = true;
 
 	executionTime1000Hz = micros() - currentTime;
@@ -175,6 +178,108 @@ int write_register(modbus_t *ctx, int slave, int addr, int value)
 	return 0;
 }
 
+uint16_t bswap8(uint16_t a)
+{
+	a = ((a & 0x0F) << 4) | ((a & 0xF0) >> 4);
+	return a;
+}
+
+uint16_t bswap16(uint16_t a)
+{
+	a = ((a & 0x00FF) << 8) | ((a & 0xFF00) >> 8);
+	return a;
+}
+
+uint32_t _bswap32(uint32_t a)
+{
+	a = ((a & 0x000000FF) << 24) |
+		((a & 0x0000FF00) << 8) |
+		((a & 0x00FF0000) >> 8) |
+		((a & 0xFF000000) >> 24);
+	return a;
+}
+
+uint64_t _bswap64(uint64_t a)
+{
+	a = ((a & 0x00000000000000FFULL) << 56) |
+		((a & 0x000000000000FF00ULL) << 40) |
+		((a & 0x0000000000FF0000ULL) << 24) |
+		((a & 0x00000000FF000000ULL) << 8) |
+		((a & 0x000000FF00000000ULL) >> 8) |
+		((a & 0x0000FF0000000000ULL) >> 24) |
+		((a & 0x00FF000000000000ULL) >> 40) |
+		((a & 0xFF00000000000000ULL) >> 56);
+	return a;
+}
+
+uint16_t servo_sync(modbus_t *ctx, uint8_t id)
+{
+	uint16_t data = 0xFFFF;
+
+	modbus_set_slave(ctx, id);
+	modbus_read_registers(ctx, 0x0900, 1, &data);
+
+	return data;
+}
+
+void update_previous_time(uint64_t currentTime, uint8_t frame)
+{
+	switch (frame)
+	{
+		case INIT:
+
+			previous1000HzTime = currentTime;
+			previous200HzTime = currentTime;
+			previous100HzTime = currentTime;
+			previous50HzTime = currentTime;
+			previous10HzTime = currentTime;
+			previous5HzTime = currentTime;
+			previous1HzTime = currentTime;
+
+			break;
+
+		case F1000HZ:
+			deltaTime1000Hz = currentTime - previous1000HzTime;
+			previous1000HzTime = currentTime;
+			break;
+
+		case F200HZ : 
+			deltaTime200Hz = currentTime - previous200HzTime;
+			previous200HzTime = currentTime;
+			break;
+
+		case F100HZ:
+			deltaTime100Hz = currentTime - previous100HzTime;
+			previous100HzTime = currentTime;
+			break;
+
+		case F050HZ:
+			deltaTime50Hz = currentTime - previous50HzTime;
+			previous50HzTime = currentTime;
+			break;
+
+		case F010HZ:
+			deltaTime10Hz = currentTime - previous10HzTime;
+			previous10HzTime = currentTime;
+			break;
+
+		case F005HZ:
+			deltaTime5Hz = currentTime - previous5HzTime;
+			previous5HzTime = currentTime;
+			break;
+
+		case F001HZ:
+			deltaTime10Hz = currentTime - previous10HzTime;
+			previous10HzTime = currentTime;
+			break;
+
+		default :
+			break;
+
+
+	}
+}
+
 void* rs485p1_thread_main(void* arg)
 {
 	/* TIMER */
@@ -183,11 +288,34 @@ void* rs485p1_thread_main(void* arg)
 	/* TIME */
 	uint64_t currentTime;
 
+	/* LCM */
+	//uint8_t mc_ttl = 0;
+	//struct in_addr mc_addr;
+	//int mc_port = htons(7667);
+
+	//if (inet_pton("239.255.76.67", (struct in_addr*) &mc_addr) < 0)
+	//	return 1;
+	//inet_addr("127.0.0.1");
+
+	// create the Multicast UDP socket
+	//struct sockaddr_in read_addr, send_addr;
+
+	//memset(&read_addr, 0, sizeof(read_addr));
+	//read_addr.sin_family = AF_INET;
+	//read_addr.sin_addr.s_addr = INADDR_ANY;
+	//read_addr.sin_port = mc_port;
+
+	//memset(&send_addr, 0, sizeof(read_addr));
+	//send_addr.sin_family = AF_INET;
+	//send_addr.sin_addr = mc_addr;
+	//send_addr.sin_port = mc_port;
+
 	/* MODBUS */
 	static modbus_t  *ctx[2];
 
 	/* not yet initialized */
 	commander_initialized = false;
+
 	/* MODBUS */
 	uint16_t data[64];
 
@@ -220,20 +348,9 @@ void* rs485p1_thread_main(void* arg)
 
 	/* TEMP */
 	modbus_set_slave(ctx[1], 20);
-	
-	//if (connect(ctx[1]) != 0)
-	//{
-	//	fprintf(stderr, "connect failed.\n");
-	//	return 0;
-	//}
-
-	//modbus_connect(ctx[1]);
 
 	AO[1] = 20.0;
 	write_register(ctx[1], 20, 0x0, (int)AO[1] * 10);
-	//modbus_write_register(ctx[1], 0x0, (int)AO[1] * 10);
-	//modbus_close(ctx[1]);
-	//disconnect(ctx[1]);
 
 	/* ENABLE SERVO */
 	servo_enabled[SERVO_1] = true;
@@ -245,6 +362,7 @@ void* rs485p1_thread_main(void* arg)
 	//modbus_set_response_timeout(ctx[0], 1, 0);
 
 	/* S4 : DI contact control */
+#if 0
 	modbus_set_slave(ctx[0], SERVO_4);
 	modbus_connect(ctx[0]);
 	modbus_write_register(ctx[0], 0x061E, 0x0040);
@@ -255,7 +373,22 @@ void* rs485p1_thread_main(void* arg)
 	modbus_read_registers(ctx[0], 0x0630, 1, data);
 	//log_info("addr = 0x0630, data = 0x%X", data[0]);
 	modbus_close(ctx[0]);
+#endif
 
+	/* MQTT */
+	mosquitto_lib_init();
+	mosq = mosquitto_new("ctrl.rs485p1", true, NULL);
+
+	if (NULL == mosq)
+		printf("rs485p1 mqtt error\n");
+	else
+	{
+		if (mosquitto_connect_async(mosq, "localhost", 1883, 60) == MOSQ_ERR_SUCCESS) {
+			mosquitto_loop_start(mosq);
+		}
+	}
+
+	/* TIMER */
 	timer = timeSetEvent(1, 1, (LPTIMECALLBACK)timer_handler, DWORD(1), TIME_PERIODIC); // TIME_PERIODIC, TIME_ONESHO
 
 	/* now initialized */
@@ -263,13 +396,13 @@ void* rs485p1_thread_main(void* arg)
 	thread_running = true;
 
 	currentTime = micros();
-	previous1000HzTime = currentTime;
-	previous200HzTime = currentTime;
-	previous100HzTime = currentTime;
-	previous50HzTime = currentTime;
-	previous10HzTime = currentTime;
-	previous5HzTime = currentTime;
-	previous1HzTime = currentTime;
+
+	update_previous_time(currentTime, INIT);
+
+
+	/* Define a new and too short timeout! */
+	modbus_set_response_timeout(ctx[0], 0, 10000);
+	modbus_set_response_timeout(ctx[1], 0, 10000);
 
 	log_info("driver_rs485_p1_thread_main already running");
 
@@ -280,10 +413,12 @@ void* rs485p1_thread_main(void* arg)
 			frame_5Hz = false;
 
 			currentTime = micros();
-			deltaTime5Hz = currentTime - previous5HzTime;
-			previous5HzTime = currentTime;
+			update_previous_time(currentTime, F005HZ);
 
-			//log_info("deltaTime5Hz = %ld", deltaTime5Hz);
+			if (deltaTime5Hz > 210000L)
+				log_error("deltaTime5Hz (%4.2f) > 210 ms", deltaTime5Hz/1000.0f);
+
+			//log_info("deltaTime5Hz = %.2f ms", deltaTime5Hz/1000.0f);
 
 			/* keep servo driver connection*/
 			modbus_connect(ctx[0]);
@@ -292,30 +427,42 @@ void* rs485p1_thread_main(void* arg)
 			if (servo_enabled[SERVO_1] == true)
 			{
 				//log_info("S1 ENABLED");
-				modbus_set_slave(ctx[0], SERVO_1);
-				modbus_read_registers(ctx[0], 0x0900, 1, data);
+				data[0] = servo_sync(ctx[0], SERVO_1);
+				//printf("S1 data[0] = 0x%04X \n", bswap8(data[0]));
+				printf("S1 data[0] = 0x%04X \n", data[0]);
 			}
+
+			Sleep(10);
 
 			// Servo driver SDE-040A2 400W, MP Y axis
 			if (servo_enabled[SERVO_2] == true)
 			{
 				//log_info("S2 ENABLED");
-				modbus_set_slave(ctx[0], SERVO_2);
-				modbus_read_registers(ctx[0], 0x0900, 1, data);
+				data[0] = servo_sync(ctx[0], SERVO_2);
+				//printf("S2 data[0] = 0x%04X \n", bswap8(data[0]));
+				printf("S1 data[0] = 0x%04X \n", data[0]);
 			}
+
+			Sleep(10);
 
 			// Servo driver SDE-010A2 100W, Guild Way
 			if (servo_enabled[SERVO_3] == true)
 			{
 				//log_info("S3 ENABLED");
-				modbus_set_slave(ctx[0], SERVO_3);
-				modbus_read_registers(ctx[0], 0x0900, 1, data);
+				data[0] = servo_sync(ctx[0], SERVO_3);
+				//printf("S3 data[0] = 0x%04X \n", bswap8(data[0]));
+				printf("S1 data[0] = 0x%04X \n", data[0]);
 			}
+
+			Sleep(10);
 
 			// Servo driver SDE-020A2 200W, Centrifugal
 			if (servo_enabled[SERVO_4] == true)
 			{
 				//log_info("S4 ENABLED");
+				data[0] = servo_sync(ctx[0], SERVO_4);
+				//printf("S4 data[0] = 0x%04X \n", bswap8(data[0]));
+				printf("S1 data[0] = 0x%04X \n", data[0]);
 #if 0
 				modbus_set_slave(ctx[0], SERVO_4);
 				//modbus_read_registers(ctx[0], 0x0900, 1, data);
@@ -332,10 +479,16 @@ void* rs485p1_thread_main(void* arg)
 #endif
 			}
 
+			Sleep(10);
+
 			modbus_close(ctx[0]);
 
-			//executionTime5Hz = micros() - currentTime;
-			//log_info("executionTime5Hz = %ld", executionTime5Hz);
+			executionTime5Hz = micros() - currentTime;
+
+			if (executionTime5Hz > 100000L)
+				log_error("executionTime5Hz (%4.2f) > 100 ms", executionTime5Hz / 1000.0f);
+
+			//log_info("executionTime5Hz = %.2f ms", executionTime5Hz / 1000.0f);
 		}
 
 		if (frame_1Hz)
@@ -344,9 +497,9 @@ void* rs485p1_thread_main(void* arg)
 			frame_1Hz = false;
 
 			currentTime = micros();
-			deltaTime1Hz = currentTime - previous1HzTime;
-			previous1HzTime = currentTime;
+			update_previous_time(currentTime, F001HZ);
 
+#if 1
 			//rc = modbus_set_slave(ctx[1], 20);
 			//rc = modbus_connect(ctx[1]);
 			//rc = modbus_read_input_registers(ctx[1], 0x0, 1, data);
@@ -355,7 +508,7 @@ void* rs485p1_thread_main(void* arg)
 			rs485p1_data.tc.pv = data[0];
 
 			char str[10];
-#if 1
+#if 0
 			// real data
 			sprintf_s(str, "%3.1f", (float)data[0] * 0.1);
 			write_register(ctx[1], 20, 0x0, (int)rs485p1_data.tc.sv * 10);
@@ -366,8 +519,13 @@ void* rs485p1_thread_main(void* arg)
 			//double tmp = (double)((rand() / (RAND_MAX + 1.0)) * (110.0 - 90.0) + 110.0); // 1~5 us
 			double tmp = 90.0 + (double)rand() / ((double)RAND_MAX / (110.00 - 90.0));
 			sprintf_s(str, "%3.1f", tmp * 0.1); // 9~27 us
-			//mosquitto_publish(mosq, NULL, AI_01, 64, str, 0, true); // 156~812 us
+			mosquitto_publish(mosq, NULL, "CONTROL/INPUT/AI/01", 64, str, 0, true); // 156~812 us
 			log_info("tmp = %3.1f", tmp * 0.1);
+			mosquitto_publish(mosq, NULL, "CONTROL/INPUT/SERVO/01", 16, "ON", 0, true);
+			mosquitto_publish(mosq, NULL, "CONTROL/INPUT/SERVO/02", 16, "ON", 0, true);
+			mosquitto_publish(mosq, NULL, "CONTROL/INPUT/SERVO/03", 16, "ON", 0, true);
+			mosquitto_publish(mosq, NULL, "CONTROL/INPUT/SERVO/04", 16, "ON", 0, true);
+#endif
 #endif
 			executionTime1Hz = micros() - currentTime;
 			//log_info("deltaTime1Hz = %d us", deltaTime1Hz);
@@ -474,7 +632,7 @@ int rsh_rs485p1_main(int argc, char *argv[])
 						log_error("invalid input, val = %4.1f", val);
 					else
 					{
-						rs485p1_data.tc.sv = val;
+						rs485p1_data.tc.sv = (uint16_t)val;
 						log_info("val = %4.1f", val);
 					}
 				}
