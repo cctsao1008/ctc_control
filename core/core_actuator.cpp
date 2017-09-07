@@ -10,26 +10,6 @@
 
 #include "core_common.h"
 
-extern int run;
-extern int vote;
-
-void* core_actuator_thread_main(void* arg)
-{
-	printf("CCS: core_actuator_thread_main running...\n");
-	vote++;
-
-	while (run)
-	{
-		// put your code here.
-		Sleep(5000);
-	}
-
-	printf("CCS: core_actuator_thread_main exit.\n");
-	vote--;
-
-	return 0;
-}
-
 int control_motor(void* data)
 {
 	// call driver.
@@ -61,5 +41,11 @@ int control_griper(void* data)
 	// call driver.
 	// 2finger
 	// 3finger
+	return 0;
+}
+
+int control_mp1(void* data)
+{
+	
 	return 0;
 }

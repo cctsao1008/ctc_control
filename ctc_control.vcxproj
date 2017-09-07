@@ -109,7 +109,6 @@
     <ClCompile Include="module\example\example.cpp" />
     <ClCompile Include="module\interpreter\interpreter.cpp" />
     <ClCompile Include="module\interpreter\pycfunctions.cpp" />
-    <ClCompile Include="module\lcm-lite\lcmlite.c" />
     <ClCompile Include="module\log.c\src\log.c" />
     <ClCompile Include="module\microscope_xy\microscope_xy.cpp" />
     <ClCompile Include="module\rs485\rs485p1.cpp" />
@@ -132,7 +131,6 @@
     <ClInclude Include="module\cserial\c_serial.h" />
     <ClInclude Include="module\example.h" />
     <ClInclude Include="module\interpreter.h" />
-    <ClInclude Include="module\lcm-lite\lcmlite.h" />
     <ClInclude Include="module\log.c\src\log.h" />
     <ClInclude Include="module\microscope_xy.h" />
     <ClInclude Include="module\rs485p1.h" />

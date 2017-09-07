@@ -58,9 +58,6 @@
     <Filter Include="Source Files\module\microscope_xy">
       <UniqueIdentifier>{9b640081-595e-4330-a835-ba0c82d3e598}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\module\lcm-lite">
-      <UniqueIdentifier>{6e1064f5-b812-4a8c-b813-5fa152129ede}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\module\mqtt-bridge">
       <UniqueIdentifier>{16aad170-fe6f-4e54-bf91-5fba3c1588fd}</UniqueIdentifier>
     </Filter>
@@ -132,9 +129,6 @@
     <ClCompile Include="module\microscope_xy\microscope_xy.cpp">
       <Filter>Source Files\module\microscope_xy</Filter>
     </ClCompile>
-    <ClCompile Include="module\lcm-lite\lcmlite.c">
-      <Filter>Source Files\module\lcm-lite</Filter>
-    </ClCompile>
     <ClCompile Include="module\interpreter\pycfunctions.cpp">
       <Filter>Source Files\module\interpreter</Filter>
     </ClCompile>
@@ -199,9 +193,6 @@
     </ClInclude>
     <ClInclude Include="module\washer.h">
       <Filter>Source Files\module</Filter>
-    </ClInclude>
-    <ClInclude Include="module\lcm-lite\lcmlite.h">
-      <Filter>Source Files\module\lcm-lite</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
