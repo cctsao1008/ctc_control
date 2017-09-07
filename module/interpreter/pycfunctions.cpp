@@ -11,12 +11,13 @@
 #include "core_common.h"
 
 #define USING_MP1
+#define USING_CENT
 
 #if defined(USING_MP1)
 /* Motion Platform 1 APIs*/
 
 static PyObject*
-emb_mp1_movl(PyObject *self, PyObject *args) {
+mp1_movl(PyObject *self, PyObject *args) {
 	double x, y;
 
 	if (!PyArg_ParseTuple(args, "dd", &x, &y)) {
@@ -25,12 +26,12 @@ emb_mp1_movl(PyObject *self, PyObject *args) {
 
 	// cal set_mp1_movl
 
-	printf("emb_mp1_movl(%3.2f, %3.2f)\n", x, y);
+	printf("%s (%3.2f, %3.2f)\n", __FUNCTION__, x, y);
 	return Py_BuildValue("");
 }
 
 static PyObject*
-emb_mp1_movj(PyObject *self, PyObject *args) {
+mp1_movj(PyObject *self, PyObject *args) {
 	double j1, j2;
 
 	if (!PyArg_ParseTuple(args, "dd", &j1, &j2)) {
@@ -38,33 +39,47 @@ emb_mp1_movj(PyObject *self, PyObject *args) {
 	}
 	// cal set_mp1_movj
 
-	printf("emb_mp1_movj(%3.2f, %3.2f)\n", j1, j2);
+	printf("%s (%3.2f, %3.2f)\n", __FUNCTION__, j1, j2);
 	return Py_BuildValue("");
 }
 
 static PyObject*
-emb_set_mp1_pos(PyObject *self, PyObject *args) {
-	int mask = 0;
-	double x = 0, y = 0, z1 = 0, z2 = 0, z3 = 0;
+set_mp1_pos(PyObject *self, PyObject *args) {
+	int mask;
+	double x, y, z1, z2, z3;
 
 	if (!PyArg_ParseTuple(args, "dddddi", &x, &y, &z1, &z2, &z3, &mask)) {
 		return NULL;
 	}
 
 	if ((mask & 0x01) == 0x01)
-		printf("set pos.x = %4.2f\n", x);
+	{
+
+	}
+		
 
 	if ((mask & 0x02) == 0x02)
-		printf("set pos.y = %4.2f\n", y);
+	{
+
+	}
 
 	if ((mask & 0x04) == 0x04)
-		printf("set pos.z1 = %4.2f\n", z1);
+	{
+
+	}
 
 	if ((mask & 0x08) == 0x08)
-		printf("set pos.z2 = %4.2f\n", z2);
+	{
+
+	}
 
 	if ((mask & 0x10) == 0x10)
-		printf("set pos.z3 = %4.2f\n", z3);
+	{
+		
+	}
+
+	printf("%s ( x = %4.2f, y = %4.2f, z1 = %4.2f, z2 = %4.2f, z3 = %4.2f, mask =0x%02X)\n",
+		__FUNCTION__, x, y, z1, z2, z3, mask);
 
 	// cal set_mp1_movl
 
@@ -74,10 +89,10 @@ emb_set_mp1_pos(PyObject *self, PyObject *args) {
 }
 
 static PyObject*
-emb_get_mp1_pos(PyObject *self, PyObject *args) {
+get_mp1_pos(PyObject *self, PyObject *args) {
 	double x, y;
 
-	printf("emb_get_mp1_pos\n");
+	printf("get_mp1_pos\n");
 
 	if (!PyArg_ParseTuple(args, "dd", &x, &y)) {
 		return NULL;
@@ -85,7 +100,91 @@ emb_get_mp1_pos(PyObject *self, PyObject *args) {
 
 	// cal set_mp1_movl
 
-	printf("emb_mp1_movl(%3.2f, %3.2f)\n", x, y);
+	printf("%s ( x = %3.2f, y = %3.2f)\n", __FUNCTION__, x, y);
+	return Py_BuildValue("");
+}
+#endif
+
+#if defined(USING_CENT)
+/* relative centrifugal force */
+#define DEFAULT_RCF_MIN    0
+#define DEFAULT_RCF_MAX    10000
+
+/* centrifugal control */
+static PyObject*
+set_cen_rpm(PyObject *self, PyObject *args) {
+	double rpm;
+
+
+	if (!PyArg_ParseTuple(args, "d", &rpm)) {
+		return NULL;
+	}
+
+	printf("%s ( rpm = %f)\n", __FUNCTION__, rpm);
+
+	return Py_BuildValue("");
+}
+
+static PyObject*
+set_cen_rcf(PyObject *self, PyObject *args) {
+	double rcf;
+
+	if (!PyArg_ParseTuple(args, "d", &rcf)) {
+		return NULL;
+	}
+
+	if ((rcf > DEFAULT_RCF_MIN) && (rcf < DEFAULT_RCF_MAX)) {
+		printf("%s ( rcf = %f)\n", __FUNCTION__, rcf);
+	}
+	else {
+		printf("%s invalid rcf value! %f", __FUNCTION__, rcf);
+	}
+ 
+
+	return Py_BuildValue("");
+}
+
+static PyObject*
+set_cen_temp(PyObject *self, PyObject *args) {
+	double temp;
+
+
+	if (!PyArg_ParseTuple(args, "d", &temp)) {
+		return NULL;
+	}
+
+	printf("%s ( temp = %f)\n", __FUNCTION__, temp);
+
+	return Py_BuildValue("");
+}
+
+static PyObject*
+set_cen_duration(PyObject *self, PyObject *args) {
+	double duration;
+
+
+	if (!PyArg_ParseTuple(args, "d", &duration)) {
+		return NULL;
+	}
+
+	printf("%s ( duration = %f)\n", __FUNCTION__, duration);
+
+	return Py_BuildValue("");
+}
+
+static PyObject*
+set_cen_ctrl(PyObject *self, PyObject *args) {
+	double on;
+
+	if (!PyArg_ParseTuple(args, "d", &on)) {
+		return NULL;
+	}
+
+	if (on > 0)
+	{
+		printf("%s ( on = %f)\n", __FUNCTION__, on);
+	}
+
 	return Py_BuildValue("");
 }
 #endif
@@ -122,10 +221,19 @@ static PyMethodDef EmbMethods[] = {
 	{ "testfunction", emb_testfunction, METH_VARARGS, "Multiply args." },
 	{ "stringfunc", emb_stringfunc, METH_VARARGS, "C print a python str." },
 	{ "func1", emb_func1, METH_VARARGS, "Test function." },
+	/* motion platform 1 control apis */
 #if defined(USING_MP1)
-	{ "mp1_movl", emb_mp1_movl, METH_VARARGS, "mp1_movl" },
-	{ "mp1_movj", emb_mp1_movj, METH_VARARGS, "mp1_movj" },
-	{ "set_mp1_pos", emb_set_mp1_pos, METH_VARARGS, "set_mp1_pos" },
+	{ "mp1_movl", mp1_movl, METH_VARARGS, "mp1_movl" },
+	{ "mp1_movj", mp1_movj, METH_VARARGS, "mp1_movj" },
+	{ "set_mp1_pos", set_mp1_pos, METH_VARARGS, "set_mp1_pos" },
+#endif
+	/* centrifugal  control apis */
+#if defined(USING_CENT)
+	{ "set_cen_rpm", set_cen_rpm, METH_VARARGS, "set_cen_rpm" },
+	{ "set_cen_rcf", set_cen_rcf, METH_VARARGS, "set_cen_rcf" },
+	{ "set_cen_temp", set_cen_temp, METH_VARARGS, "set_cen_temp" },
+	{ "set_cen_duration", set_cen_duration, METH_VARARGS, "set_cen_duration" },
+	{ "set_cen_ctrl", set_cen_ctrl, METH_VARARGS, "set_cen_ctrl" },
 #endif
 	{ NULL, NULL, 0, NULL }
 };
