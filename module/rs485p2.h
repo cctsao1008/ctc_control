@@ -10,7 +10,6 @@
 #define _RS485P2_H_
 
 #include "core_common.h"
-#include "syringepump.h"
 
 class RS485Port
 {
@@ -30,6 +29,7 @@ public:
 
 	//Thread
 	bool initThread();
+	void clearMsg(uint8_t Address);
 	Message* getControlerMsg(uint8_t Address);
 	static DWORD WINAPI ReadWriteMsg(LPVOID ThreadParameter);
 
@@ -67,5 +67,9 @@ void rs485p2_memory_clean(Argument* ThreadParameter);
 DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter);
 
 int rsh_rs485p2_main(int argc, char *argv[]);
+
+static RS485Port* rs485p2;
+
+extern void initRS485P2para();
 
 #endif // _RS485P2_H_

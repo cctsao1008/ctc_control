@@ -208,20 +208,20 @@ bool MicroscopeXY::setSpeed(double Speed)
 // Combined with the driver
 bool MicroscopeXY::moveX(double X, uint8_t Direction)
 {
-	uint8_t address = '\x00';
-	int steps = (int)X * 40000.0;
-	Message* msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), address, Direction, NumberToString(steps).c_str(), "0", "0");
+	uint8_t address = '\x02';
+	int steps = (int)(X * 40000.0);
+	Message* msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), address, Direction, NumberToString(steps).c_str(), "50", "50");
 
 	/*
 	if (Direction == PositiveExecute && (_position.X + X) > 90.0)
 	{
-		printf("ShakeMachine: moveArm Error, Over 90.0 degree\n");
-		return false;
+	printf("ShakeMachine: moveArm Error, Over 90.0 degree\n");
+	return false;
 	}
 	else if (Direction == NegativeExecute && (_armPosition - Degree) < 0.0)
 	{
-		printf("ShakeMachine: moveArm Error, Over 90.0 degree\n");
-		return false;
+	printf("ShakeMachine: moveArm Error, Over 90.0 degree\n");
+	return false;
 	}
 	*/
 
@@ -230,19 +230,19 @@ bool MicroscopeXY::moveX(double X, uint8_t Direction)
 	clock_t dwMsgSend = clock();
 
 	//WaitForSingleObject(_ghMutex, INFINITE); // try
+	_rs485Port->clearMsg(address);
 	if (c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length) < 0)
 	{
 		printf("MicroscopeXY: moveX TX ERROR\n");
 	}
 	else
-	{ 
+	{
 		GetLocalTime(&msgSend);
-		printf("Address %.2X Message Send at %02d:%02d:%02d.%03d\n",address, msgSend.wHour, msgSend.wMinute, msgSend.wSecond, msgSend.wMilliseconds);
+		printf("Address %.2X Message Send at %02d:%02d:%02d.%03d\n", address, msgSend.wHour, msgSend.wMinute, msgSend.wSecond, msgSend.wMilliseconds);
 	}
 	//ReleaseMutex(_ghMutex); // try
 
 	bool controlRecieved = false;
-	unsigned int timeout = 0;
 	while (true)
 	{
 		feedback = _rs485Port->getControlerMsg(address);
@@ -263,11 +263,11 @@ bool MicroscopeXY::moveX(double X, uint8_t Direction)
 			/*
 			if (feedback->content[0] == (uint8_t) '\xB5' && feedback->content[1] == address)
 			{
-				WaitForSingleObject(_ghMutex, INFINITE); // try
-				printf("Resend Command\n");
-				c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length);
-				ReleaseMutex(_ghMutex); // try
-				continue;
+			WaitForSingleObject(_ghMutex, INFINITE); // try
+			printf("Resend Command\n");
+			c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length);
+			ReleaseMutex(_ghMutex); // try
+			continue;
 			}
 			*/
 
@@ -281,6 +281,7 @@ bool MicroscopeXY::moveX(double X, uint8_t Direction)
 			if (feedback->content[0] == (uint8_t) '\xB0' && feedback->content[1] == address)
 			{
 				printf("Address %.2X moveX Finished\n", address);
+				_rs485Port->clearMsg(address);
 				break;
 			}
 			delete[] feedback->content;
@@ -293,17 +294,6 @@ bool MicroscopeXY::moveX(double X, uint8_t Direction)
 			clock_t dwCurrent = clock();
 			if (dwCurrent - dwMsgSend > 500)
 			{
-				if (timeout > 5)
-				{
-					printf("Address %.2X Timeout too many times\n", address);
-					printf("Please check COM Port\n");
-					return false;
-				}
-				else
-				{
-					timeout += 1;
-				}
-
 				printf("Address %.2X not recieve B1\n", address);
 				printf("MicroscopeXY: moveX TX Timeout\n");
 				if (c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length) < 0)
@@ -323,15 +313,15 @@ bool MicroscopeXY::moveX(double X, uint8_t Direction)
 		Sleep(100);
 	}
 	delete[]  msgPtr->content;
-	
+
 	return true;
 }
 
 bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 {
-	uint8_t address = '\x00';
-	int steps = (int)Y * 40000.0;
-	Message* msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), address, Direction, NumberToString(steps).c_str(), "0", "0");
+	uint8_t address = '\x03';
+	int steps = (int)(Y * 40000.0);
+	Message* msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), address, Direction, NumberToString(steps).c_str(), "50", "50");
 
 	/*
 	if (Direction == PositiveExecute && (_position.X + X) > 90.0)
@@ -351,19 +341,19 @@ bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 	clock_t dwMsgSend = clock();
 
 	//WaitForSingleObject(_ghMutex, INFINITE); // try
+	_rs485Port->clearMsg(address);
 	if (c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length) < 0)
 	{
 		printf("MicroscopeXY: moveY TX ERROR\n");
 	}
 	else
-	{ 
+	{
 		GetLocalTime(&msgSend);
-		printf("Address %.2X Message Send at %02d:%02d:%02d.%03d\n",address, msgSend.wHour, msgSend.wMinute, msgSend.wSecond, msgSend.wMilliseconds);
+		printf("Address %.2X Message Send at %02d:%02d:%02d.%03d\n", address, msgSend.wHour, msgSend.wMinute, msgSend.wSecond, msgSend.wMilliseconds);
 	}
 	//ReleaseMutex(_ghMutex); // try
 
 	bool controlRecieved = false;
-	unsigned int timeout = 0;
 	while (true)
 	{
 		feedback = _rs485Port->getControlerMsg(address);
@@ -384,11 +374,11 @@ bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 			/*
 			if (feedback->content[0] == (uint8_t) '\xB5' && feedback->content[1] == address)
 			{
-				WaitForSingleObject(_ghMutex, INFINITE); // try
-				printf("Resend Command\n");
-				c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length);
-				ReleaseMutex(_ghMutex); // try
-				continue;
+			WaitForSingleObject(_ghMutex, INFINITE); // try
+			printf("Resend Command\n");
+			c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length);
+			ReleaseMutex(_ghMutex); // try
+			continue;
 			}
 			*/
 
@@ -402,6 +392,7 @@ bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 			if (feedback->content[0] == (uint8_t) '\xB0' && feedback->content[1] == address)
 			{
 				printf("Address %.2X moveY Finished\n", address);
+				_rs485Port->clearMsg(address);
 				break;
 			}
 			delete[] feedback->content;
@@ -411,17 +402,6 @@ bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 		//WaitForSingleObject(_ghMutex, INFINITE); // try
 		if (!controlRecieved)
 		{
-			if (timeout > 5)
-			{
-				printf("Address %.2X Timeout too many times\n", address);
-				printf("Please check COM Port\n");
-				return false;
-			}
-			else
-			{
-				timeout += 1;
-			}
-
 			clock_t dwCurrent = clock();
 			if (dwCurrent - dwMsgSend > 500)
 			{
@@ -444,6 +424,6 @@ bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 		Sleep(100);
 	}
 	delete[]  msgPtr->content;
-	
+
 	return true;
 }

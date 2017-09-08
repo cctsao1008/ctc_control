@@ -209,4 +209,5 @@ private:
 	uint8_t* SQ_CMD;
 };
 
+static BianNeng* bianneng;
 #endif // _CORE_BIANNENG_H_

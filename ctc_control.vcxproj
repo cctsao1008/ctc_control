@@ -127,6 +127,7 @@
     <ClInclude Include="core\core_rsh.h" />
     <ClInclude Include="core\core_scheduler.h" />
     <ClInclude Include="core\core_service.h" />
+    <ClInclude Include="module\bianneng\bianneng.h" />
     <ClInclude Include="module\config.h" />
     <ClInclude Include="module\cserial\c_serial.h" />
     <ClInclude Include="module\example.h" />

@@ -126,8 +126,8 @@ void* thread_main(void* arg)
 		return 0;
 	}
 
-	PyObject * pFunc = PyObject_GetAttrString(pModule, "main");
-	PyEval_CallObject(pFunc, NULL);
+	//PyObject * pFunc = PyObject_GetAttrString(pModule, "main");
+	//PyEval_CallObject(pFunc, NULL);
 
 	Py_DECREF(pModule);
 

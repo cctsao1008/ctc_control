@@ -59,4 +59,6 @@ private:
 
 };
 
+static MicroscopeXY* microscopexy;
+
 #endif // _XYZTABLE_H_
