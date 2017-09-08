@@ -349,8 +349,12 @@ void* rs485p1_thread_main(void* arg)
 	/* TEMP */
 	modbus_set_slave(ctx[1], 20);
 
+#if 0
 	AO[1] = 20.0;
 	write_register(ctx[1], 20, 0x0, (int)AO[1] * 10);
+#else
+	write_register(ctx[1], 20, 0x0, (int)(round(pd.cent.temp) * 10));
+#endif
 
 	/* ENABLE SERVO */
 	servo_enabled[SERVO_1] = true;
@@ -429,7 +433,7 @@ void* rs485p1_thread_main(void* arg)
 				//log_info("S1 ENABLED");
 				data[0] = servo_sync(ctx[0], SERVO_1);
 				//printf("S1 data[0] = 0x%04X \n", bswap8(data[0]));
-				printf("S1 data[0] = 0x%04X \n", data[0]);
+				//printf("S1 data[0] = 0x%04X \n", data[0]);
 			}
 
 			Sleep(10);
@@ -440,7 +444,7 @@ void* rs485p1_thread_main(void* arg)
 				//log_info("S2 ENABLED");
 				data[0] = servo_sync(ctx[0], SERVO_2);
 				//printf("S2 data[0] = 0x%04X \n", bswap8(data[0]));
-				printf("S1 data[0] = 0x%04X \n", data[0]);
+				//printf("S2 data[0] = 0x%04X \n", data[0]);
 			}
 
 			Sleep(10);
@@ -451,7 +455,7 @@ void* rs485p1_thread_main(void* arg)
 				//log_info("S3 ENABLED");
 				data[0] = servo_sync(ctx[0], SERVO_3);
 				//printf("S3 data[0] = 0x%04X \n", bswap8(data[0]));
-				printf("S1 data[0] = 0x%04X \n", data[0]);
+				//printf("S3 data[0] = 0x%04X \n", data[0]);
 			}
 
 			Sleep(10);
@@ -462,7 +466,7 @@ void* rs485p1_thread_main(void* arg)
 				//log_info("S4 ENABLED");
 				data[0] = servo_sync(ctx[0], SERVO_4);
 				//printf("S4 data[0] = 0x%04X \n", bswap8(data[0]));
-				printf("S1 data[0] = 0x%04X \n", data[0]);
+				//printf("S4 data[0] = 0x%04X \n", data[0]);
 #if 0
 				modbus_set_slave(ctx[0], SERVO_4);
 				//modbus_read_registers(ctx[0], 0x0900, 1, data);
@@ -504,14 +508,18 @@ void* rs485p1_thread_main(void* arg)
 			//rc = modbus_connect(ctx[1]);
 			//rc = modbus_read_input_registers(ctx[1], 0x0, 1, data);
 			//modbus_close(ctx[1]);
-			read_input_register(ctx[1], 20, 0x0, data);
-
-			char str[10];
-#if 0
+#if 1
 			// real data
+			/* read temp value from controller */
+			read_input_register(ctx[1], 20, 0x0, data);
+			char str[10];
 			sprintf_s(str, "%3.1f", (float)data[0] * 0.1);
 			//mosquitto_publish(mosq, NULL, AI_01, 64, str, 0, true);
 			//log_info("FT3400 PV = %3.1f", (float)data[0] * 0.1);
+
+			/* write new temp value to controller */
+			write_register(ctx[1], 20, 0x0, (int)(round(pd.cent.temp) * 10));
+			printf("write temp = %d\n", (int)(round(pd.cent.temp) * 10));
 #else
 			// fake data
 			//double tmp = (double)((rand() / (RAND_MAX + 1.0)) * (110.0 - 90.0) + 110.0); // 1~5 us

@@ -26,7 +26,7 @@ mp1_movl(PyObject *self, PyObject *args) {
 
 	// cal set_mp1_movl
 
-	printf("%s (%3.2f, %3.2f)\n", __FUNCTION__, x, y);
+	printf("%s (x = %3.2f, y = %3.2f)\n", __FUNCTION__, x, y);
 	return Py_BuildValue("");
 }
 
@@ -39,7 +39,7 @@ mp1_movj(PyObject *self, PyObject *args) {
 	}
 	// cal set_mp1_movj
 
-	printf("%s (%3.2f, %3.2f)\n", __FUNCTION__, j1, j2);
+	printf("%s (x = %3.2f, y = %3.2f)\n", __FUNCTION__, j1, j2);
 	return Py_BuildValue("");
 }
 
@@ -78,7 +78,7 @@ set_mp1_pos(PyObject *self, PyObject *args) {
 		
 	}
 
-	printf("%s ( x = %4.2f, y = %4.2f, z1 = %4.2f, z2 = %4.2f, z3 = %4.2f, mask =0x%02X)\n",
+	printf("%s (x = %4.2f, y = %4.2f, z1 = %4.2f, z2 = %4.2f, z3 = %4.2f, mask =0x%02X)\n",
 		__FUNCTION__, x, y, z1, z2, z3, mask);
 
 	// cal set_mp1_movl
@@ -100,13 +100,16 @@ get_mp1_pos(PyObject *self, PyObject *args) {
 
 	// cal set_mp1_movl
 
-	printf("%s ( x = %3.2f, y = %3.2f)\n", __FUNCTION__, x, y);
+	printf("%s (x = %3.2f, y = %3.2f)\n", __FUNCTION__, x, y);
 	return Py_BuildValue("");
 }
 #endif
 
 #if defined(USING_CENT)
 /* relative centrifugal force */
+#define DEFAULT_RPM_MIN    0
+#define DEFAULT_RPM_MAX    6000
+
 #define DEFAULT_RCF_MIN    0
 #define DEFAULT_RCF_MAX    10000
 
@@ -115,12 +118,13 @@ static PyObject*
 set_cen_rpm(PyObject *self, PyObject *args) {
 	double rpm;
 
-
 	if (!PyArg_ParseTuple(args, "d", &rpm)) {
 		return NULL;
 	}
 
-	printf("%s ( rpm = %f)\n", __FUNCTION__, rpm);
+	pd.cent.rpm = rpm;
+
+	printf("%s (rpm = %f)\n", __FUNCTION__, rpm);
 
 	return Py_BuildValue("");
 }
@@ -134,7 +138,8 @@ set_cen_rcf(PyObject *self, PyObject *args) {
 	}
 
 	if ((rcf > DEFAULT_RCF_MIN) && (rcf < DEFAULT_RCF_MAX)) {
-		printf("%s ( rcf = %f)\n", __FUNCTION__, rcf);
+		printf("%s (rcf = %f)\n", __FUNCTION__, rcf);
+		pd.cent.rcf = rcf;
 	}
 	else {
 		printf("%s invalid rcf value! %f", __FUNCTION__, rcf);
@@ -148,12 +153,13 @@ static PyObject*
 set_cen_temp(PyObject *self, PyObject *args) {
 	double temp;
 
-
 	if (!PyArg_ParseTuple(args, "d", &temp)) {
 		return NULL;
 	}
 
-	printf("%s ( temp = %f)\n", __FUNCTION__, temp);
+	printf("%s (temp = %f)\n", __FUNCTION__, temp);
+
+	pd.cent.temp = temp;
 
 	return Py_BuildValue("");
 }
@@ -167,7 +173,9 @@ set_cen_duration(PyObject *self, PyObject *args) {
 		return NULL;
 	}
 
-	printf("%s ( duration = %f)\n", __FUNCTION__, duration);
+	printf("%s (duration = %f)\n", __FUNCTION__, duration);
+
+	pd.cent.duration = duration;
 
 	return Py_BuildValue("");
 }
@@ -182,8 +190,12 @@ set_cen_ctrl(PyObject *self, PyObject *args) {
 
 	if (on > 0)
 	{
-		printf("%s ( on = %f)\n", __FUNCTION__, on);
+		printf("%s (on = %f)\n", __FUNCTION__, on);
+
+		pd.cent.on = 1.0f;
 	}
+	else
+		pd.cent.on = 0.0f;
 
 	return Py_BuildValue("");
 }

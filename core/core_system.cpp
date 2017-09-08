@@ -10,10 +10,7 @@
 
 #include "core_common.h"
 
-/* rs485 p1*/
-int rpm = 0;
-
-/* rs485 p2*/
+platform_data pd;
 
 uint64_t micros(void) {
 	LARGE_INTEGER freq, tick;

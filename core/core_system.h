@@ -16,8 +16,6 @@ uint64_t micros(void);
 
 typedef struct _mp
 {
-	double sys_elaps;
-
 	/* motion platform */
 	double pitch[2];
 
@@ -28,12 +26,24 @@ typedef struct _mp
 	double pos_pv[2];
 
 	double pos_queue[2];
-} mp;
+} mp1;
+
+typedef struct _cent
+{
+	double rpm;
+	double rcf;
+	double temp;
+	double duration;
+	double on;
+} cent;
 
 typedef struct _platform_data
 {
 	double sys_elaps;
 
 	/* motion platform 1 */
-	mp mp1;
+	mp1 mp1;
+	cent cent;
 } platform_data;
+
+extern platform_data pd;
