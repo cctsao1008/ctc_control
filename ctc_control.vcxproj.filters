@@ -194,5 +194,8 @@
     <ClInclude Include="module\washer.h">
       <Filter>Source Files\module</Filter>
     </ClInclude>
+    <ClInclude Include="module\bianneng\bianneng.h">
+      <Filter>Source Files\module\bianneng</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

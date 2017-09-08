@@ -268,13 +268,19 @@ DWORD WINAPI RS485Port::ReadWriteMsg(LPVOID ThreadParameter)
     return 0;
 }
 
-
-static BianNeng bianneng = BianNeng();
-static RS485Port rs485p2 = RS485Port("COM6");
-static SyringePump syringepump = SyringePump(&rs485p2);
-static Washer washer = Washer(&rs485p2);
-static MicroscopeXY microscopexy = MicroscopeXY(&rs485p2);
-
+void initRS485P2para()
+{
+	static bool init = false;
+	if (!init)
+	{
+		bianneng = new BianNeng();
+		rs485p2 = new RS485Port("COM6");
+		syringepump = new SyringePump(rs485p2);
+		washer = new Washer(rs485p2);
+		microscopexy = new MicroscopeXY(rs485p2);
+		init = true;
+	}
+}
 
 void rs485p2_memory_clean(Argument* ThreadParameter)
 {
@@ -289,18 +295,18 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 {
 	int argc = ((Argument *)ThreadParameter)->_argc;
 	char** argv = ((Argument *)ThreadParameter)->_argv;
-	
+
 	log_info("[commander] pub, argc = %d", argc);
 
 	/*
 	for (int i = 0; i < argc; i++)
 	{
-		printf("%s ", argv[i]);
+	printf("%s ", argv[i]);
 	}
 	printf("\n");
 	*/
 
-	if (argc < 2) 
+	if (argc < 2)
 	{
 		log_info("missing command");
 		rs485p2_memory_clean((Argument *)ThreadParameter);
@@ -317,7 +323,7 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 			return 0;
 		}
 
-		Message* msg = bianneng.trans2RTCMD(argv[2], (uint8_t)atoi(argv[3]), (*argv[4] - '0'), argv[5], argv[6], argv[7]);
+		Message* msg = bianneng->trans2RTCMD(argv[2], (uint8_t)atoi(argv[3]), (*argv[4] - '0'), argv[5], argv[6], argv[7]);
 		for (int i = 0; i < msg->length; i++)
 		{
 			printf("%.2X ", msg->content[i]);
@@ -340,7 +346,7 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 		// AB stands for Absorb
 		if (!strcmp(argv[2], "AB"))
 		{
-			syringepump.absorbVolume(atof(argv[3]));
+			syringepump->absorbVolume(atof(argv[3]));
 			rs485p2_memory_clean((Argument *)ThreadParameter);
 			return 0;
 		}
@@ -348,7 +354,7 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 		// DR stands for Drain
 		if (!strcmp(argv[2], "DR"))
 		{
-			syringepump.drainVolume(atof(argv[3]));
+			syringepump->drainVolume(atof(argv[3]));
 			rs485p2_memory_clean((Argument *)ThreadParameter);
 			return 0;
 		}
@@ -363,7 +369,7 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 		// PIP stands for Pipetting
 		if (!strcmp(argv[2], "PIP"))
 		{
-			syringepump.pipetteVolume(atof(argv[3]), atoi(argv[4]));
+			syringepump->pipetteVolume(atof(argv[3]), atoi(argv[4]));
 			rs485p2_memory_clean((Argument *)ThreadParameter);
 			return 0;
 		}
@@ -384,7 +390,7 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 		// MA stands for Move Arm
 		if (!strcmp(argv[2], "MA"))
 		{
-			washer.moveArm(atof(argv[3]), (uint8_t)atoi(argv[4]));
+			washer->moveArm(atof(argv[3]), (uint8_t)atoi(argv[4]));
 			rs485p2_memory_clean((Argument *)ThreadParameter);
 			return 0;
 		}
@@ -392,14 +398,14 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 		// SH stands for Shake
 		if (!strcmp(argv[2], "SH"))
 		{
-			washer.shakeMachine(atof(argv[3]), (unsigned int)atoi(argv[4]));
+			washer->shakeMachine(atof(argv[3]), (unsigned int)atoi(argv[4]));
 			return 0;
 		}
 
 		// RG stands for Rotate Gripper
 		if (!strcmp(argv[2], "RG"))
 		{
-			washer.rotateGripper(atof(argv[3]), (uint8_t)atoi(argv[4]));
+			washer->rotateGripper(atof(argv[3]), (uint8_t)atoi(argv[4]));
 			rs485p2_memory_clean((Argument *)ThreadParameter);
 			return 0;
 		}
@@ -420,7 +426,7 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 		// MV stands for Move to (X, Y)
 		if (!strcmp(argv[2], "MV"))
 		{
-			microscopexy.move2Pos(atof(argv[3]), atof(argv[4]));
+			microscopexy->move2Pos(atof(argv[3]), atof(argv[4]));
 			rs485p2_memory_clean((Argument *)ThreadParameter);
 			return 0;
 		}
@@ -439,6 +445,8 @@ int rsh_rs485p2_main(int argc, char *argv[])
 	threadParameter->_argc = argc;
 	threadParameter->_argv = new char *[argc];
 
+	initRS485P2para();
+
 	for (int i = 0; i < argc; i++)
 	{
 		int length = 0;
@@ -453,14 +461,14 @@ int rsh_rs485p2_main(int argc, char *argv[])
 			threadParameter->_argv[i][j] = argv[i][j];
 		}
 	}
-	
+
 	hThread = CreateThread(NULL,                       // default security attributes
-							  0,					   // use default stack size
-		   &rs485p2_thread_main,                       // thread function
-	   (LPVOID) threadParameter,                       // argument to thread function
-							  0,                       // use default creation flags
-						   NULL);                      // returns the thread identifier
-	
+		0,					   // use default stack size
+		&rs485p2_thread_main,                       // thread function
+		(LPVOID)threadParameter,                       // argument to thread function
+		0,                       // use default creation flags
+		NULL);                      // returns the thread identifier
+
 	if (hThread == NULL)
 	{
 		fprintf(stderr, "[ERROR]: rsh_rs485p2_main: rs485p2_thread_main Thread Cannot Be Created\n");

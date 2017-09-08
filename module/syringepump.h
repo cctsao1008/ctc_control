@@ -49,4 +49,6 @@ private:
 	
 };
 
+static SyringePump* syringepump;
+
 #endif // _SYRINGEPUMP_H_
