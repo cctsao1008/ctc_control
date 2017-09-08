@@ -307,7 +307,6 @@ int main(int argc, char *argv[])
 	strcpy_s(command, "commander start");
 	rsh_command(command);
 
-
 	//log_info("ctc control is running.");
 
     /* now initialized */

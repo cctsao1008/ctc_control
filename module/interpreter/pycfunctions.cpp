@@ -262,6 +262,7 @@ set_mxy_mv(PyObject *self, PyObject *args) {
 	if (!PyArg_ParseTuple(args, "dd", &x, &y)) {
 		return Py_BuildValue("s", "[ERROR] Microscope XY Table Move Failed");
 	}
+	initRS485P2para();
 	microscopexy->move2Pos(x, y);
 	return Py_BuildValue("s", "[INFO] Microscope XY Table Move Finished");
 }

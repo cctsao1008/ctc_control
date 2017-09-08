@@ -29,6 +29,7 @@ public:
 
 	//Thread
 	bool initThread();
+	void clearMsg(uint8_t Address);
 	Message* getControlerMsg(uint8_t Address);
 	static DWORD WINAPI ReadWriteMsg(LPVOID ThreadParameter);
 

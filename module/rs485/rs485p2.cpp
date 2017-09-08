@@ -93,6 +93,10 @@ bool RS485Port::initThread()
 	// init _recieveMap
 	_recieveMap.insert(std::pair <uint8_t, std::vector<Message>>('\x00', std::vector<Message>())); // try
 	_recieveMap.insert(std::pair <uint8_t, std::vector<Message>>('\x01', std::vector<Message>())); // try
+	_recieveMap.insert(std::pair <uint8_t, std::vector<Message>>('\x02', std::vector<Message>())); // try
+	_recieveMap.insert(std::pair <uint8_t, std::vector<Message>>('\x03', std::vector<Message>())); // try
+	_recieveMap.insert(std::pair <uint8_t, std::vector<Message>>('\x04', std::vector<Message>())); // try
+	_recieveMap.insert(std::pair <uint8_t, std::vector<Message>>('\x05', std::vector<Message>())); // try
 
 	// init thread parameter
 	_ghMutex = CreateMutex(NULL, FALSE, (LPCSTR) _name);
@@ -164,6 +168,14 @@ Message* RS485Port::getControlerMsg(uint8_t Address)
 	//ReleaseMutex(_ghMutex);
 
     return NULL;
+}
+
+void RS485Port::clearMsg(uint8_t Address)
+{
+	if (!_recieveMap.find(Address)->second.empty())
+	{
+		_recieveMap.find(Address)->second.clear();
+	}
 }
 
 DWORD WINAPI RS485Port::ReadWriteMsg(LPVOID ThreadParameter)
