@@ -138,6 +138,15 @@
     <ClCompile Include="module\interpreter\emb_motion_platform_m.cpp">
       <Filter>Source Files\module\interpreter</Filter>
     </ClCompile>
+    <ClCompile Include="module\interpreter\emb_microscopexy.cpp">
+      <Filter>Source Files\module\interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="module\interpreter\emb_syringepump.cpp">
+      <Filter>Source Files\module\interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="module\interpreter\emb_washer.cpp">
+      <Filter>Source Files\module\interpreter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="module\cserial\c_serial.h">

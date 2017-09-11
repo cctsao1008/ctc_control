@@ -108,7 +108,10 @@
     <ClCompile Include="module\cserial\c_serial.c" />
     <ClCompile Include="module\example\example.cpp" />
     <ClCompile Include="module\interpreter\emb_centrifuge.cpp" />
+    <ClCompile Include="module\interpreter\emb_microscopexy.cpp" />
     <ClCompile Include="module\interpreter\emb_motion_platform_m.cpp" />
+    <ClCompile Include="module\interpreter\emb_syringepump.cpp" />
+    <ClCompile Include="module\interpreter\emb_washer.cpp" />
     <ClCompile Include="module\interpreter\interpreter_main.cpp" />
     <ClCompile Include="module\interpreter\interpreter_common.cpp" />
     <ClCompile Include="module\log.c\src\log.c" />
