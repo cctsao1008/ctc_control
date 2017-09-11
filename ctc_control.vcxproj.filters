@@ -105,9 +105,6 @@
     <ClCompile Include="module\scanner\scanner.cpp">
       <Filter>Source Files\module\scanner</Filter>
     </ClCompile>
-    <ClCompile Include="module\interpreter\interpreter.cpp">
-      <Filter>Source Files\module\interpreter</Filter>
-    </ClCompile>
     <ClCompile Include="module\config\config.cpp">
       <Filter>Source Files\module\config</Filter>
     </ClCompile>
@@ -129,7 +126,16 @@
     <ClCompile Include="module\microscope_xy\microscope_xy.cpp">
       <Filter>Source Files\module\microscope_xy</Filter>
     </ClCompile>
-    <ClCompile Include="module\interpreter\pycfunctions.cpp">
+    <ClCompile Include="module\interpreter\emb_centrifuge.cpp">
+      <Filter>Source Files\module\interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="module\interpreter\interpreter_main.cpp">
+      <Filter>Source Files\module\interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="module\interpreter\interpreter_common.cpp">
+      <Filter>Source Files\module\interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="module\interpreter\emb_motion_platform_m.cpp">
       <Filter>Source Files\module\interpreter</Filter>
     </ClCompile>
   </ItemGroup>
@@ -196,6 +202,9 @@
     </ClInclude>
     <ClInclude Include="module\bianneng\bianneng.h">
       <Filter>Source Files\module\bianneng</Filter>
+    </ClInclude>
+    <ClInclude Include="module\interpreter\interpreter_common.h">
+      <Filter>Source Files\module\interpreter</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
