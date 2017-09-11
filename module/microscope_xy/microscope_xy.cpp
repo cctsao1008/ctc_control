@@ -136,6 +136,8 @@ bool MicroscopeXY::move2Pos(Position Pos)
 
 bool MicroscopeXY::move2Pos(double X, double Y)
 {
+	printf("%f %f\n", X, Y);
+	printf("%f %f\n", _position.X, _position.Y);
 	double xLength = _position.X - X;
 	uint8_t xDirection;
 	double yLength = _position.Y - Y;
