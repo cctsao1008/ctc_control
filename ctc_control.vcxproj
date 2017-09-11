@@ -66,7 +66,7 @@
       <Command> xcopy /d /y "$(ProjectDir)\lib\mosquitto-1.4.14\*.dll" "$(OutDir)"
  xcopy /d /y "$(ProjectDir)\lib\libmodbus v3.1.4\x86\libs\*.dll" "$(OutDir)"
  xcopy /d /y "$(ProjectDir)\lib\python-3.6.2-embed-win32\*.dll" "$(OutDir)"
- xcopy /d /s /y "$(ProjectDir)\lib\python-3.6.2-embed-win32\pyc" "$(OutDir)"</Command>
+ xcopy /d /s /y "$(ProjectDir)\lib\python-3.6.2-embed-win32\python36.zip" "$(OutDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

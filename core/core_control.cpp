@@ -303,11 +303,11 @@ int main(int argc, char *argv[])
 	char buffer1[MAX_PATH];
 	char buffer2[MAX_PATH];
 	GetCurrentDirectory(MAX_PATH, buffer1);
-	printf("%s \n", buffer1);
+	//printf("%s \n", buffer1);
 
 	//strcpy_s(buffer2, "%s\dll", buffer1);
 	sprintf(buffer2, "%s\\dll", buffer1);
-	printf("%s \n", buffer2);
+	//printf("%s \n", buffer2);
 	SetDllDirectory(buffer2);
 
 	strcpy_s(command, "commander start");
