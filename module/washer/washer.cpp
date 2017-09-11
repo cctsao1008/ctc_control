@@ -7,6 +7,7 @@
  *********************************************/
 
 #include "core_common.h"
+//#include <typeinfo>
 
 // Constructor
 Washer::Washer(RS485Port* PortPtr)
@@ -14,8 +15,8 @@ Washer::Washer(RS485Port* PortPtr)
 	if (initDriver())
 	{
 		_armPosition = 0.0;
-		_rotateSpeed = RPM197;
-		_shakeSpeed = RPM197;
+		_rotateSpeed = RPM50;
+		_shakeSpeed = RPM930;
 		_rs485Port = PortPtr;
 		_ghMutex = _rs485Port->getMutex();
 	}
@@ -23,26 +24,26 @@ Washer::Washer(RS485Port* PortPtr)
 
 Washer::Washer(double Pos, double RotateSpeed, double ShakeSpeed, RS485Port* PortPtr)
 {
-    if(initDriver())
-    {
+	if (initDriver())
+	{
 		_armPosition = Pos;
 		_rotateSpeed = RotateSpeed;
-    	_shakeSpeed  = ShakeSpeed;
+		_shakeSpeed = ShakeSpeed;
 		_rs485Port = PortPtr;
 		_ghMutex = _rs485Port->getMutex();
-    }
-    else
-    {
-    	// Error Message
-    }
-    
+	}
+	else
+	{
+		// Error Message
+	}
+
 }
 
 // Destructor
-Washer::~Washer ()
+Washer::~Washer()
 {
 	// Release memory if it's needed
-} 
+}
 
 // Information
 double Washer::getPositon() const
@@ -50,12 +51,12 @@ double Washer::getPositon() const
 	return _armPosition;
 }
 
-double Washer::getRotateSpeed() const
+unsigned int Washer::getRotateSpeed() const
 {
 	return _rotateSpeed;
 }
 
-double Washer::getShakeSpeed() const
+unsigned int Washer::getShakeSpeed() const
 {
 	return _shakeSpeed;
 }
@@ -65,9 +66,10 @@ double Washer::getShakeSpeed() const
 bool Washer::moveArm(double Degree, uint8_t Direction)
 {
 	uint8_t address = '\x00';
-	int steps = (int)Degree * 100.0 / 1.8;
-	Message* msgPtr = trans2RTCMD(NumberToString(_shakeSpeed).c_str(), address, Direction, NumberToString(steps).c_str(), "0", "0");
-	
+	int steps = (int)Degree * 90.0 / 0.9;
+	//printf("%s\n", typeid(_shakeSpeed).name());
+	Message* msgPtr = trans2RTCMD(NumberToString(_shakeSpeed).c_str(), address, Direction, NumberToString(steps).c_str(), "200", "0");
+
 	if (Direction == PositiveExecute && (_armPosition + Degree) > 90.0)
 	{
 		printf("Washer: moveArm Error, Over 90.0 degree\n");
@@ -84,9 +86,10 @@ bool Washer::moveArm(double Degree, uint8_t Direction)
 	clock_t dwMsgSend = clock();
 
 	//WaitForSingleObject(_ghMutex, INFINITE); // try
+	_rs485Port->clearMsg(address);
 	if (c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length) < 0)
 	{
-		printf("ShakeMachine: moveArm TX ERROR\n");
+		printf("Washer: moveArm TX ERROR\n");
 	}
 	else
 	{
@@ -96,7 +99,6 @@ bool Washer::moveArm(double Degree, uint8_t Direction)
 	//ReleaseMutex(_ghMutex); // try
 
 	bool controlRecieved = false;
-	unsigned int timeout = 0;
 	while (true)
 	{
 		feedback = _rs485Port->getControlerMsg(address);
@@ -144,6 +146,21 @@ bool Washer::moveArm(double Degree, uint8_t Direction)
 					_armPosition -= Degree;
 					printf("Address %.2X moveArm Negative Finished\n", address);
 				}
+				_rs485Port->clearMsg(address);
+				break;
+			}
+
+			if (feedback->content[0] == (uint8_t) '\xA1' && feedback->content[1] == address)
+			{
+				_armPosition += Degree;
+				printf("Address %.2X moveArm Positive to the Limited\n", address);
+				break;
+			}
+
+			if (feedback->content[0] == (uint8_t) '\xA0' && feedback->content[1] == address)
+			{
+				_armPosition -= Degree;
+				printf("Address %.2X moveArm Negative to the Limited\n", address);
 				break;
 			}
 			delete[] feedback->content;
@@ -153,17 +170,6 @@ bool Washer::moveArm(double Degree, uint8_t Direction)
 		//WaitForSingleObject(_ghMutex, INFINITE); // try
 		if (!controlRecieved)
 		{
-			if (timeout > 5)
-			{
-				printf("Address %.2X Timeout too many times\n", address);
-				printf("Please check COM Port\n");
-				return false;
-			}
-			else
-			{
-				timeout += 1;
-			}
-
 			clock_t dwCurrent = clock();
 			if (dwCurrent - dwMsgSend > 500)
 			{
@@ -186,26 +192,25 @@ bool Washer::moveArm(double Degree, uint8_t Direction)
 		Sleep(100);
 	}
 	delete[]  msgPtr->content;
-
 	return true;
 }
 
 bool Washer::rotateGripper(double Circle, uint8_t Direction)
 {
-	uint8_t address = '\x00';
-	int steps = (int)Circle * 400.0 / 60.0;
-	Message* msgPtr = trans2RTCMD(NumberToString(_shakeSpeed).c_str(), address, Direction, NumberToString(steps).c_str(), "0", "0");
+	uint8_t address = '\x01';
+	int steps = (int)Circle * 400.0;
+	Message* msgPtr = trans2RTCMD(NumberToString(_rotateSpeed).c_str(), address, Direction, NumberToString(steps).c_str(), "200", "0");
 
 	/*
 	if (Direction == PositiveExecute && (_position + Degree) > 90.0)
 	{
-		printf("ShakeMachine: moveArm Error, Over 90.0 degree");
-		return false;
+	printf("ShakeMachine: moveArm Error, Over 90.0 degree");
+	return false;
 	}
 	else if (Direction == NegativeExecute && (_position - Degree) < 0.0)
 	{
-		printf("ShakeMachine: moveArm Error, Over 90.0 degree");
-		return false;
+	printf("ShakeMachine: moveArm Error, Over 90.0 degree");
+	return false;
 	}
 	*/
 
@@ -213,6 +218,7 @@ bool Washer::rotateGripper(double Circle, uint8_t Direction)
 	SYSTEMTIME msgSend;
 	clock_t dwMsgSend = clock();
 
+	WaitForSingleObject(_ghMutex, INFINITE);
 	if (c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length) < 0)
 	{
 		printf("Washer: rotateGripper TX ERROR\n");
@@ -222,12 +228,14 @@ bool Washer::rotateGripper(double Circle, uint8_t Direction)
 		GetLocalTime(&msgSend);
 		printf("Address %.2X Message Send at %02d:%02d:%02d.%03d\n", address, msgSend.wHour, msgSend.wMinute, msgSend.wSecond, msgSend.wMilliseconds);
 	}
+	ReleaseMutex(_ghMutex);
 
 	bool controlRecieved = false;
-	unsigned int timeout = 0;
 	while (true)
 	{
+		WaitForSingleObject(_ghMutex, INFINITE);
 		feedback = _rs485Port->getControlerMsg(address);
+		ReleaseMutex(_ghMutex);
 
 		if (feedback != NULL)
 		{
@@ -267,22 +275,12 @@ bool Washer::rotateGripper(double Circle, uint8_t Direction)
 
 		if (!controlRecieved)
 		{
-			if (timeout > 5)
-			{
-				printf("Address %.2X Timeout too many times\n", address);
-				printf("Please check COM Port\n");
-				return false;
-			}
-			else
-			{
-				timeout += 1;
-			}
-
 			clock_t dwCurrent = clock();
 			if (dwCurrent - dwMsgSend > 500)
 			{
 				printf("Address %.2X not recieve B1\n", address);
 				printf("Washer: rotateGripper TX Timeout\n");
+				WaitForSingleObject(_ghMutex, INFINITE);
 				if (c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length) < 0)
 				{
 					printf("Washer: rotateGripper TX ERROR\n");
@@ -293,6 +291,7 @@ bool Washer::rotateGripper(double Circle, uint8_t Direction)
 					GetLocalTime(&msgSend);
 					printf("Address %.2X Message Send at %02d:%02d:%02d.%03d\n", address, msgSend.wHour, msgSend.wMinute, msgSend.wSecond, msgSend.wMilliseconds);
 				}
+				ReleaseMutex(_ghMutex);
 			}
 		}
 		Sleep(100);
@@ -304,26 +303,26 @@ bool Washer::rotateGripper(double Circle, uint8_t Direction)
 
 bool Washer::shakeMachine(double Degree, unsigned int Times)
 {
-	while(Times-- > 0)
+	while (Times-- > 0)
 	{
-		printf("Degree: %f, Shake Cycle: %d\n", Degree, (5 - Times));// try
-		WaitForSingleObject(_ghMutex, INFINITE);
+		printf("Degree: %f, MoveArm %d\n", Degree, (5 - Times));// try
+		//WaitForSingleObject(_ghMutex, INFINITE);
 		if (!moveArm(Degree, PositiveExecute))
 		{
 			// Error Message
 			return false;
 		}
-		ReleaseMutex(_ghMutex);
-		Sleep(100);
+		//ReleaseMutex(_ghMutex);
+		Sleep(200);
 
-		WaitForSingleObject(_ghMutex, INFINITE);
+		//WaitForSingleObject(_ghMutex, INFINITE);
 		if (!moveArm(Degree, NegativeExecute))
 		{
 			// Error Message
 			return false;
 		}
-		ReleaseMutex(_ghMutex);
-		Sleep(100);
+		//ReleaseMutex(_ghMutex);
+		Sleep(200);
 	}
 
 	return true;
@@ -335,16 +334,14 @@ bool Washer::initDriver()
 	return true;
 }
 
-bool Washer::setRotateSpeed(double RotateSpeed)
+bool Washer::setRotateSpeed(unsigned int RotateSpeed)
 {
-	_rotateFreq = RotateSpeed;
 	_rotateSpeed = RotateSpeed;
 	return true;
 }
 
-bool Washer::setShakeSpeed(double ShakeSpeed)
+bool Washer::setShakeSpeed(unsigned int ShakeSpeed)
 {
-	_shakeFreq  = (int) ShakeSpeed * 100.0 / 1.8;
 	_shakeSpeed = ShakeSpeed;
 	return true;
 }

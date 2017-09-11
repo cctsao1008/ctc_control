@@ -1,10 +1,11 @@
-/*********************************************
+﻿/*********************************************
  * @file Washer.h                    		 *
  *                                           *
  * Washer Contorl     	 		             *
  *                                           *
  * @author Joshua <jan.joshua@iac.com.tw>    *
  *********************************************/
+
 
 #ifndef _CORE_WASHER_H_
 #define _CORE_WASHER_H_
@@ -25,8 +26,8 @@ public:
 
 	// Information
 	double getPositon() const;
-	double getRotateSpeed() const;
-	double getShakeSpeed() const;
+	unsigned int getRotateSpeed() const;
+	unsigned int getShakeSpeed() const;
 
 	// Action
 	bool moveArm(double Degree, uint8_t Direction);
@@ -35,17 +36,15 @@ public:
 	
 	// Modifier
 	bool initDriver();
-	bool setRotateSpeed(double RotateSpeed);
-	bool setShakeSpeed(double ShakeSpeed);
+	bool setRotateSpeed(unsigned int RotateSpeed);
+	bool setShakeSpeed(unsigned int ShakeSpeed);
 
 private:
 	// Status
-	double _armPosition;		// unit is degree in range of 0 degree ~ 90 degree
-	double _gripperPosition;	// unit is circle
-	double _shakeSpeed;			// unit is Hz //unit is degree
-	double _rotateSpeed;		// unit is Hz //unit is rpm
-	int _shakeFreq;				// uint is Hz, the frequecy of pwm pulses given by Shake Controler
-	int _rotateFreq;			// uint is Hz, the frequecy of pwm pulses given by Rotate Controler
+	double _armPosition;			// unit is degree in range of 0 degree ~ 90 degree
+	double _gripperPosition;		// unit is circle
+	unsigned int _shakeSpeed;		// unit is Hz //unit is degree
+	unsigned int _rotateSpeed;		// unit is Hz //unit is rpm
 	// Ptr
 	RS485Port* _rs485Port;
 	/* mutex lock */

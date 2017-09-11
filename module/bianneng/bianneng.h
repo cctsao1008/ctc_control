@@ -1,4 +1,4 @@
-/**********************************************
+﻿/**********************************************
  * @file core_bianneng.h                      *
  *                                            *
  * BianNeng Controler Command Format Transfer *
@@ -149,6 +149,9 @@
 #define NegativeExecute '\x02'
 #define StopExecute		'\x03'
 
+#define STR(x)   #x
+#define SHOW_DEFINE(x) printf("%s=%s\n", #x, STR(x))
+
 /**
 Motor Driver Message Structure
 */
@@ -210,4 +213,5 @@ private:
 };
 
 static BianNeng* bianneng;
+
 #endif // _CORE_BIANNENG_H_

@@ -29,6 +29,11 @@ PyObject* set_wm_sh(PyObject *self, PyObject *args)
 	int time = 0;
 	printf("set_wm_sh \n");
 	if (!PyArg_ParseTuple(args, "di", &degree, &time)) {
+		return Py_BuildValue("s", "[ERROR] Washer Shake Recieve Wrong Parameters");
+	}
+	initRS485P2para();
+	if (!washer->shakeMachine(degree, time))
+	{
 		return Py_BuildValue("s", "[ERROR] Washer Shake Failed");
 	}
 	return Py_BuildValue("s", "[INFO] Washer Shake Finished");
