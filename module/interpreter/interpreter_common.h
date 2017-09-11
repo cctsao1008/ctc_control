@@ -39,3 +39,24 @@ set_cen_ctrl(PyObject *self, PyObject *args);
 
 PyObject*
 set_cen_duration(PyObject *self, PyObject *args);
+
+// Joshua Add Start
+
+// Syringe Pump Control
+PyObject* set_sp_ab(PyObject *self, PyObject *args);
+
+PyObject* set_sp_dr(PyObject *self, PyObject *args);
+
+PyObject* set_sp_pip(PyObject *self, PyObject *args);
+
+// Washer Control
+PyObject* set_wm_ma(PyObject *self, PyObject *args);
+
+PyObject* set_wm_sh(PyObject *self, PyObject *args);
+
+PyObject* set_wm_rg(PyObject *self, PyObject *args);
+
+// Microscope XY Control
+PyObject* set_mxy_mv(PyObject *self, PyObject *args);
+
+// Joshua Add Finished
