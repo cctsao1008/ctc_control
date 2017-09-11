@@ -36,6 +36,7 @@ char *builtin_str[] = {
     "testopt",
     "help",
 	"python",
+	"py",
 	"version",
     "exit"
 };
@@ -48,9 +49,10 @@ int(*builtin_func[]) (int argc, char *argv[]) = {
 	&rsh_rs485p2_main, // Added by Joshua
 	//
 	&rsh_testopt,
-    &rsh_help,
-	&rsh_interpreter_main,
-	&rsh_version,
+    &rsh_help, // help
+	&rsh_interpreter_main, // python
+	&rsh_interpreter_main, // py
+	&rsh_version, // verdion
     &rsh_exit
 };
 
