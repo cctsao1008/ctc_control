@@ -32,6 +32,7 @@ char *builtin_str[] = {
 	"commander",
 	"rs485p1",
 	"rs485p2", // Added by Joshua
+	"mqtt",
 	//
     "testopt",
     "help",
@@ -47,6 +48,7 @@ int(*builtin_func[]) (int argc, char *argv[]) = {
 	&rsh_core_commander_main,
 	&rsh_rs485p1_main,
 	&rsh_rs485p2_main, // Added by Joshua
+	&rsh_mqtt_main,
 	//
 	&rsh_testopt,
     &rsh_help, // help

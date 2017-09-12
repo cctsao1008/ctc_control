@@ -9,3 +9,22 @@
 */
 
 #include "core_common.h"
+
+uint8_t mqtt_receiver(const char* topic, const char* cmd)
+{
+	if (strcmp(topic, TOPIC_PYC_CMD) == 0)
+	{
+		printf("exec python command.\n");
+	}
+	else if (strcmp(topic, TOPIC_RSH_CMD) == 0)
+	{
+		printf("exec rsh command.\n");
+		rsh_command(cmd);
+	}
+	else /* default: */
+	{
+		printf("invalid topic (%s)\n", topic);
+	}
+
+	return 0;
+}

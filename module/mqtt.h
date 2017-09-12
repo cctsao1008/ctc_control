@@ -1,9 +1,9 @@
 /**
-* @file servo.h
+* @file mqtt.h
 *
-* servo
+* mqtt
 *
-*   servo.
+*   mqtt.
 *
 * @author Ricardo <tsao.ricardo@iac.com.tw>
 */
@@ -11,5 +11,8 @@
 #pragma once
 
 #include "core_common.h"
+
+#define TOPIC_PYC_CMD "CONTROL/PYC_CMD"
+#define TOPIC_RSH_CMD "CONTROL/RSH_CMD"
 
 int rsh_mqtt_main(int argc, char *argv[]);

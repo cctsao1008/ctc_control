@@ -28,8 +28,8 @@ void* thread_main(void* arg)
 
 	PyImport_AppendInittab("emb", &PyInit_emb);
 
-	wchar_t pySearchPath[] = L"D:\vs2013\ctc_project\ctc_control_gitlab\Debug\python";
-	Py_SetPythonHome(pySearchPath);
+	//wchar_t pySearchPath[] = L"D:\vs2013\ctc_project\ctc_control_gitlab\Debug\python";
+	//Py_SetPythonHome(pySearchPath);
 
 	char buffer1[MAX_PATH];
 	GetCurrentDirectory(MAX_PATH, buffer1);

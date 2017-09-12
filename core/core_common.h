@@ -34,6 +34,7 @@
 #include "mosquitto.h"
 #include "tiny-json.h"
 #include "lcmlite.h"
+#include "mqtt.h"
 
 #ifdef _DEBUG
 #undef _DEBUG
