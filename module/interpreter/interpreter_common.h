@@ -57,6 +57,6 @@ PyObject* set_wm_sh(PyObject *self, PyObject *args);
 PyObject* set_wm_rg(PyObject *self, PyObject *args);
 
 // Microscope XY Control
-PyObject* set_mxy_mv(PyObject *self, PyObject *args);
+PyObject* set_mps_mov(PyObject *self, PyObject *args);
 
 // Joshua Add Finished

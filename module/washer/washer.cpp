@@ -22,7 +22,7 @@ Washer::Washer(RS485Port* PortPtr)
 	}
 }
 
-Washer::Washer(double Pos, double RotateSpeed, double ShakeSpeed, RS485Port* PortPtr)
+Washer::Washer(double Pos, unsigned int RotateSpeed, unsigned int ShakeSpeed, RS485Port* PortPtr)
 {
 	if (initDriver())
 	{
@@ -66,7 +66,7 @@ unsigned int Washer::getShakeSpeed() const
 bool Washer::moveArm(double Degree, uint8_t Direction)
 {
 	uint8_t address = '\x00';
-	int steps = (int)Degree * 90.0 / 0.9;
+	int steps = (int) (Degree * 90.0 / 0.9);
 	//printf("%s\n", typeid(_shakeSpeed).name());
 	printf("%p\n", washer);
 	Message* msgPtr = trans2RTCMD(NumberToString(_shakeSpeed).c_str(), address, Direction, NumberToString(steps).c_str(), "200", "0");
@@ -199,7 +199,7 @@ bool Washer::moveArm(double Degree, uint8_t Direction)
 bool Washer::rotateGripper(double Circle, uint8_t Direction)
 {
 	uint8_t address = '\x01';
-	int steps = (int)Circle * 400.0;
+	int steps = (int) (Circle * 400.0);
 	Message* msgPtr = trans2RTCMD(NumberToString(_rotateSpeed).c_str(), address, Direction, NumberToString(steps).c_str(), "200", "0");
 
 	/*

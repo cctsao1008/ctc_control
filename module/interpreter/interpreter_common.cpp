@@ -42,7 +42,7 @@ static PyMethodDef EmbMethods[] = {
 #endif
 	/* Microscope XY Table Control API */
 #if defined(USING_MICR)
-	{ "set_mxy_mv", set_mxy_mv, METH_VARARGS, "Microscope XY Table Move to Position function." },
+	{ "set_mps_mov", set_mps_mov, METH_VARARGS, "Microscope XY Table Move to Position function." },
 #endif
 	/* Microscope XY Table Control API */
 #if defined(USING_WASH)
