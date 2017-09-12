@@ -19,7 +19,7 @@ public:
 
 	// Constructor
 	Washer(RS485Port* PortPtr);
-	Washer(double Pos, double RotateSpeed, double ShakeSpeed, RS485Port* PortPtr);
+	Washer(double Pos, unsigned int RotateSpeed, unsigned int ShakeSpeed, RS485Port* PortPtr);
 
 	// Destructor
 	~Washer();

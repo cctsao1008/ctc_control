@@ -68,12 +68,9 @@ Mutexes For rsh Thread
 */
 typedef struct _rshThreadMutex
 {
-	//HANDLE _pumpMutex;
 	bool _pumpMutex;
-	//HANDLE _washerMutex;
 	bool _washerMutex;
-	//HANDLE _microxyMutex;
-	bool _microxyMutex;
+	bool _mpsMutex;
 } rshThreadMutex;
 
 
@@ -87,7 +84,6 @@ int rsh_rs485p2_main(int argc, char *argv[]);
 void rsh_rs485p2_mutex_init();
 
 static RS485Port* rs485p2;
-//static RS485Port rs485p2 = RS485Port("COM12");
 
 static rshThreadMutex rshMutex;
 

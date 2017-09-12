@@ -12,29 +12,30 @@
 #if defined(USING_MICR)
 
 // Microscope XY Control
-PyObject* set_mxy_mv(PyObject *self, PyObject *args) 
+PyObject* set_mps_wait(PyObject *self, PyObject *args)
+{
+	while (rshMutex._mpsMutex)
+	{
+		Sleep(200);
+	}
+	return Py_BuildValue("s", "[INFO] Microscope XY Table Move Finished");
+}
+
+PyObject* set_mps_mov(PyObject *self, PyObject *args) 
 {
 	double x = 0.0;
 	double y = 0.0;
-	//printf("set_mxy_mv \n");
+
 	if (!PyArg_ParseTuple(args, "dd", &x, &y)) {
 		return Py_BuildValue("s", "[ERROR] Microscope XY Table Move Failed");
 	}
 	
-	std::string command = "rs485p2 MXY MV ";
+	std::string command = "rs485p2 mps mov ";
 	command += NumberToString(x) + " " + NumberToString(y);
 
 	//printf("%s\n", command.c_str());
 	rsh_command(command.c_str());
 
-	/*
-	RS485Port p2 = RS485Port("COM12");
-	MicroscopeXY mxy = MicroscopeXY(&p2);
-	if (!mxy.move2Pos(x, y))
-	{
-		return Py_BuildValue("s", "[ERROR] Microscope XY Table Move Failed");
-	}
-	*/
 	return Py_BuildValue("s", "[INFO] Microscope XY Table Move Finished");
 }
 

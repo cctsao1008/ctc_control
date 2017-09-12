@@ -304,7 +304,7 @@ void initRS485P2para()
 	if (!init)
 	{
 		bianneng = new BianNeng();
-		rs485p2 = new RS485Port("COM6");
+		rs485p2 = new RS485Port("COM12");
 		/*
 		if (rs485p2.openRS485Port("COM12"))
 		{
@@ -326,12 +326,9 @@ void rsh_rs485p2_mutex_init()
 
 	if (!init)
 	{
-		//rshMutex._pumpMutex = CreateMutex(NULL, FALSE, (LPCSTR) "_pumpMutex");
 		rshMutex._pumpMutex = false;
-		//rshMutex._washerMutex = CreateMutex(NULL, FALSE, (LPCSTR) "_washerMutex");
 		rshMutex._washerMutex = false;
-		//rshMutex._microxyMutex = CreateMutex(NULL, FALSE, (LPCSTR) "microxyMutex");
-		rshMutex._microxyMutex = false;
+		rshMutex._mpsMutex = false;
 		init = true;
 	}
 }
@@ -352,14 +349,6 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 
 	log_info("[commander] pub, argc = %d", argc);
 
-	/*
-	for (int i = 0; i < argc; i++)
-	{
-	printf("%s ", argv[i]);
-	}
-	printf("\n");
-	*/
-
 	if (argc < 2)
 	{
 		log_info("missing command");
@@ -368,7 +357,7 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 	}
 
 	// BN stands for BengNeng Motor Controler
-	if (!strcmp(argv[1], "BN"))
+	if (!strcmp(argv[1], "bn"))
 	{
 		if (argc != 8)
 		{
@@ -388,109 +377,70 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 	}
 
 	// SP stands for Syringe Pump
-	if (!strcmp(argv[1], "SP"))
+	if (!strcmp(argv[1], "sp"))
 	{
-		/*
-		printf("Command: ");
-		for (int i = 0; i < argc; i++)
-		{
-			printf("%s ", argv[i]);
-		}
-		printf("Excuting");
-		printf("\n");
-		*/
-		//WaitForSingleObject(rshMutex._pumpMutex, INFINITE);
 		if (argc < 3)
 		{
 			log_info("error");
 		}
-		else if (!strcmp(argv[2], "AB")) // AB stands for Absorb
+		else if (!strcmp(argv[2], "ab")) // AB stands for Absorb
 		{
 			syringepump->absorbVolume(atof(argv[3]));
-			//syringepump.absorbVolume(atof(argv[3]));
 		}
-		else if (!strcmp(argv[2], "DR")) // DR stands for Drain
+		else if (!strcmp(argv[2], "dr")) // DR stands for Drain
 		{
 			syringepump->drainVolume(atof(argv[3]));
-			//syringepump.drainVolume(atof(argv[3]));
 		}
 		else if (argc != 5)
 		{
 			log_info("error");
 		}
-		else if (!strcmp(argv[2], "PIP")) // PIP stands for Pipetting
+		else if (!strcmp(argv[2], "pip")) // PIP stands for Pipetting
 		{
 			syringepump->pipetteVolume(atof(argv[3]), atoi(argv[4]));
-			//syringepump.pipetteVolume(atof(argv[3]), atoi(argv[4]));
 		}
 		rs485p2_memory_clean((Argument *)ThreadParameter);
 		rshMutex._pumpMutex = false;
-		//ReleaseMutex(rshMutex._pumpMutex);
 		return 0;
 	}
 
 	// WM stands for Washer Machine
-	if (!strcmp(argv[1], "WM"))
+	if (!strcmp(argv[1], "wm"))
 	{
-		/*
-		printf("Command: ");
-		for (int i = 0; i < argc; i++)
-		{
-			printf("%s ", argv[i]);
-		}
-		printf("Excuting");
-		printf("\n");
-		*/
-		//WaitForSingleObject(rshMutex._washerMutex, INFINITE);
 		if (argc != 5)
 		{
 			log_info("error");
 		}
-		else if (!strcmp(argv[2], "MA")) // MA stands for Move Arm
+		else if (!strcmp(argv[2], "ma")) // MA stands for Move Arm
 		{
 			washer->moveArm(atof(argv[3]), (uint8_t)atoi(argv[4]));
-			//washer.moveArm(atof(argv[3]), (uint8_t)atoi(argv[4]));
 		}
-		else if (!strcmp(argv[2], "SH")) // SH stands for Shake
+		else if (!strcmp(argv[2], "sh")) // SH stands for Shake
 		{
 			washer->shakeMachine(atof(argv[3]), (unsigned int)atoi(argv[4]));
-			//washer.shakeMachine(atof(argv[3]), (unsigned int)atoi(argv[4]));
 		}
-		else if (!strcmp(argv[2], "RG")) // RG stands for Rotate Gripper
+		else if (!strcmp(argv[2], "rg")) // RG stands for Rotate Gripper
 		{
 			washer->rotateGripper(atof(argv[3]), (uint8_t)atoi(argv[4]));
-			//washer.rotateGripper(atof(argv[3]), (uint8_t)atoi(argv[4]));
 		}
 		rs485p2_memory_clean((Argument *)ThreadParameter);
 		rshMutex._washerMutex = false;
-		//ReleaseMutex(rshMutex._washerMutex);
 		return 0;
 	}
 	
 	// MXY stands for Microscope XY Table
-	if (!strcmp(argv[1], "MXY"))
+	if (!strcmp(argv[1], "mps"))
 	{
-		printf("Command: ");
-		for (int i = 0; i < argc; i++)
-		{
-			printf("%s ", argv[i]);
-		}
-		printf("Excuting");
-		printf("\n");
-		//WaitForSingleObject(rshMutex._microxyMutex, INFINITE);
 		if (argc != 5)
 		{
 			log_info("error");
 		}
-		else if (!strcmp(argv[2], "MV")) // MV stands for Move to (X, Y)
+		else if (!strcmp(argv[2], "mov")) // MV stands for Move to (X, Y)
 		{
 			microscopexy->move2Pos(atof(argv[3]), atof(argv[4]));
-			//microscopexy.move2Pos(atof(argv[3]), atof(argv[4]));
 		}
 		rs485p2_memory_clean((Argument *)ThreadParameter);
-		rshMutex._microxyMutex = false;
-		//printf("%s", rshMutex._microxyMutex ? "true\n" : "false\n");
-		//ReleaseMutex(rshMutex._microxyMutex);
+		rshMutex._mpsMutex = false;
 		return 0;
 	}
 
@@ -524,74 +474,40 @@ int rsh_rs485p2_main(int argc, char *argv[])
 		}
 	}
 
-	if (!strcmp(argv[1], "SP"))
+	if (!strcmp(argv[1], "sp"))
 	{
-		//WaitForSingleObject(rshMutex._pumpMutex, INFINITE);
 		while(rshMutex._pumpMutex)
 		{
 			Sleep(200);
 		}
 		rshMutex._pumpMutex = true;
-		/*
-		printf("Command: ");
-		for (int i = 0; i < argc; i++)
-		{
-		printf("%s ", argv[i]);
-		}
-		printf("Get the Mutex");
-		printf("\n");
-		*/
-		//ReleaseMutex(rshMutex._pumpMutex);
 	}
 
-	if (!strcmp(argv[1], "WM"))
+	if (!strcmp(argv[1], "wm"))
 	{
-		//WaitForSingleObject(rshMutex._washerMutex, INFINITE);
 		while (rshMutex._washerMutex)
 		{
 			Sleep(200);
 		}
 		rshMutex._washerMutex = true;
-		/*
-		printf("Command: ");
-		for (int i = 0; i < argc; i++)
-		{
-		printf("%s ", argv[i]);
-		}
-		printf("Get the Mutex");
-		printf("\n");
-		*/
-		//ReleaseMutex(rshMutex._washerMutex);
 	}
 
-	if (!strcmp(argv[1], "MXY"))
+	if (!strcmp(argv[1], "mps"))
 	{
-		//WaitForSingleObject(rshMutex._microxyMutex, INFINITE);
-		while (rshMutex._microxyMutex)
+		while (rshMutex._mpsMutex)
 		{
 			Sleep(200);
 		}
-		rshMutex._microxyMutex = true;
-		//printf("%s", rshMutex._microxyMutex ? "true\n" : "false\n");
-		/*
-		printf("Command: ");
-		for (int i = 0; i < argc; i++)
-		{
-			printf("%s ", argv[i]);
-		}
-		printf("Get the Mutex");
-		printf("\n");
-		*/
-		//ReleaseMutex(rshMutex._microxyMutex);
+		rshMutex._mpsMutex = true;
 	}
-	///*
+
 	hThread = CreateThread(	NULL,                        // default security attributes
 								0,				   	     // use default stack size
 			 &rs485p2_thread_main,                       // thread function
 		  (LPVOID)threadParameter,                       // argument to thread function
 								0,                       // use default creation flags
 							 NULL);                      // returns the thread identifier
-	//*/
+
 	if (hThread == NULL)
 	{
 		fprintf(stderr, "[ERROR]: rsh_rs485p2_main: rs485p2_thread_main Thread Cannot Be Created\n");
