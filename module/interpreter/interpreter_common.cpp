@@ -64,3 +64,33 @@ PyInit_emb(void) {
 	return PyModule_Create(&EmbModule);
 }
 /* END - C API */
+
+uint8_t pyc_command(const char *cmd)
+{
+	wchar_t *program = Py_DecodeLocale("ctc_python", NULL);
+
+	if (program == NULL) {
+		return 0;
+	}
+
+	Py_SetProgramName(program);
+
+	PyImport_AppendInittab("emb", &PyInit_emb);
+
+	Py_Initialize();
+
+	PyRun_SimpleString(
+		"from time import time\n"
+		"the_time = time()\n"
+		"print(f'Time1 is {the_time}')\n"
+		);
+
+	//PyRun_SimpleString(
+	//	"import sys\n"
+	//	"sys.path.append('./')\n"
+	//	);
+
+	PyMem_RawFree(program);
+
+	Py_FinalizeEx();
+}

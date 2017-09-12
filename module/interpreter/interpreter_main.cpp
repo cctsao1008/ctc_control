@@ -11,10 +11,26 @@
 #include "core_common.h"
 
 extern PyObject* PyInit_emb(void);
+void* interpreter_thread_main(void* arg);
 
 static pthread_t pid;
+static char file[256] = { 0 };
 
-void* thread_main(void* arg)
+int rsh_interpreter_main(int argc, char *argv[])
+{
+	if (argc < 2) {
+		log_info("missing command");
+		return 0;
+	}
+
+	memcpy(file, argv[1], strlen(argv[1]));
+
+	pthread_create(&pid, NULL, &interpreter_thread_main, file);
+
+	return 0;
+}
+
+void* interpreter_thread_main(void* arg)
 {
 	PyObject *pName, *pModule;
 
@@ -28,8 +44,8 @@ void* thread_main(void* arg)
 
 	PyImport_AppendInittab("emb", &PyInit_emb);
 
-	wchar_t pySearchPath[] = L"D:\vs2013\ctc_project\ctc_control_gitlab\Debug\python";
-	Py_SetPythonHome(pySearchPath);
+	//wchar_t pySearchPath[] = L"D:\vs2013\ctc_project\ctc_control_gitlab\Debug\python";
+	//Py_SetPythonHome(pySearchPath);
 
 	char buffer1[MAX_PATH];
 	GetCurrentDirectory(MAX_PATH, buffer1);
@@ -79,22 +95,6 @@ void* thread_main(void* arg)
 	PyMem_RawFree(program);
 
 	Py_FinalizeEx();
-
-	return 0;
-}
-
-static char file[256] = { 0 };
-
-int rsh_interpreter_main(int argc, char *argv[])
-{
-	if (argc < 2) {
-		log_info("missing command");
-		return 0;
-	}
-
-	memcpy(file, argv[1], strlen(argv[1]));
-
-	pthread_create(&pid, NULL, &thread_main, file);
 
 	return 0;
 }
