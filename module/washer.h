@@ -52,5 +52,6 @@ private:
 };
 
 static Washer* washer;
+//static Washer washer = Washer(&rs485p2);
 
 #endif // CORE_WASHER_H_

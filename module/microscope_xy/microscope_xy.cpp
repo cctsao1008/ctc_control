@@ -9,6 +9,22 @@
 #include "core_common.h"
 
 // Constructor
+MicroscopeXY::MicroscopeXY()
+{
+	if (initDriver())
+	{
+		_position.X = 0;
+		_position.Y = 0;
+		_position.Z = 0;
+		_speed = RPM197;
+	}
+	else
+	{
+		// Error Message
+	}
+
+}
+
 MicroscopeXY::MicroscopeXY(RS485Port* PortPtr)
 {
 	if (initDriver())
@@ -16,6 +32,7 @@ MicroscopeXY::MicroscopeXY(RS485Port* PortPtr)
 		_position.X = 0;
 		_position.Y = 0;
 		_position.Z = 0;
+		_speed = RPM197;
 		_rs485Port = PortPtr;
 		_ghMutex = _rs485Port->getMutex();;
 	}
@@ -28,41 +45,41 @@ MicroscopeXY::MicroscopeXY(RS485Port* PortPtr)
 
 MicroscopeXY::MicroscopeXY(Position Pos, RS485Port* PortPtr)
 {
-	if(initDriver())
-    {
-    	_position.X = Pos.X;
-    	_position.Y = Pos.Y;
-    	_position.Z = Pos.Z;
+	if (initDriver())
+	{
+		_position.X = Pos.X;
+		_position.Y = Pos.Y;
+		_position.Z = Pos.Z;
 		_rs485Port = PortPtr;
 		_ghMutex = _rs485Port->getMutex();
-    }
-    else
-    {
-    	// Error Message
-    }
+	}
+	else
+	{
+		// Error Message
+	}
 }
 
 MicroscopeXY::MicroscopeXY(double X, double Y, RS485Port* PortPtr)
 {
-	if(initDriver())
-    {
-    	_position.X = X;
-    	_position.Y = Y;
-    	_position.Z = 0;
+	if (initDriver())
+	{
+		_position.X = X;
+		_position.Y = Y;
+		_position.Z = 0;
 		_rs485Port = PortPtr;
 		_ghMutex = _rs485Port->getMutex();
-    }
-    else
-    {
-    	// Error Message
-    }
+	}
+	else
+	{
+		// Error Message
+	}
 }
 
 // Destructor
-MicroscopeXY::~MicroscopeXY() 
+MicroscopeXY::~MicroscopeXY()
 {
 	// Release memory if it's needed
-} 
+}
 
 // Information
 Position MicroscopeXY::getPositon() const
@@ -136,13 +153,12 @@ bool MicroscopeXY::move2Pos(Position Pos)
 
 bool MicroscopeXY::move2Pos(double X, double Y)
 {
-	printf("%f %f\n", X, Y);
-	printf("%f %f\n", _position.X, _position.Y);
 	double xLength = _position.X - X;
 	uint8_t xDirection;
 	double yLength = _position.Y - Y;
 	uint8_t yDirection;
 
+	///*
 	WaitForSingleObject(_ghMutex, INFINITE);
 	if (xLength > 0)
 	{
@@ -153,14 +169,16 @@ bool MicroscopeXY::move2Pos(double X, double Y)
 		xLength = 0 - xLength;
 		xDirection = PositiveExecute;
 	}
-	
+
 	if (!moveX(xLength, xDirection)) // If motor did not move successfully
 	{
 		// Error Message
 		return false;
 	}
-	ReleaseMutex(_ghMutex);
 	Sleep(500);
+	ReleaseMutex(_ghMutex);
+
+	//*/
 
 	WaitForSingleObject(_ghMutex, INFINITE);
 	if (yLength > 0)
@@ -178,8 +196,8 @@ bool MicroscopeXY::move2Pos(double X, double Y)
 		// Error Message
 		return false;
 	}
-	ReleaseMutex(_ghMutex);
 	Sleep(500);
+	ReleaseMutex(_ghMutex);
 
 	return true;
 }
@@ -187,7 +205,7 @@ bool MicroscopeXY::move2Pos(double X, double Y)
 // Modifier
 bool MicroscopeXY::initDriver()
 {
-	if(false) // If motor driver cannot be init
+	if (false) // If motor driver cannot be init
 	{
 		// Error Message
 		return false;
@@ -198,12 +216,19 @@ bool MicroscopeXY::initDriver()
 
 bool MicroscopeXY::setSpeed(double Speed)
 {
-	if(false) // If motor driver cannot set speed successfully
+	if (false) // If motor driver cannot set speed successfully
 	{
 		// Error Message
 		return false;
 	}
 
+	return true;
+}
+
+bool MicroscopeXY::setPort(RS485Port* PortPtr)
+{
+	_rs485Port = PortPtr;
+	_ghMutex = _rs485Port->getMutex();
 	return true;
 }
 

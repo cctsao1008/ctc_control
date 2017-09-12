@@ -15,6 +15,7 @@ class RS485Port
 {
 public:
 	// Constructor
+	RS485Port();
     RS485Port(const char* COM);
 
     // Destructor
@@ -22,6 +23,7 @@ public:
 
 	// setting
 	bool setRS485Port(c_serial_port_t* Port);
+	bool openRS485Port(const char* COM);
 
 	// getting
 	c_serial_port_t* getPortHandle();
@@ -53,14 +55,28 @@ private:
 };
 
 /**
-Arguments For Thread
+Arguments For rsh Thread
 */
 typedef struct _argument 
 {
 	int _argc;
 	char** _argv;
-
 } Argument;
+
+/**
+Mutexes For rsh Thread
+*/
+typedef struct _rshThreadMutex
+{
+	//HANDLE _pumpMutex;
+	bool _pumpMutex;
+	//HANDLE _washerMutex;
+	bool _washerMutex;
+	//HANDLE _microxyMutex;
+	bool _microxyMutex;
+} rshThreadMutex;
+
+
 
 void rs485p2_memory_clean(Argument* ThreadParameter);
 
@@ -68,8 +84,13 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter);
 
 int rsh_rs485p2_main(int argc, char *argv[]);
 
-static RS485Port* rs485p2;
+void rsh_rs485p2_mutex_init();
 
-extern void initRS485P2para();
+static RS485Port* rs485p2;
+//static RS485Port rs485p2 = RS485Port("COM12");
+
+static rshThreadMutex rshMutex;
+
+void initRS485P2para();
 
 #endif // _RS485P2_H_
