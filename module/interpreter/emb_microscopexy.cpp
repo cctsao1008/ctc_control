@@ -16,12 +16,25 @@ PyObject* set_mxy_mv(PyObject *self, PyObject *args)
 {
 	double x = 0.0;
 	double y = 0.0;
-	printf("set_mxy_mv \n");
+	//printf("set_mxy_mv \n");
 	if (!PyArg_ParseTuple(args, "dd", &x, &y)) {
 		return Py_BuildValue("s", "[ERROR] Microscope XY Table Move Failed");
 	}
-	initRS485P2para();
-	microscopexy->move2Pos(x, y);
+	
+	std::string command = "rs485p2 MXY MV ";
+	command += NumberToString(x) + " " + NumberToString(y);
+
+	//printf("%s\n", command.c_str());
+	rsh_command(command.c_str());
+
+	/*
+	RS485Port p2 = RS485Port("COM12");
+	MicroscopeXY mxy = MicroscopeXY(&p2);
+	if (!mxy.move2Pos(x, y))
+	{
+		return Py_BuildValue("s", "[ERROR] Microscope XY Table Move Failed");
+	}
+	*/
 	return Py_BuildValue("s", "[INFO] Microscope XY Table Move Finished");
 }
 

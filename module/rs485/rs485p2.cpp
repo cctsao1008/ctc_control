@@ -9,49 +9,19 @@
 #include "core_common.h"
 
 /* RS485Port Class */
+RS485Port::RS485Port()
+{
+	
+}
+
 RS485Port::RS485Port(const char* COM)
 {
-    int status;
-
-    /*
-    * Allocate the serial port struct.
-    * This defaults to 9600-8-N-1
-    */
-    if (c_serial_new(&_port, NULL) < 0){
-        fprintf(stderr, "[ERROR]: RS485Port unable to create new serial port\n");
-    }
-
-    /*
-    * The port name is the device to open(/dev/ttyS0 on Linux,
-    * COM1 on Windows)
-    */
-    if (c_serial_set_port_name(_port, COM) < 0){
-        fprintf(stderr, "[ERROR]: RS485Port can't set port name\n");
-    }
-
-    /*
-    * Set various serial port settings.  These are the default.
-    */
-    c_serial_set_baud_rate(_port, CSERIAL_BAUD_9600);
-    c_serial_set_data_bits(_port, CSERIAL_BITS_8);
-    c_serial_set_stop_bits(_port, CSERIAL_STOP_BITS_1);
-    c_serial_set_parity(_port, CSERIAL_PARITY_NONE);
-    c_serial_set_flow_control(_port, CSERIAL_FLOW_NONE);
-
-    /*
-    * We want to get all line flags when they change
-    */
-    c_serial_set_serial_line_change_flags(_port, CSERIAL_LINE_FLAG_ALL);
-
-    status = c_serial_open(_port);
-    if (status < 0){
-        fprintf(stderr, "[ERROR]: RS485Port can't open serial port\n");
-    }
-
-	_name = COM;
-	//fprintf(stdout, "[INFO]: RS485Port successfully established %s port\n", _name);
-	initThread();
-	//fprintf(stdout, "[INFO]: RS485Port successfully established thread\n");
+	if (openRS485Port(COM))
+	{
+		//fprintf(stdout, "[INFO]: RS485Port successfully established %s port\n", _name);
+		initThread();
+		//fprintf(stdout, "[INFO]: RS485Port successfully established thread\n");
+	}
 }
 
 RS485Port::~RS485Port()
@@ -75,6 +45,53 @@ bool RS485Port::setRS485Port(c_serial_port_t *Port)
 {
 	_port = Port;
     return true;
+}
+
+bool RS485Port::openRS485Port(const char* COM)
+{
+	int status;
+
+	/*
+	* Allocate the serial port struct.
+	* This defaults to 9600-8-N-1
+	*/
+	if (c_serial_new(&_port, NULL) < 0){
+		fprintf(stderr, "[ERROR]: RS485Port unable to create new serial port\n");
+		return false;
+	}
+
+	/*
+	* The port name is the device to open(/dev/ttyS0 on Linux,
+	* COM1 on Windows)
+	*/
+	if (c_serial_set_port_name(_port, COM) < 0){
+		fprintf(stderr, "[ERROR]: RS485Port can't set port name\n");
+		return false;
+	}
+
+	/*
+	* Set various serial port settings.  These are the default.
+	*/
+	c_serial_set_baud_rate(_port, CSERIAL_BAUD_9600);
+	c_serial_set_data_bits(_port, CSERIAL_BITS_8);
+	c_serial_set_stop_bits(_port, CSERIAL_STOP_BITS_1);
+	c_serial_set_parity(_port, CSERIAL_PARITY_NONE);
+	c_serial_set_flow_control(_port, CSERIAL_FLOW_NONE);
+
+	/*
+	* We want to get all line flags when they change
+	*/
+	c_serial_set_serial_line_change_flags(_port, CSERIAL_LINE_FLAG_ALL);
+
+	status = c_serial_open(_port);
+	if (status < 0){
+		fprintf(stderr, "[ERROR]: RS485Port can't open serial port\n");
+		return false;
+	}
+
+	_name = COM;
+
+	return true;
 }
 
 c_serial_port_t* RS485Port::getPortHandle()
@@ -280,6 +297,7 @@ DWORD WINAPI RS485Port::ReadWriteMsg(LPVOID ThreadParameter)
     return 0;
 }
 
+///*
 void initRS485P2para()
 {
 	static bool init = false;
@@ -287,9 +305,33 @@ void initRS485P2para()
 	{
 		bianneng = new BianNeng();
 		rs485p2 = new RS485Port("COM6");
+		/*
+		if (rs485p2.openRS485Port("COM12"))
+		{
+			rs485p2.initThread();
+		}
+		*/
 		syringepump = new SyringePump(rs485p2);
 		washer = new Washer(rs485p2);
+		//microscopexy.setPort(rs485p2);
 		microscopexy = new MicroscopeXY(rs485p2);
+		init = true;
+	}
+}
+//*/
+
+void rsh_rs485p2_mutex_init()
+{
+	static bool init = false;
+
+	if (!init)
+	{
+		//rshMutex._pumpMutex = CreateMutex(NULL, FALSE, (LPCSTR) "_pumpMutex");
+		rshMutex._pumpMutex = false;
+		//rshMutex._washerMutex = CreateMutex(NULL, FALSE, (LPCSTR) "_washerMutex");
+		rshMutex._washerMutex = false;
+		//rshMutex._microxyMutex = CreateMutex(NULL, FALSE, (LPCSTR) "microxyMutex");
+		rshMutex._microxyMutex = false;
 		init = true;
 	}
 }
@@ -348,103 +390,110 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 	// SP stands for Syringe Pump
 	if (!strcmp(argv[1], "SP"))
 	{
+		/*
+		printf("Command: ");
+		for (int i = 0; i < argc; i++)
+		{
+			printf("%s ", argv[i]);
+		}
+		printf("Excuting");
+		printf("\n");
+		*/
+		//WaitForSingleObject(rshMutex._pumpMutex, INFINITE);
 		if (argc < 3)
 		{
 			log_info("error");
-			rs485p2_memory_clean((Argument *)ThreadParameter);
-			return 0;
 		}
-
-		// AB stands for Absorb
-		if (!strcmp(argv[2], "AB"))
+		else if (!strcmp(argv[2], "AB")) // AB stands for Absorb
 		{
 			syringepump->absorbVolume(atof(argv[3]));
-			rs485p2_memory_clean((Argument *)ThreadParameter);
-			return 0;
+			//syringepump.absorbVolume(atof(argv[3]));
 		}
-
-		// DR stands for Drain
-		if (!strcmp(argv[2], "DR"))
+		else if (!strcmp(argv[2], "DR")) // DR stands for Drain
 		{
 			syringepump->drainVolume(atof(argv[3]));
-			rs485p2_memory_clean((Argument *)ThreadParameter);
-			return 0;
+			//syringepump.drainVolume(atof(argv[3]));
 		}
-
-		if (argc != 5)
+		else if (argc != 5)
 		{
 			log_info("error");
-			rs485p2_memory_clean((Argument *)ThreadParameter);
-			return 0;
 		}
-
-		// PIP stands for Pipetting
-		if (!strcmp(argv[2], "PIP"))
+		else if (!strcmp(argv[2], "PIP")) // PIP stands for Pipetting
 		{
 			syringepump->pipetteVolume(atof(argv[3]), atoi(argv[4]));
-			rs485p2_memory_clean((Argument *)ThreadParameter);
-			return 0;
+			//syringepump.pipetteVolume(atof(argv[3]), atoi(argv[4]));
 		}
-
+		rs485p2_memory_clean((Argument *)ThreadParameter);
+		rshMutex._pumpMutex = false;
+		//ReleaseMutex(rshMutex._pumpMutex);
 		return 0;
 	}
 
 	// WM stands for Washer Machine
 	if (!strcmp(argv[1], "WM"))
 	{
+		/*
+		printf("Command: ");
+		for (int i = 0; i < argc; i++)
+		{
+			printf("%s ", argv[i]);
+		}
+		printf("Excuting");
+		printf("\n");
+		*/
+		//WaitForSingleObject(rshMutex._washerMutex, INFINITE);
 		if (argc != 5)
 		{
 			log_info("error");
-			rs485p2_memory_clean((Argument *)ThreadParameter);
-			return 0;
 		}
-
-		// MA stands for Move Arm
-		if (!strcmp(argv[2], "MA"))
+		else if (!strcmp(argv[2], "MA")) // MA stands for Move Arm
 		{
 			washer->moveArm(atof(argv[3]), (uint8_t)atoi(argv[4]));
-			rs485p2_memory_clean((Argument *)ThreadParameter);
-			return 0;
+			//washer.moveArm(atof(argv[3]), (uint8_t)atoi(argv[4]));
 		}
-
-		// SH stands for Shake
-		if (!strcmp(argv[2], "SH"))
+		else if (!strcmp(argv[2], "SH")) // SH stands for Shake
 		{
 			washer->shakeMachine(atof(argv[3]), (unsigned int)atoi(argv[4]));
-			return 0;
+			//washer.shakeMachine(atof(argv[3]), (unsigned int)atoi(argv[4]));
 		}
-
-		// RG stands for Rotate Gripper
-		if (!strcmp(argv[2], "RG"))
+		else if (!strcmp(argv[2], "RG")) // RG stands for Rotate Gripper
 		{
 			washer->rotateGripper(atof(argv[3]), (uint8_t)atoi(argv[4]));
-			rs485p2_memory_clean((Argument *)ThreadParameter);
-			return 0;
+			//washer.rotateGripper(atof(argv[3]), (uint8_t)atoi(argv[4]));
 		}
 		rs485p2_memory_clean((Argument *)ThreadParameter);
+		rshMutex._washerMutex = false;
+		//ReleaseMutex(rshMutex._washerMutex);
 		return 0;
 	}
-
+	
 	// MXY stands for Microscope XY Table
 	if (!strcmp(argv[1], "MXY"))
 	{
+		printf("Command: ");
+		for (int i = 0; i < argc; i++)
+		{
+			printf("%s ", argv[i]);
+		}
+		printf("Excuting");
+		printf("\n");
+		//WaitForSingleObject(rshMutex._microxyMutex, INFINITE);
 		if (argc != 5)
 		{
 			log_info("error");
-			rs485p2_memory_clean((Argument *)ThreadParameter);
-			return 0;
 		}
-
-		// MV stands for Move to (X, Y)
-		if (!strcmp(argv[2], "MV"))
+		else if (!strcmp(argv[2], "MV")) // MV stands for Move to (X, Y)
 		{
 			microscopexy->move2Pos(atof(argv[3]), atof(argv[4]));
-			rs485p2_memory_clean((Argument *)ThreadParameter);
-			return 0;
+			//microscopexy.move2Pos(atof(argv[3]), atof(argv[4]));
 		}
 		rs485p2_memory_clean((Argument *)ThreadParameter);
+		rshMutex._microxyMutex = false;
+		//printf("%s", rshMutex._microxyMutex ? "true\n" : "false\n");
+		//ReleaseMutex(rshMutex._microxyMutex);
 		return 0;
 	}
+
 	rs485p2_memory_clean((Argument *)ThreadParameter);
 	return 0;
 }
@@ -458,6 +507,7 @@ int rsh_rs485p2_main(int argc, char *argv[])
 	threadParameter->_argv = new char *[argc];
 
 	initRS485P2para();
+	rsh_rs485p2_mutex_init();
 
 	for (int i = 0; i < argc; i++)
 	{
@@ -474,13 +524,74 @@ int rsh_rs485p2_main(int argc, char *argv[])
 		}
 	}
 
-	hThread = CreateThread(NULL,                       // default security attributes
-		0,					   // use default stack size
-		&rs485p2_thread_main,                       // thread function
-		(LPVOID)threadParameter,                       // argument to thread function
-		0,                       // use default creation flags
-		NULL);                      // returns the thread identifier
+	if (!strcmp(argv[1], "SP"))
+	{
+		//WaitForSingleObject(rshMutex._pumpMutex, INFINITE);
+		while(rshMutex._pumpMutex)
+		{
+			Sleep(200);
+		}
+		rshMutex._pumpMutex = true;
+		/*
+		printf("Command: ");
+		for (int i = 0; i < argc; i++)
+		{
+		printf("%s ", argv[i]);
+		}
+		printf("Get the Mutex");
+		printf("\n");
+		*/
+		//ReleaseMutex(rshMutex._pumpMutex);
+	}
 
+	if (!strcmp(argv[1], "WM"))
+	{
+		//WaitForSingleObject(rshMutex._washerMutex, INFINITE);
+		while (rshMutex._washerMutex)
+		{
+			Sleep(200);
+		}
+		rshMutex._washerMutex = true;
+		/*
+		printf("Command: ");
+		for (int i = 0; i < argc; i++)
+		{
+		printf("%s ", argv[i]);
+		}
+		printf("Get the Mutex");
+		printf("\n");
+		*/
+		//ReleaseMutex(rshMutex._washerMutex);
+	}
+
+	if (!strcmp(argv[1], "MXY"))
+	{
+		//WaitForSingleObject(rshMutex._microxyMutex, INFINITE);
+		while (rshMutex._microxyMutex)
+		{
+			Sleep(200);
+		}
+		rshMutex._microxyMutex = true;
+		//printf("%s", rshMutex._microxyMutex ? "true\n" : "false\n");
+		/*
+		printf("Command: ");
+		for (int i = 0; i < argc; i++)
+		{
+			printf("%s ", argv[i]);
+		}
+		printf("Get the Mutex");
+		printf("\n");
+		*/
+		//ReleaseMutex(rshMutex._microxyMutex);
+	}
+	///*
+	hThread = CreateThread(	NULL,                        // default security attributes
+								0,				   	     // use default stack size
+			 &rs485p2_thread_main,                       // thread function
+		  (LPVOID)threadParameter,                       // argument to thread function
+								0,                       // use default creation flags
+							 NULL);                      // returns the thread identifier
+	//*/
 	if (hThread == NULL)
 	{
 		fprintf(stderr, "[ERROR]: rsh_rs485p2_main: rs485p2_thread_main Thread Cannot Be Created\n");

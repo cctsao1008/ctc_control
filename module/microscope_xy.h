@@ -24,6 +24,7 @@ class MicroscopeXY : public BianNeng
 public:
 
     // Constructor
+	MicroscopeXY();
 	MicroscopeXY(RS485Port* PortPtr);
 	MicroscopeXY(Position Pos, RS485Port* PortPtr);
 	MicroscopeXY(double X, double Y, RS485Port* PortPtr);
@@ -44,6 +45,7 @@ public:
     // Modifier
     bool initDriver();
     bool setSpeed(double Speed);
+	bool setPort(RS485Port* PortPtr);
 
 private:
     // Combined with the driver
@@ -60,5 +62,6 @@ private:
 };
 
 static MicroscopeXY* microscopexy;
+//static MicroscopeXY microscopexy = MicroscopeXY();
 
 #endif // _XYZTABLE_H_

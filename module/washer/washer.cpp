@@ -67,12 +67,8 @@ bool Washer::moveArm(double Degree, uint8_t Direction)
 {
 	uint8_t address = '\x00';
 	int steps = (int)Degree * 90.0 / 0.9;
-	//getShakeSpeed();
-
-	return 0;
-	//printf("%x\n", washer);
 	//printf("%s\n", typeid(_shakeSpeed).name());
-	//printf("%d\n", getShakeSpeed());
+	printf("%p\n", washer);
 	Message* msgPtr = trans2RTCMD(NumberToString(_shakeSpeed).c_str(), address, Direction, NumberToString(steps).c_str(), "200", "0");
 
 	if (Direction == PositiveExecute && (_armPosition + Degree) > 90.0)

@@ -50,5 +50,6 @@ private:
 };
 
 static SyringePump* syringepump;
+//static SyringePump syringepump = SyringePump(&rs485p2);
 
 #endif // _SYRINGEPUMP_H_
