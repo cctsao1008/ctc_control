@@ -144,7 +144,6 @@
     <ClInclude Include="module\log.c\src\log.h" />
     <ClInclude Include="module\microscope_xy.h" />
     <ClInclude Include="module\mqtt.h" />
-    <ClInclude Include="module\mqttbridge.h" />
     <ClInclude Include="module\rs485p1.h" />
     <ClInclude Include="module\rs485p2.h" />
     <ClInclude Include="module\scanner.h" />

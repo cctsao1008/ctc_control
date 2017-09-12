@@ -224,9 +224,6 @@
     <ClInclude Include="module\interpreter\interpreter_common.h">
       <Filter>Source Files\module\interpreter</Filter>
     </ClInclude>
-    <ClInclude Include="module\mqttbridge.h">
-      <Filter>Source Files\module</Filter>
-    </ClInclude>
     <ClInclude Include="module\servo.h">
       <Filter>Source Files\module</Filter>
     </ClInclude>
