@@ -86,6 +86,20 @@ uint8_t pyc_command(const char *cmd)
 		);
 
 	//PyRun_SimpleString(
+	//	"from time import time\n"
+	//	"the_time = time()\n"
+	//	"print(f'Time1 is {the_time}')\n"
+	//	);
+
+	PyRun_SimpleString(
+		"import emb\n"
+		);
+
+	PyRun_SimpleString(
+		cmd
+		);
+
+	//PyRun_SimpleString(
 	//	"import sys\n"
 	//	"sys.path.append('./')\n"
 	//	);
