@@ -73,7 +73,9 @@ typedef struct _rshThreadMutex
 	bool _mpsMutex;
 } rshThreadMutex;
 
-
+bool get_pumpMutex();
+bool get_washerMutex();
+bool get_mspMutex();
 
 void rs485p2_memory_clean(Argument* ThreadParameter);
 

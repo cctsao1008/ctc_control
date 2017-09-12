@@ -12,15 +12,6 @@
 #if defined(USING_MICR)
 
 // Microscope XY Control
-PyObject* set_mps_wait(PyObject *self, PyObject *args)
-{
-	while (rshMutex._mpsMutex)
-	{
-		Sleep(200);
-	}
-	return Py_BuildValue("s", "[INFO] Microscope XY Table Move Finished");
-}
-
 PyObject* set_mps_mov(PyObject *self, PyObject *args) 
 {
 	double x = 0.0;
@@ -32,6 +23,13 @@ PyObject* set_mps_mov(PyObject *self, PyObject *args)
 	
 	std::string command = "rs485p2 mps mov ";
 	command += NumberToString(x) + " " + NumberToString(y);
+
+	while (get_mspMutex())
+	{
+		Sleep(200);
+	}
+
+	printf("command %s excuting", command);
 
 	//printf("%s\n", command.c_str());
 	rsh_command(command.c_str());
