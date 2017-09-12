@@ -304,7 +304,7 @@ void initRS485P2para()
 	if (!init)
 	{
 		bianneng = new BianNeng();
-		rs485p2 = new RS485Port("COM6");
+		rs485p2 = new RS485Port("COM12");
 		/*
 		if (rs485p2.openRS485Port("COM12"))
 		{
