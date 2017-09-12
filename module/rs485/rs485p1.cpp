@@ -9,6 +9,7 @@
 */
 
 #include "core_common.h"
+#include "servo.h"
 
 /* TIME */
 #define FRAME_COUNT   1000
@@ -116,9 +117,6 @@ static void WINAPI timer_handler(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dw
 static double AI[32];
 static double AO[32];
 
-/* SERVO  */
-enum { SERVO_1 = 1, SERVO_2, SERVO_3, SERVO_4, SERVO_MAX };
-
 static bool servo_enabled[SERVO_MAX];
 
 int connect(modbus_t *ctx)
@@ -210,16 +208,6 @@ uint64_t _bswap64(uint64_t a)
 		((a & 0x00FF000000000000ULL) >> 40) |
 		((a & 0xFF00000000000000ULL) >> 56);
 	return a;
-}
-
-uint16_t servo_sync(modbus_t *ctx, uint8_t id)
-{
-	uint16_t data = 0xFFFF;
-
-	modbus_set_slave(ctx, id);
-	modbus_read_registers(ctx, 0x0900, 1, &data);
-
-	return data;
 }
 
 void update_previous_time(uint64_t currentTime, uint8_t frame)
@@ -431,7 +419,8 @@ void* rs485p1_thread_main(void* arg)
 			if (servo_enabled[SERVO_1] == true)
 			{
 				//log_info("S1 ENABLED");
-				data[0] = servo_sync(ctx[0], SERVO_1);
+				//loop_servo_1();
+				//data[0] = servo_sync(ctx[0], SERVO_1);
 				//printf("S1 data[0] = 0x%04X \n", bswap8(data[0]));
 				//printf("S1 data[0] = 0x%04X \n", data[0]);
 			}
@@ -442,7 +431,8 @@ void* rs485p1_thread_main(void* arg)
 			if (servo_enabled[SERVO_2] == true)
 			{
 				//log_info("S2 ENABLED");
-				data[0] = servo_sync(ctx[0], SERVO_2);
+				//loop_servo_2();
+				//data[0] = servo_sync(ctx[0], SERVO_2);
 				//printf("S2 data[0] = 0x%04X \n", bswap8(data[0]));
 				//printf("S2 data[0] = 0x%04X \n", data[0]);
 			}
@@ -453,7 +443,8 @@ void* rs485p1_thread_main(void* arg)
 			if (servo_enabled[SERVO_3] == true)
 			{
 				//log_info("S3 ENABLED");
-				data[0] = servo_sync(ctx[0], SERVO_3);
+				//loop_servo_3();
+				//data[0] = servo_sync(ctx[0], SERVO_3);
 				//printf("S3 data[0] = 0x%04X \n", bswap8(data[0]));
 				//printf("S3 data[0] = 0x%04X \n", data[0]);
 			}
@@ -464,7 +455,8 @@ void* rs485p1_thread_main(void* arg)
 			if (servo_enabled[SERVO_4] == true)
 			{
 				//log_info("S4 ENABLED");
-				data[0] = servo_sync(ctx[0], SERVO_4);
+				loop_servo_4(ctx[0]);
+				//data[0] = servo_sync(ctx[0], SERVO_4);
 				//printf("S4 data[0] = 0x%04X \n", bswap8(data[0]));
 				//printf("S4 data[0] = 0x%04X \n", data[0]);
 #if 0

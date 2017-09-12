@@ -116,8 +116,11 @@
     <ClCompile Include="module\interpreter\interpreter_common.cpp" />
     <ClCompile Include="module\log.c\src\log.c" />
     <ClCompile Include="module\microscope_xy\microscope_xy.cpp" />
+    <ClCompile Include="module\mqtt\mqtt_main.cpp" />
+    <ClCompile Include="module\mqtt\mqtt_receiver.cpp" />
     <ClCompile Include="module\rs485\rs485p1.cpp" />
     <ClCompile Include="module\rs485\rs485p2.cpp" />
+    <ClCompile Include="module\rs485\servo.cpp" />
     <ClCompile Include="module\scanner\scanner.cpp" />
     <ClCompile Include="module\syringepump\syringepump.cpp" />
     <ClCompile Include="module\tiny-json\tiny-json.c" />
@@ -140,9 +143,12 @@
     <ClInclude Include="module\interpreter\interpreter_common.h" />
     <ClInclude Include="module\log.c\src\log.h" />
     <ClInclude Include="module\microscope_xy.h" />
+    <ClInclude Include="module\mqtt.h" />
+    <ClInclude Include="module\mqttbridge.h" />
     <ClInclude Include="module\rs485p1.h" />
     <ClInclude Include="module\rs485p2.h" />
     <ClInclude Include="module\scanner.h" />
+    <ClInclude Include="module\servo.h" />
     <ClInclude Include="module\syringepump.h" />
     <ClInclude Include="module\tiny-json\tiny-json.h" />
     <ClInclude Include="module\washer.h" />

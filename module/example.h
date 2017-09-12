@@ -10,4 +10,4 @@
 
 #pragma once
 
-int rsh_core_example_main(int argc, char *argv[]);
+int rsh_example_main(int argc, char *argv[]);

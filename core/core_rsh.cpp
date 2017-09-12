@@ -43,7 +43,7 @@ char *builtin_str[] = {
 
 int(*builtin_func[]) (int argc, char *argv[]) = {
 	//
-	&rsh_core_example_main,
+	&rsh_example_main,
 	&rsh_core_commander_main,
 	&rsh_rs485p1_main,
 	&rsh_rs485p2_main, // Added by Joshua

@@ -58,11 +58,11 @@
     <Filter Include="Source Files\module\microscope_xy">
       <UniqueIdentifier>{9b640081-595e-4330-a835-ba0c82d3e598}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\module\mqtt-bridge">
-      <UniqueIdentifier>{16aad170-fe6f-4e54-bf91-5fba3c1588fd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\module\param">
       <UniqueIdentifier>{31a5fd54-0940-4dff-bca6-92a70e6403f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\module\mqtt">
+      <UniqueIdentifier>{16aad170-fe6f-4e54-bf91-5fba3c1588fd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +147,15 @@
     <ClCompile Include="module\interpreter\emb_washer.cpp">
       <Filter>Source Files\module\interpreter</Filter>
     </ClCompile>
+    <ClCompile Include="module\rs485\servo.cpp">
+      <Filter>Source Files\module\rs485</Filter>
+    </ClCompile>
+    <ClCompile Include="module\mqtt\mqtt_main.cpp">
+      <Filter>Source Files\module\mqtt</Filter>
+    </ClCompile>
+    <ClCompile Include="module\mqtt\mqtt_receiver.cpp">
+      <Filter>Source Files\module\mqtt</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="module\cserial\c_serial.h">
@@ -214,6 +223,15 @@
     </ClInclude>
     <ClInclude Include="module\interpreter\interpreter_common.h">
       <Filter>Source Files\module\interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="module\mqttbridge.h">
+      <Filter>Source Files\module</Filter>
+    </ClInclude>
+    <ClInclude Include="module\servo.h">
+      <Filter>Source Files\module</Filter>
+    </ClInclude>
+    <ClInclude Include="module\mqtt.h">
+      <Filter>Source Files\module</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

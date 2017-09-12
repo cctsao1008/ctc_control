@@ -1,9 +1,9 @@
 /**
-* @file core_example.cpp
+* @file example.cpp
 *
-* core_example
+* example
 *
-*   core_example.
+*   example.
 *
 * @author Ricardo <tsao.ricardo@iac.com.tw>
 */
@@ -28,7 +28,7 @@ static void WINAPI timer_handler(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dw
 	return;
 }
 
-void* core_example_thread_main(void* arg)
+void* example_thread_main(void* arg)
 {
 	MMRESULT timer;
 
@@ -56,7 +56,7 @@ void* core_example_thread_main(void* arg)
 	return 0;
 }
 
-int rsh_core_example_main(int argc, char *argv[])
+int rsh_example_main(int argc, char *argv[])
 {
 	if (argc < 2) {
 		log_info("[example] missing command");
@@ -73,7 +73,7 @@ int rsh_core_example_main(int argc, char *argv[])
 
 		thread_should_exit = false;
 
-		pthread_create(&pid, NULL, &core_example_thread_main, NULL);
+		pthread_create(&pid, NULL, &example_thread_main, NULL);
 
 		return 0;
 	}

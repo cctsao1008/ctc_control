@@ -22,13 +22,64 @@ static volatile bool thread_running = false;        /**< daemon status flag */
 
 HANDLE ghMutex;
 
-void WINAPI console_ctrl_handler(DWORD event)
+BOOL WINAPI console_ctrl_handler(DWORD fdwCtrlType)
 {
-    //if (event == CTRL_C_EVENT)
-	//	log_warn("Ctrl-C handler\n"); // do cleanup
+	switch (fdwCtrlType)
+	{ 
+		// Handle the CTRL-C signal. 
+	case CTRL_C_EVENT: 
+		printf( "Ctrl-C event\n\n" );
+		Beep( 750, 300 ); 
+		Sleep(5000);
+		for (int i = 0; i < 20; i++)
+		{
+			//printf("%d\n", i);
+			printf(".", i);
+			Sleep(20);
+		}
+		return( TRUE );
+
+		// CTRL-CLOSE: confirm that the user wants to exit. 
+	case CTRL_CLOSE_EVENT: 
+		Beep( 600, 200 ); 
+		printf( "Ctrl-Close event\n\n" );
+		Sleep(5000);
+		return( TRUE ); 
+
+		// Pass other signals to the next handler. 
+	case CTRL_BREAK_EVENT: 
+		Beep( 900, 200 ); 
+		printf( "Ctrl-Break event\n\n" );
+		Sleep(5000);
+		return FALSE; 
+
+	case CTRL_LOGOFF_EVENT: 
+		Beep( 1000, 200 ); 
+		printf( "Ctrl-Logoff event\n\n" );
+		Sleep(5000);
+		return FALSE; 
+
+	case CTRL_SHUTDOWN_EVENT: 
+		Beep( 750, 500 ); 
+		printf( "Ctrl-Shutdown event\n\n" );
+		Sleep(5000);
+		return FALSE; 
+
+	default: 
+		Sleep(5000);
+		return FALSE; 
+	} 
+#if 0
+    if (event == CTRL_C_EVENT)
+		log_warn("Ctrl-C handler\n"); // do cleanup
+
 
     //OutputDebugString("console_ctrl_handler.");
 	//log_warn("console_ctrl_handler.");
+
+	printf("console_ctrl_handler\n");
+	//return;
+
     run = 0;
 
     //Sleep(5000);
@@ -60,6 +111,7 @@ void WINAPI console_ctrl_handler(DWORD event)
     Sleep(1000);
     //exit(0);
     thread_running = false;
+#endif
 }
 
 /** Print the value os a json object or array.
@@ -291,12 +343,13 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    if (!SetConsoleCtrlHandler((PHANDLER_ROUTINE)console_ctrl_handler, TRUE))
+    //if (!SetConsoleCtrlHandler((PHANDLER_ROUTINE)console_ctrl_handler, TRUE))
+	if (!SetConsoleCtrlHandler((PHANDLER_ROUTINE)console_ctrl_handler, TRUE))
     {
         // unable to install handler... 
         // display message to the user
 		log_error("unable to install handler.");
-        return (-1);
+        //return (-1);
     }
 
 
