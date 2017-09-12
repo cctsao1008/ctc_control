@@ -342,6 +342,21 @@ void rs485p2_memory_clean(Argument* ThreadParameter)
 	delete[](ThreadParameter)->_argv;
 }
 
+bool get_pumpMutex()
+{
+	return rshMutex._pumpMutex;
+}
+
+bool get_washerMutex()
+{
+	return rshMutex._washerMutex;
+}
+
+bool get_mspMutex()
+{
+	return rshMutex._mpsMutex;
+}
+
 DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 {
 	int argc = ((Argument *)ThreadParameter)->_argc;
@@ -439,8 +454,8 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 		{
 			microscopexy->move2Pos(atof(argv[3]), atof(argv[4]));
 		}
-		rs485p2_memory_clean((Argument *)ThreadParameter);
 		rshMutex._mpsMutex = false;
+		rs485p2_memory_clean((Argument *)ThreadParameter);
 		return 0;
 	}
 
@@ -476,28 +491,34 @@ int rsh_rs485p2_main(int argc, char *argv[])
 
 	if (!strcmp(argv[1], "sp"))
 	{
+		
 		while(rshMutex._pumpMutex)
 		{
 			Sleep(200);
 		}
+		
 		rshMutex._pumpMutex = true;
 	}
 
 	if (!strcmp(argv[1], "wm"))
 	{
+		
 		while (rshMutex._washerMutex)
 		{
 			Sleep(200);
 		}
+		
 		rshMutex._washerMutex = true;
 	}
 
 	if (!strcmp(argv[1], "mps"))
 	{
+		
 		while (rshMutex._mpsMutex)
 		{
 			Sleep(200);
 		}
+		
 		rshMutex._mpsMutex = true;
 	}
 

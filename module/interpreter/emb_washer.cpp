@@ -24,7 +24,12 @@ PyObject* set_wm_ma(PyObject *self, PyObject *args)
 	std::string command = "rs485p2 wm ma ";
 	command += NumberToString(degree) + " " + NumberToString(direction);
 
-	printf("%s\n", command.c_str());
+	while (get_washerMutex())
+	{
+		Sleep(200);
+	}
+
+	//printf("%s\n", command.c_str());
 	rsh_command(command.c_str());
 
 	return Py_BuildValue("s", "[INFO] Washer Move Arm Finished");
@@ -41,6 +46,11 @@ PyObject* set_wm_sh(PyObject *self, PyObject *args)
 	
 	std::string command = "rs485p2 wm sh ";
 	command += NumberToString(degree) + " " + NumberToString(time);
+
+	while (get_washerMutex())
+	{
+		Sleep(200);
+	}
 
 	//printf("%s\n", command.c_str());
 	rsh_command(command.c_str());
@@ -59,6 +69,11 @@ PyObject* set_wm_rg(PyObject *self, PyObject *args)
 
 	std::string command = "rs485p2 wm rg ";
 	command += NumberToString(degree) + " " + NumberToString(direction);
+
+	while (get_washerMutex())
+	{
+		Sleep(200);
+	}
 
 	//printf("%s\n", command.c_str());
 	rsh_command(command.c_str());

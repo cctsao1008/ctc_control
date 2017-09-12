@@ -23,6 +23,11 @@ PyObject* set_sp_ab(PyObject *self, PyObject *args)
 	std::string command = "rs485p2 sp ab ";
 	command += NumberToString(amount);
 
+	while (get_pumpMutex())
+	{
+		Sleep(200);
+	}
+
 	//printf("%s\n", command.c_str());
 	rsh_command(command.c_str());
 
@@ -39,6 +44,11 @@ PyObject* set_sp_dr(PyObject *self, PyObject *args)
 
 	std::string command = "rs485p2 sp dr ";
 	command += NumberToString(amount);
+
+	while (get_pumpMutex())
+	{
+		Sleep(200);
+	}
 
 	//printf("%s\n", command.c_str());
 	rsh_command(command.c_str());
@@ -57,6 +67,11 @@ PyObject* set_sp_pip(PyObject *self, PyObject *args)
 
 	std::string command = "rs485p2 sp pip ";
 	command += NumberToString(amount) + " " + NumberToString(time);
+
+	while (get_pumpMutex())
+	{
+		Sleep(200);
+	}
 
 	//printf("%s\n", command.c_str());
 	rsh_command(command.c_str());
