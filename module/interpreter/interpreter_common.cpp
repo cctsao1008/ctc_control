@@ -39,10 +39,12 @@ static PyMethodDef EmbMethods[] = {
 	{ "set_sp_ab", set_sp_ab, METH_VARARGS, "Syringe Pump Absorb function." },
 	{ "set_sp_dr", set_sp_dr, METH_VARARGS, "Syringe Pump Drain function." },
 	{ "set_sp_pip", set_sp_pip, METH_VARARGS, "Syringe Pump Pipetting function." },
+	{ "set_sp_wait", set_sp_wait, METH_VARARGS, "Syringe Pump Wait function." },
 #endif
 	/* Microscope XY Table Control API */
 #if defined(USING_MICR)
 	{ "set_mps_mov", set_mps_mov, METH_VARARGS, "Microscope XY Table Move to Position function." },
+	{ "set_mps_wait", set_mps_wait, METH_VARARGS, "Microscope XY Table Wait Move function." },
 #endif
 	/* Microscope XY Table Control API */
 #if defined(USING_WASH)

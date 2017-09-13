@@ -12,6 +12,16 @@
 #if defined(USING_SYRI)
 
 // Syringe Pump Control
+PyObject* set_sp_wait(PyObject *self, PyObject *args)
+{
+	while (get_pumpMutex())
+	{
+		Sleep(200);
+	}
+
+	return Py_BuildValue("s", "[INFO] Syringe Pump Wait Finished");
+}
+
 PyObject* set_sp_ab(PyObject *self, PyObject *args)
 {
 	double amount = 0.0;

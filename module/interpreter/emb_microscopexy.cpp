@@ -12,6 +12,16 @@
 #if defined(USING_MICR)
 
 // Microscope XY Control
+PyObject* set_mps_wait(PyObject *self, PyObject *args)
+{
+	while (get_mspMutex())
+	{
+		Sleep(200);
+	}
+
+	return Py_BuildValue("s", "[INFO] Microscope XY Table Wait Finished");
+}
+
 PyObject* set_mps_mov(PyObject *self, PyObject *args) 
 {
 	double x = 0.0;

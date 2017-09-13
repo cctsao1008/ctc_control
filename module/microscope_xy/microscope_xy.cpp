@@ -235,7 +235,7 @@ bool MicroscopeXY::setPort(RS485Port* PortPtr)
 // Combined with the driver
 bool MicroscopeXY::moveX(double X, uint8_t Direction)
 {
-	uint8_t address = '\x02';
+	uint8_t address = '\x03';
 	int steps = (int)(X * 40000.0);
 	Message* msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), address, Direction, NumberToString(steps).c_str(), "50", "50");
 
@@ -319,7 +319,7 @@ bool MicroscopeXY::moveX(double X, uint8_t Direction)
 		if (!controlRecieved)
 		{
 			clock_t dwCurrent = clock();
-			if (dwCurrent - dwMsgSend > 500)
+			if (dwCurrent - dwMsgSend > 1000)
 			{
 				printf("Address %.2X not recieve B1\n", address);
 				printf("MicroscopeXY: moveX TX Timeout\n");
@@ -346,7 +346,7 @@ bool MicroscopeXY::moveX(double X, uint8_t Direction)
 
 bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 {
-	uint8_t address = '\x03';
+	uint8_t address = '\x02';
 	int steps = (int)(Y * 40000.0);
 	Message* msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), address, Direction, NumberToString(steps).c_str(), "50", "50");
 
@@ -430,7 +430,7 @@ bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 		if (!controlRecieved)
 		{
 			clock_t dwCurrent = clock();
-			if (dwCurrent - dwMsgSend > 500)
+			if (dwCurrent - dwMsgSend > 1000)
 			{
 				printf("Address %.2X not recieve B1\n", address);
 				printf("MicroscopeXY: moveY TX Timeout\n");

@@ -15,7 +15,7 @@ SyringePump::SyringePump(RS485Port* PortPtr)
     {
 		_volume.insert(std::pair <unsigned int, double>(5, 0.0));
 		_volume.insert(std::pair <unsigned int, double>(20, 0.0));
-		_speed = RPM197;
+		_speed = RPM45;
 		_rs485Port = PortPtr;
 		_ghMutex = _rs485Port->getMutex();
     }
