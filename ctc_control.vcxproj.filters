@@ -162,6 +162,9 @@
     <ClCompile Include="core\core_memorywriter.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
+    <ClCompile Include="module\interpreter\emb_mariadb.cpp">
+      <Filter>Source Files\module\interpreter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="module\cserial\c_serial.h">
@@ -235,6 +238,12 @@
     </ClInclude>
     <ClInclude Include="module\mqtt.h">
       <Filter>Source Files\module</Filter>
+    </ClInclude>
+    <ClInclude Include="core\core_mariadb.h">
+      <Filter>Source Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\core_memorywriter.h">
+      <Filter>Source Files\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -51,6 +51,6 @@ private:
 	std::vector<std::string> flds;
 };
 
-
+void test_query();
 
 #endif // CORE_MARIADB_H_

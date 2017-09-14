@@ -236,7 +236,7 @@ bool MicroscopeXY::setPort(RS485Port* PortPtr)
 bool MicroscopeXY::moveX(double X, uint8_t Direction)
 {
 	uint8_t address = '\x03';
-	int steps = (int)(X * 40000.0);
+	int steps = (int)(X * 400.0);
 	Message* msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), address, Direction, NumberToString(steps).c_str(), "50", "50");
 
 	/*
@@ -311,6 +311,18 @@ bool MicroscopeXY::moveX(double X, uint8_t Direction)
 				_rs485Port->clearMsg(address);
 				break;
 			}
+			if (feedback->content[0] == (uint8_t) '\xA0' && feedback->content[1] == address)
+			{
+				printf("Address %.2X moveX Finished\n", address);
+				_rs485Port->clearMsg(address);
+				break;
+			}
+			if (feedback->content[0] == (uint8_t) '\xA1' && feedback->content[1] == address)
+			{
+				printf("Address %.2X moveX Finished\n", address);
+				_rs485Port->clearMsg(address);
+				break;
+			}
 			delete[] feedback->content;
 			delete feedback;
 		}
@@ -347,7 +359,7 @@ bool MicroscopeXY::moveX(double X, uint8_t Direction)
 bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 {
 	uint8_t address = '\x02';
-	int steps = (int)(Y * 40000.0);
+	int steps = (int)(Y * 400.0);
 	Message* msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), address, Direction, NumberToString(steps).c_str(), "50", "50");
 
 	/*
@@ -419,6 +431,18 @@ bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 			if (feedback->content[0] == (uint8_t) '\xB0' && feedback->content[1] == address)
 			{
 				printf("Address %.2X moveY Finished\n", address);
+				_rs485Port->clearMsg(address);
+				break;
+			}
+			if (feedback->content[0] == (uint8_t) '\xA0' && feedback->content[1] == address)
+			{
+				printf("Address %.2X moveX Finished\n", address);
+				_rs485Port->clearMsg(address);
+				break;
+			}
+			if (feedback->content[0] == (uint8_t) '\xA1' && feedback->content[1] == address)
+			{
+				printf("Address %.2X moveX Finished\n", address);
 				_rs485Port->clearMsg(address);
 				break;
 			}

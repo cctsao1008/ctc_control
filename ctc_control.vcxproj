@@ -110,6 +110,7 @@
     <ClCompile Include="module\cserial\c_serial.c" />
     <ClCompile Include="module\example\example.cpp" />
     <ClCompile Include="module\interpreter\emb_centrifuge.cpp" />
+    <ClCompile Include="module\interpreter\emb_mariadb.cpp" />
     <ClCompile Include="module\interpreter\emb_microscopexy.cpp" />
     <ClCompile Include="module\interpreter\emb_motion_platform_m.cpp" />
     <ClCompile Include="module\interpreter\emb_syringepump.cpp" />
@@ -133,6 +134,8 @@
     <ClInclude Include="core\core_commander.h" />
     <ClInclude Include="core\core_actuator.h" />
     <ClInclude Include="core\core_common.h" />
+    <ClInclude Include="core\core_mariadb.h" />
+    <ClInclude Include="core\core_memorywriter.h" />
     <ClInclude Include="core\core_system.h" />
     <ClInclude Include="core\core_rsh.h" />
     <ClInclude Include="core\core_scheduler.h" />

@@ -306,3 +306,30 @@ std::vector<std::string>& splitstring::split(char delim, int rep)
 	
 	return flds;
 }
+
+void test_query()
+{
+	std::wstring memoryName{ L"shm_1" };
+	size_t memorySize{ 80 };
+	MemoryWriter writer(memoryName, memorySize);
+
+
+	std::vector<std::string> values;
+	std::vector<std::string> constrain;
+	MySQL_API test = MySQL_API();
+	std::map <int, std::vector<std::string>> result;
+	test.Query("hospital_info", constrain, values);
+	result = test.getResult();
+	for (unsigned int i = 0; i < result.size(); i++)
+	{
+		std::string data;
+		for (unsigned int j = 0; j < result[i].size(); j++)
+		{
+			data += result[i][j];
+			data += " ";
+		}
+		writer.write(data);
+		printf("C++: Written in shm - %s\n", data);
+		Sleep(1000);
+	}
+}

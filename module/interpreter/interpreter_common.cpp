@@ -42,7 +42,7 @@ static PyMethodDef EmbMethods[] = {
 	{ "set_sp_wait", set_sp_wait, METH_VARARGS, "Syringe Pump Wait function." },
 #endif
 	/* Microscope XY Table Control API */
-#if defined(USING_MICR)
+#if defined(USING_MPS)
 	{ "set_mps_mov", set_mps_mov, METH_VARARGS, "Microscope XY Table Move to Position function." },
 	{ "set_mps_wait", set_mps_wait, METH_VARARGS, "Microscope XY Table Wait Move function." },
 #endif
@@ -51,6 +51,10 @@ static PyMethodDef EmbMethods[] = {
 	{ "set_wm_ma", set_wm_ma, METH_VARARGS, "Washer Move Arm function." },
 	{ "set_wm_sh", set_wm_sh, METH_VARARGS, "Washer Shake function." },
 	{ "set_wm_rg", set_wm_rg, METH_VARARGS, "Washer Rotate Gripper function." },
+#endif
+	/* MariaDB API */
+#if defined(USING_DB)
+	{ "set_db_query", set_db_query, METH_VARARGS, "MariaDB Query function." },
 #endif
 	{ NULL, NULL, 0, NULL }
 };

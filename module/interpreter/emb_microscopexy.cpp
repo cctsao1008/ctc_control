@@ -9,7 +9,7 @@
 #include "core_common.h"
 #include "interpreter_common.h"
 
-#if defined(USING_MICR)
+#if defined(USING_MPS)
 
 // Microscope XY Control
 PyObject* set_mps_wait(PyObject *self, PyObject *args)
