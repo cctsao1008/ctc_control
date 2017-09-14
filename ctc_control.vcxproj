@@ -99,6 +99,8 @@
     <ClCompile Include="core\core_commander.cpp" />
     <ClCompile Include="core\core_actuator.cpp" />
     <ClCompile Include="core\core_control.cpp" />
+    <ClCompile Include="core\core_mariadb.cpp" />
+    <ClCompile Include="core\core_memorywriter.cpp" />
     <ClCompile Include="core\core_system.cpp" />
     <ClCompile Include="core\core_rsh.cpp" />
     <ClCompile Include="core\core_scheduler.cpp" />

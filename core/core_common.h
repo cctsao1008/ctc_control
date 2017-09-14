@@ -56,6 +56,8 @@
 //#include "core_modbus.h"
 //#include "core_serialport.h"
 #include "core_rsh.h"
+#include "core_mariadb.h"
+#include "core_memorywriter.h"
 
 #include "washer.h"
 #include "syringepump.h"

@@ -156,6 +156,12 @@
     <ClCompile Include="module\mqtt\mqtt_receiver.cpp">
       <Filter>Source Files\module\mqtt</Filter>
     </ClCompile>
+    <ClCompile Include="core\core_mariadb.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\core_memorywriter.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="module\cserial\c_serial.h">

@@ -1,14 +1,11 @@
-/*********************************************
+﻿/*********************************************
 * @file core_mariadb.cpp                     *
 *                                            *
 * Mariadb API                                *
 *                                            *
 * @author Joshua <jan.joshua@iac.com.tw>     *
 *********************************************/
-
-#include "stdafx.h"
 #include "core_common.h"
-#include "core_mariadb.h"
 
 
 /* Constructor & Destructor */
@@ -31,13 +28,66 @@ MySQL_API::~MySQL_API()
 void MySQL_API::Init()
 {
 	std::vector<std::string> field;
+	/* Shared Tables */
 	_field_name.insert(std::make_pair("hospital_info", field));
 	_field_name["hospital_info"].push_back("id");
 	_field_name["hospital_info"].push_back("name");
 	_field_name["hospital_info"].push_back("tele");
 	_field_name["hospital_info"].push_back("address");
+	_field_name.insert(std::make_pair("patient_info", field));
+	_field_name["patient_info"].push_back("name");
+	_field_name["patient_info"].push_back("sex");
+	_field_name["patient_info"].push_back("birthday");
+	_field_name["patient_info"].push_back("medical_num");
+	_field_name["patient_info"].push_back("cancer_history");
+	_field_name["patient_info"].push_back("cancer_type");
+	_field_name["patient_info"].push_back("diagnose_date");
+	_field_name["patient_info"].push_back("hospital_id");
+	_field_name["patient_info"].push_back("collector");
+	_field_name["patient_info"].push_back("collect_date");
+	_field_name["patient_info"].push_back("collect_time");
+	_field_name["patient_info"].push_back("sample_state");
+	_field_name["patient_info"].push_back("recieve_date");
+	_field_name["patient_info"].push_back("recieve_time");
+	_field_name["patient_info"].push_back("analysis_date");
+	_field_name["patient_info"].push_back("analysis_time");
+	_field_name["patient_info"].push_back("patient_num");
+	_field_name["patient_info"].push_back("note");
+	_field_name["patient_info"].push_back("ctc_num");
+	_field_name.insert(std::make_pair("slide_info", field));
+	_field_name["slide_info"].push_back("slide_id");
+	_field_name["slide_info"].push_back("finished_stamp");
+	_field_name["slide_info"].push_back("sample_num");
+	_field_name["slide_info"].push_back("ctc_num_1");
+	_field_name["slide_info"].push_back("ctc_num_2");
+	_field_name["slide_info"].push_back("ctc_num_3");
+	_field_name["slide_info"].push_back("ctc_num_4");
+	_field_name["slide_info"].push_back("ctc_num_5");
+	_field_name["slide_info"].push_back("ctc_num_6");
+	_field_name["slide_info"].push_back("ctc_num_7");
+	_field_name["slide_info"].push_back("ctc_num_8");
+	/* Analysis Tables */
+	_field_name.insert(std::make_pair("single_picture_info", field));
+	_field_name["single_picture_info"].push_back("ctc_num");
+	_field_name["single_picture_info"].push_back("picture_num");
+	_field_name["single_picture_info"].push_back("fitc_cell_num");
+	_field_name["single_picture_info"].push_back("dapi_cell_num");
+	_field_name["single_picture_info"].push_back("df_cell_num");
+	_field_name.insert(std::make_pair("single_picture_cell_info", field));
+	_field_name["single_picture_cell_info"].push_back("ctc_num");
+	_field_name["single_picture_cell_info"].push_back("picture_num");
+	_field_name["single_picture_cell_info"].push_back("x");
+	_field_name["single_picture_cell_info"].push_back("y");
+	_field_name["single_picture_cell_info"].push_back("length");
+	_field_name["single_picture_cell_info"].push_back("height");
+	_field_name.insert(std::make_pair("merge_picture_cell_info", field));
+	_field_name["merge_picture_cell_info"].push_back("ctc_num");
+	_field_name["merge_picture_cell_info"].push_back("x");
+	_field_name["merge_picture_cell_info"].push_back("y");
+	_field_name["merge_picture_cell_info"].push_back("length");
+	_field_name["merge_picture_cell_info"].push_back("height");
 	_field_name.insert(std::make_pair("image_analysis", field));
-	_field_name["image_analysis"].push_back("blood_id");
+	_field_name["image_analysis"].push_back("ctc_num");
 	_field_name["image_analysis"].push_back("dapi_value");
 	_field_name["image_analysis"].push_back("fitc_value");
 	_field_name["image_analysis"].push_back("dapi_cell_brightness");
@@ -48,34 +98,15 @@ void MySQL_API::Init()
 	_field_name["image_analysis"].push_back("fitc_path");
 	_field_name["image_analysis"].push_back("dapi_result_path");
 	_field_name["image_analysis"].push_back("fitc_result_path");
-	_field_name["image_analysis"].push_back("df_result_path");
-	_field_name["image_analysis"].push_back("spliced_path");
-	_field_name["image_analysis"].push_back("fitc_cell_num");
-	_field_name["image_analysis"].push_back("dapi_cell_num");
-	_field_name["image_analysis"].push_back("df_cell_num");
-	_field_name["image_analysis"].push_back("spliced_cell_num");
-	_field_name["image_analysis"].push_back("whether_error");
-	_field_name["image_analysis"].push_back("picture_id");
+	_field_name["image_analysis"].push_back("ctc_result_path");
+	_field_name["image_analysis"].push_back("merge_path");
+	_field_name["image_analysis"].push_back("merge_fitc_num");
+	_field_name["image_analysis"].push_back("merge_dapi_num");
+	_field_name["image_analysis"].push_back("merge_ctc_num");
 	_field_name["image_analysis"].push_back("start_time");
 	_field_name["image_analysis"].push_back("finish_time");
-	_field_name.insert(std::make_pair("barcode_info", field));
-	_field_name["barcode_info"].push_back("name");
-	_field_name["barcode_info"].push_back("sex");
-	_field_name["barcode_info"].push_back("birthday");
-	_field_name["barcode_info"].push_back("patient_num");
-	_field_name["barcode_info"].push_back("barcode");
-	_field_name["barcode_info"].push_back("cancer_history");
-	_field_name["barcode_info"].push_back("cancer_type");
-	_field_name["barcode_info"].push_back("diagnose_time");
-	_field_name["barcode_info"].push_back("hospital_id");
-	_field_name["barcode_info"].push_back("collector");
-	_field_name["barcode_info"].push_back("collect_time");
-	_field_name["barcode_info"].push_back("sample_state");
-	_field_name["barcode_info"].push_back("recieve_time");
-	_field_name["barcode_info"].push_back("analysis_time");
-	_field_name["barcode_info"].push_back("note");
 	_field_name.insert(std::make_pair("microscope_device", field));
-	_field_name["microscope_device"].push_back("info_id");
+	_field_name["microscope_device"].push_back("ctc_num");
 	_field_name["microscope_device"].push_back("start_time");
 	_field_name["microscope_device"].push_back("finish_time");
 	_field_name["microscope_device"].push_back("led_brightness");
@@ -84,6 +115,7 @@ void MySQL_API::Init()
 	_field_name["microscope_device"].push_back("x_step");
 	_field_name["microscope_device"].push_back("y_length");
 	_field_name["microscope_device"].push_back("y_step");
+	/* Centrifigure Table */
 	_field_name.insert(std::make_pair("system_info", field));
 	_field_name["system_info"].push_back("info_id");
 	_field_name["system_info"].push_back("component");
@@ -113,34 +145,23 @@ void MySQL_API::Init()
 	_field_name["reagent_info"].push_back("sol3");
 	_field_name["reagent_info"].push_back("r_q");
 	_field_name["reagent_info"].push_back("r_r");
-	_field_name.insert(std::make_pair("tubechange_info", field));
-	_field_name["reagent_info"].push_back("tube_id1");
-	_field_name["reagent_info"].push_back("timestamp1");
-	_field_name["reagent_info"].push_back("tube_id2");
-	_field_name["reagent_info"].push_back("timestamp2");
-	_field_name["reagent_info"].push_back("tube_id3");
-	_field_name["reagent_info"].push_back("timestamp3");
-	_field_name["reagent_info"].push_back("tube_id4");
-	_field_name["reagent_info"].push_back("timestamp4");
-	_field_name["reagent_info"].push_back("tube_id5");
-	_field_name["reagent_info"].push_back("timestamp5");
-	_field_name["reagent_info"].push_back("tube_id6");
-	_field_name["reagent_info"].push_back("timestamp6");
-	_field_name["reagent_info"].push_back("slide_id");
-	_field_name["reagent_info"].push_back("timestamp7");
-	_field_name["reagent_info"].push_back("pos");
-	_field_name.insert(std::make_pair("slide_info", field));
-	_field_name["reagent_info"].push_back("slide_id");
-	_field_name["reagent_info"].push_back("finished_stamp");
-	_field_name["reagent_info"].push_back("sample_num");
-	_field_name["reagent_info"].push_back("tube_id1");
-	_field_name["reagent_info"].push_back("tube_id2");
-	_field_name["reagent_info"].push_back("tube_id3");
-	_field_name["reagent_info"].push_back("tube_id4");
-	_field_name["reagent_info"].push_back("tube_id5");
-	_field_name["reagent_info"].push_back("tube_id6");
-	_field_name["reagent_info"].push_back("tube_id7");
-	_field_name["reagent_info"].push_back("tube_id8");
+	_field_name.insert(std::make_pair("barcode_info", field));
+	_field_name["barcode_info"].push_back("ctc_num");
+	_field_name["barcode_info"].push_back("timestamp1");
+	_field_name["barcode_info"].push_back("tube_id2");
+	_field_name["barcode_info"].push_back("timestamp2");
+	_field_name["barcode_info"].push_back("tube_id3");
+	_field_name["barcode_info"].push_back("timestamp3");
+	_field_name["barcode_info"].push_back("tube_id4");
+	_field_name["barcode_info"].push_back("timestamp4");
+	_field_name["barcode_info"].push_back("tube_id5");
+	_field_name["barcode_info"].push_back("timestamp5");
+	_field_name["barcode_info"].push_back("tube_id6");
+	_field_name["barcode_info"].push_back("timestamp6");
+	_field_name["barcode_info"].push_back("slide_id");
+	_field_name["barcode_info"].push_back("timestamp7");
+	_field_name["barcode_info"].push_back("pos");
+	
 };
 
 /* Basic Operation*/
@@ -182,7 +203,7 @@ bool MySQL_API::Insert(std::string Table, std::vector<std::string> Content)
 	return false;
 };
 
-bool MySQL_API::Query(std::string Table, std::vector<std::string> Constrain, std::vector<std::string> Value)
+bool MySQL_API::Query(std::string Table, std::vector<std::string> &Constrain, std::vector<std::string> &Value)
 {
 	std::string query = "SELECT * FROM " + Table;
 
@@ -244,3 +265,44 @@ std::map <int, std::vector<std::string>> MySQL_API::getResult()
 {
 	return _query_result;
 };
+
+// split: receives a char delimiter; returns a vector of strings
+// By default ignores repeated delimiters, unless argument rep == 1.
+std::vector<std::string>& splitstring::split(char delim, int rep) 
+{
+	if (!flds.empty())
+	{
+		flds.clear();  // empty vector if necessary
+	}
+	
+	std::string work = data();
+	std::string buf = "";
+	
+	int i = 0;
+	
+	while (i < work.length()) 
+	{
+		if (work[i] != delim)
+		{
+			buf += work[i];
+		}
+		else if (rep == 1) 
+		{
+			flds.push_back(buf);
+			buf = "";
+		}
+		else if (buf.length() > 0) 
+		{
+			flds.push_back(buf);
+			buf = "";
+		}
+		i++;
+	}
+	
+	if (!buf.empty())
+	{
+		flds.push_back(buf);
+	}
+	
+	return flds;
+}
