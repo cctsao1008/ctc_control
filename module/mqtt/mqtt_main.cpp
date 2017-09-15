@@ -131,3 +131,10 @@ static void on_message(struct mosquitto *, void *, const struct mosquitto_messag
 		printf("topic = %s, payload = %s\n", msg->topic, (char*)msg->payload);
 	}
 }
+
+uint8_t mqtt_publish(const char *topic, int payloadlen, const void *payload)
+{
+	mosquitto_publish(mosq, NULL, topic, payloadlen, payload, 0, true);
+
+	return 0;
+}
