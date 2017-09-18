@@ -328,3 +328,67 @@ std::vector<std::string>& splitstring::split(char delim, int rep)
 	
 	return flds;
 }
+
+bool get_dbMutex()
+{
+	return dbMutex._dbMutex;
+}
+
+void rsh_db_mutex_init()
+{
+	static bool init = false;
+
+	if (!init)
+	{
+		dbMutex._dbMutex = false;
+		init = true;
+	}
+}
+
+// rsh db main
+int rsh_db_main(int argc, char *argv[])
+{
+	rsh_db_mutex_init();
+
+	if (!strcmp(argv[1], "db"))
+	{
+		while (dbMutex._dbMutex)
+		{
+			Sleep(200);
+		}
+
+		dbMutex._dbMutex = true;
+	}
+
+	if (!strcmp(argv[1], "query"))
+	{
+		if (argc != 3 && argc != 5)
+		{
+			log_info("error");
+			return 0;
+		}
+
+		if (argc == 3)
+		{
+			std::vector<std::string> _values;
+			std::vector<std::string> _constrain;
+			mariadb.Query(argv[2], _constrain, _values);
+			//mariadb.pubResult();
+			return 0;
+		}
+		else
+		{
+			splitstring values(argv[3]);
+			splitstring constrain(argv[4]);
+
+			std::vector<std::string> _values = values.split(';');
+			std::vector<std::string> _constrain = constrain.split(';');
+			mariadb.Query(argv[2], _constrain, _values);
+			//mariadb.pubResult();
+			return 0;
+		}
+	}
+
+
+	return 0;
+}

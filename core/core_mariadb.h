@@ -52,6 +52,24 @@ private:
 	std::vector<std::string> flds;
 };
 
+/**
+Mutexes For db Thread
+*/
+typedef struct _dbThreadMutex
+{
+	bool _dbMutex;
+} dbThreadMutex;
+
+bool get_dbMutex();
+
+void rsh_db_mutex_init();
+
+int rsh_db_main(int argc, char *argv[]);
+
+static dbThreadMutex dbMutex;
+
 static MySQL_API mariadb;
+
+
 
 #endif // CORE_MARIADB_H_

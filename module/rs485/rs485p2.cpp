@@ -304,7 +304,7 @@ void initRS485P2para()
 	if (!init)
 	{
 		bianneng = new BianNeng();
-		rs485p2 = new RS485Port("COM12");
+		rs485p2 = new RS485Port("COM6");
 		/*
 		if (rs485p2.openRS485Port("COM12"))
 		{
@@ -326,9 +326,9 @@ void rsh_rs485p2_mutex_init()
 
 	if (!init)
 	{
-		rshMutex._pumpMutex = false;
-		rshMutex._washerMutex = false;
-		rshMutex._mpsMutex = false;
+		rs485p2Mutex._pumpMutex = false;
+		rs485p2Mutex._washerMutex = false;
+		rs485p2Mutex._mpsMutex = false;
 		init = true;
 	}
 }
@@ -344,17 +344,17 @@ void rs485p2_memory_clean(Argument* ThreadParameter)
 
 bool get_pumpMutex()
 {
-	return rshMutex._pumpMutex;
+	return rs485p2Mutex._pumpMutex;
 }
 
 bool get_washerMutex()
 {
-	return rshMutex._washerMutex;
+	return rs485p2Mutex._washerMutex;
 }
 
 bool get_mspMutex()
 {
-	return rshMutex._mpsMutex;
+	return rs485p2Mutex._mpsMutex;
 }
 
 DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
@@ -368,15 +368,6 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 	{
 		log_info("missing command");
 		rs485p2_memory_clean((Argument *)ThreadParameter);
-		return 0;
-	}
-
-	if (!strcmp(argv[1], "db"))
-	{
-		std::vector<std::string> values;
-		std::vector<std::string> constrain;
-		mariadb.Query("hospital_info", constrain, values);
-		mariadb.pubResult();
 		return 0;
 	}
 
@@ -424,7 +415,7 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 			syringepump->pipetteVolume(atof(argv[3]), atoi(argv[4]));
 		}
 		rs485p2_memory_clean((Argument *)ThreadParameter);
-		rshMutex._pumpMutex = false;
+		rs485p2Mutex._pumpMutex = false;
 		return 0;
 	}
 
@@ -448,7 +439,7 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 			washer->rotateGripper(atof(argv[3]), (uint8_t)atoi(argv[4]));
 		}
 		rs485p2_memory_clean((Argument *)ThreadParameter);
-		rshMutex._washerMutex = false;
+		rs485p2Mutex._washerMutex = false;
 		return 0;
 	}
 	
@@ -463,7 +454,7 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 		{
 			microscopexy->move2Pos(atof(argv[3]), atof(argv[4]));
 		}
-		rshMutex._mpsMutex = false;
+		rs485p2Mutex._mpsMutex = false;
 		rs485p2_memory_clean((Argument *)ThreadParameter);
 		return 0;
 	}
@@ -501,34 +492,34 @@ int rsh_rs485p2_main(int argc, char *argv[])
 	if (!strcmp(argv[1], "sp"))
 	{
 		
-		while(rshMutex._pumpMutex)
+		while (rs485p2Mutex._pumpMutex)
 		{
 			Sleep(200);
 		}
 		
-		rshMutex._pumpMutex = true;
+		rs485p2Mutex._pumpMutex = true;
 	}
 
 	if (!strcmp(argv[1], "wm"))
 	{
 		
-		while (rshMutex._washerMutex)
+		while (rs485p2Mutex._washerMutex)
 		{
 			Sleep(200);
 		}
 		
-		rshMutex._washerMutex = true;
+		rs485p2Mutex._washerMutex = true;
 	}
 
 	if (!strcmp(argv[1], "mps"))
 	{
 		
-		while (rshMutex._mpsMutex)
+		while (rs485p2Mutex._mpsMutex)
 		{
 			Sleep(200);
 		}
 		
-		rshMutex._mpsMutex = true;
+		rs485p2Mutex._mpsMutex = true;
 	}
 
 	hThread = CreateThread(	NULL,                        // default security attributes

@@ -64,14 +64,14 @@ typedef struct _argument
 } Argument;
 
 /**
-Mutexes For rsh Thread
+Mutexes For rs485p2 Thread
 */
-typedef struct _rshThreadMutex
+typedef struct _rs485p2ThreadMutex
 {
 	bool _pumpMutex;
 	bool _washerMutex;
 	bool _mpsMutex;
-} rshThreadMutex;
+} rs485p2ThreadMutex;
 
 bool get_pumpMutex();
 bool get_washerMutex();
@@ -87,7 +87,7 @@ void rsh_rs485p2_mutex_init();
 
 static RS485Port* rs485p2;
 
-static rshThreadMutex rshMutex;
+static rs485p2ThreadMutex rs485p2Mutex;
 
 void initRS485P2para();
 
