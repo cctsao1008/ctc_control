@@ -52,4 +52,6 @@ private:
 	std::vector<std::string> flds;
 };
 
+static MySQL_API mariadb;
+
 #endif // CORE_MARIADB_H_

@@ -371,6 +371,15 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 		return 0;
 	}
 
+	if (!strcmp(argv[1], "db"))
+	{
+		std::vector<std::string> values;
+		std::vector<std::string> constrain;
+		mariadb.Query("hospital_info", constrain, values);
+		mariadb.pubResult();
+		return 0;
+	}
+
 	// BN stands for BengNeng Motor Controler
 	if (!strcmp(argv[1], "bn"))
 	{

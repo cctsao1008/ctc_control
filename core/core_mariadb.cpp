@@ -267,8 +267,25 @@ std::map <int, std::vector<std::string>> MySQL_API::getResult()
 
 bool MySQL_API::pubResult()
 {
-	//if (_query_result.size())
-	return false;
+	if (_query_result.size() > 0)
+	{
+		for (int i = 0; i < _query_result.size(); i++)
+		{
+			std::string row = "";
+			for (int j = 0; j < _query_result[i].size(); j++)
+			{
+				row += _query_result[i][j];
+				if (i != (_query_result[i].size() - 1))
+				{
+					row += " ";
+				}
+			}
+			mqtt_publish("query_result", row.length(), row.c_str());
+			Sleep(1000);
+		}
+	}
+
+	return true;
 };
 
 // split: receives a char delimiter; returns a vector of strings
