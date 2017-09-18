@@ -17,12 +17,13 @@ static void on_message(struct mosquitto *, void *, const struct mosquitto_messag
 
 /* pthreads */
 static pthread_t pid;
+static pthread_mutex_t lock;
 
 /* mqtt */
 static mosquitto *mosq;
 
 /* flags */
-static bool commander_initialized = false;
+static bool initialized = false;
 static volatile bool thread_should_exit = false;	/**< daemon exit flag */
 static volatile bool thread_running = false;		/**< daemon status flag */
 
@@ -43,6 +44,7 @@ int rsh_mqtt_main(int argc, char *argv[])
 
 		thread_should_exit = false;
 
+		pthread_mutex_init(&lock, NULL);
 		pthread_create(&pid, NULL, &mqtt_thread_main, NULL);
 
 		return 0;
@@ -73,7 +75,7 @@ int rsh_mqtt_main(int argc, char *argv[])
 static void* mqtt_thread_main(void* arg)
 {
 	/* not yet initialized */
-	commander_initialized = false;
+	initialized = false;
 
 	/* mqtt */
 	mosquitto_lib_init();
@@ -90,7 +92,7 @@ static void* mqtt_thread_main(void* arg)
 	mosquitto_subscribe(mosq, NULL, TOPIC_RSH_CMD, 0);
 
 	/* now initialized */
-	commander_initialized = true;
+	initialized = true;
 	thread_running = true;
 
 	while (!thread_should_exit)
@@ -134,7 +136,12 @@ static void on_message(struct mosquitto *, void *, const struct mosquitto_messag
 
 uint8_t mqtt_publish(const char *topic, int payloadlen, const void *payload)
 {
+	if (initialized != TRUE)
+		return 0;
+
+	pthread_mutex_lock(&lock);
 	mosquitto_publish(mosq, NULL, topic, payloadlen, payload, 0, true);
+	pthread_mutex_unlock(&lock);
 
 	return 0;
 }
