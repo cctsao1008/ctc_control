@@ -81,9 +81,18 @@ static void* mqtt_thread_main(void* arg)
 	mosquitto_lib_init();
 	mosq = mosquitto_new("ctrl.mqtt", true, NULL);
 
-	if (mosquitto_connect_async(mosq, "localhost", 1883, 60) == MOSQ_ERR_SUCCESS) {
-		mosquitto_loop_start(mosq);
+	if (!mosq){
+		fprintf(stderr, "[mqtt] Error: Out of memory.\n");
+		return 0;
+		//exit(1);
 	}
+
+	if (mosquitto_connect_async(mosq, "localhost", 1883, 60) != MOSQ_ERR_SUCCESS) {
+		fprintf(stderr, "[mqtt] Unable to connect.\n");
+		return 0;
+	}
+
+	mosquitto_loop_start(mosq);
 
 	/* message callback */
 	mosquitto_message_callback_set(mosq, on_message);
@@ -98,6 +107,7 @@ static void* mqtt_thread_main(void* arg)
 	while (!thread_should_exit)
 	{
 		//log_info("[mqtt] mqtt_thread_main running");
+		//mqtt_publish("/CINTROL/TEST", sizeof("HELLO"), "HELLO");
 		Sleep(2000);
 	}
 
