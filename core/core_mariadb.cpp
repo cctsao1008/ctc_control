@@ -245,7 +245,6 @@ bool MySQL_API::Query(std::string Table, std::vector<std::string> &Constrain, st
 				row.push_back(_row[i]);
 			}
 			_query_result.insert(std::make_pair(count, row));
-			Sleep(1000);
 			count += 1;
 		}
 
@@ -264,6 +263,12 @@ std::vector<std::string> MySQL_API::getField(std::string Table)
 std::map <int, std::vector<std::string>> MySQL_API::getResult()
 {
 	return _query_result;
+};
+
+bool MySQL_API::pubResult()
+{
+	//if (_query_result.size())
+	return false;
 };
 
 // split: receives a char delimiter; returns a vector of strings

@@ -235,7 +235,7 @@ bool MicroscopeXY::setPort(RS485Port* PortPtr)
 // Combined with the driver
 bool MicroscopeXY::moveX(double X, uint8_t Direction)
 {
-	uint8_t address = '\x03';
+	uint8_t address = '\x20';
 	int steps = (int)(X * 400.0);
 	Message* msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), address, Direction, NumberToString(steps).c_str(), "50", "50");
 
@@ -358,7 +358,7 @@ bool MicroscopeXY::moveX(double X, uint8_t Direction)
 
 bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 {
-	uint8_t address = '\x02';
+	uint8_t address = '\x21';
 	int steps = (int)(Y * 400.0);
 	Message* msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), address, Direction, NumberToString(steps).c_str(), "50", "50");
 

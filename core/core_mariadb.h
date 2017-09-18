@@ -29,6 +29,7 @@ public:
 	/* Get Result Search*/
 	std::vector<std::string> getField(std::string Table);
 	std::map <int, std::vector<std::string>> getResult();
+	bool MySQL_API::pubResult();
 
 private:
 	// MySQL API Variables
