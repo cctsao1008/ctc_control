@@ -55,9 +55,6 @@
     <Filter Include="Source Files\module\microscope_xy">
       <UniqueIdentifier>{9b640081-595e-4330-a835-ba0c82d3e598}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\module\param">
-      <UniqueIdentifier>{31a5fd54-0940-4dff-bca6-92a70e6403f0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\module\mqtt">
       <UniqueIdentifier>{16aad170-fe6f-4e54-bf91-5fba3c1588fd}</UniqueIdentifier>
     </Filter>

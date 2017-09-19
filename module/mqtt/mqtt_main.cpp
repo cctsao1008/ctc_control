@@ -150,7 +150,7 @@ uint8_t mqtt_publish(const char *topic, int payloadlen, const void *payload)
 		return 0;
 
 	pthread_mutex_lock(&lock);
-	mosquitto_publish(mosq, NULL, topic, payloadlen, payload, 0, true);
+	mosquitto_publish(mosq, NULL, topic, payloadlen, payload, 0, false);
 	pthread_mutex_unlock(&lock);
 
 	return 0;
