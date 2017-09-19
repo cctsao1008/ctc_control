@@ -53,7 +53,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>core;module;module\lcm-lite;module\getopt\src;module\wingetopt\src;module\log.c\src;module\tiny-json;module\cserial;module\bianneng;lib\libmodbus v3.1.4\x86\include;lib\pthreads-w32-2-9-1-release\include;lib\python-3.6.2-embed-win32;lib\mosquitto-1.4.14\devel;lib\Python36\include;lib\MariaDB 10.1\include\mysql;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>core;module;module\kvdb\src;module\lcm-lite;module\getopt\src;module\wingetopt\src;module\log.c\src;module\tiny-json;module\cserial;module\bianneng;lib\libmodbus v3.1.4\x86\include;lib\pthreads-w32-2-9-1-release\include;lib\python-3.6.2-embed-win32;lib\mosquitto-1.4.14\devel;lib\Python36\include;lib\MariaDB 10.1\include\mysql;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -67,7 +67,8 @@
  xcopy /d /y "$(ProjectDir)\lib\libmodbus v3.1.4\x86\libs\*.dll" "$(OutDir)"
  xcopy /d /y "$(ProjectDir)\lib\python-3.6.2-embed-win32\*.dll" "$(OutDir)"
  xcopy /d /s /y "$(ProjectDir)\lib\python-3.6.2-embed-win32\python36.zip" "$(OutDir)"
- xcopy /d /y "$(ProjectDir)\lib\MariaDB 10.1\lib\*.dll" "$(OutDir)"</Command>
+ xcopy /d /y "$(ProjectDir)\lib\MariaDB 10.1\lib\*.dll" "$(OutDir)"
+ xcopy /d /y "$(ProjectDir)\core\default.ini" "$(OutDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -107,13 +108,15 @@
     <ClCompile Include="core\core_scheduler.cpp" />
     <ClCompile Include="core\core_service.cpp" />
     <ClCompile Include="module\bianneng\bianneng.cpp" />
-    <ClCompile Include="module\config\config.cpp" />
+    <ClCompile Include="module\config\cfg_util.c" />
+    <ClCompile Include="module\config\config.c" />
     <ClCompile Include="module\cserial\c_serial.c" />
     <ClCompile Include="module\example\example.cpp" />
     <ClCompile Include="module\interpreter\emb_centrifuge.cpp" />
+    <ClCompile Include="module\interpreter\emb_guideway.cpp" />
     <ClCompile Include="module\interpreter\emb_mariadb.cpp" />
     <ClCompile Include="module\interpreter\emb_microscopexy.cpp" />
-    <ClCompile Include="module\interpreter\emb_motion_platform_m.cpp" />
+    <ClCompile Include="module\interpreter\emb_mp_main.cpp" />
     <ClCompile Include="module\interpreter\emb_syringepump.cpp" />
     <ClCompile Include="module\interpreter\emb_washer.cpp" />
     <ClCompile Include="module\interpreter\interpreter_main.cpp" />

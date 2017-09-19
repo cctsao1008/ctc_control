@@ -113,4 +113,6 @@ uint8_t pyc_command(const char *cmd)
 	PyMem_RawFree(program);
 
 	Py_FinalizeEx();
+
+	return 0;
 }

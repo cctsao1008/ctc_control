@@ -88,7 +88,7 @@ static void* mqtt_thread_main(void* arg)
 	}
 
 	if (mosquitto_connect_async(mosq, "localhost", 1883, 60) != MOSQ_ERR_SUCCESS) {
-		fprintf(stderr, "[mqtt] Unable to connect.\n");
+		fprintf(stderr, "[mqtt] Unable to connect to broker.\n");
 		return 0;
 	}
 

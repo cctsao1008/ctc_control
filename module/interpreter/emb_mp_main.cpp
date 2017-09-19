@@ -1,9 +1,9 @@
 /**
-* @file emb_motion_platform_main.cpp
+* @file emb_main_xyz_table.cpp
 *
-* emb_motion_platform_main
+* emb_mp_main
 *
-*   emb_motion_platform_main.
+*   emb_mp_main.
 *
 * @author Ricardo <tsao.ricardo@iac.com.tw>
 */

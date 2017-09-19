@@ -33,10 +33,6 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 #include "cfg_util.h"
 
 /**
@@ -291,9 +287,5 @@ void config_set_value_float(CONFIG cfg, const char *section, const char *key, fl
  * @return (none).
  */
 void config_set_value_bool(CONFIG cfg, const char *section, const char *key, bool value);
-
-#ifdef __cplusplus
-} /* end extern "C" */
-#endif /* __cplusplus */
 
 #endif

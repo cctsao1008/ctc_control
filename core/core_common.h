@@ -35,6 +35,7 @@
 #include "tiny-json.h"
 #include "lcmlite.h"
 #include "mqtt.h"
+#include "config.h"
 
 #ifdef _DEBUG
 #undef _DEBUG
@@ -67,7 +68,6 @@
 #include "rs485p2.h"
 #include "bianneng.h"
 #include "interpreter.h"
-#include "config.h"
 #include "example.h"
 
 #pragma warning(disable:4996)
