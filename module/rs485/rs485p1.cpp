@@ -50,7 +50,11 @@ static volatile bool thread_running = false;		/**< daemon status flag */
 /* MQTT */
 static mosquitto *mosq;
 
-rs485p1 rs485p1_data;
+
+/* RS485 */
+static char *port = { 0 };
+static int baud[2] = { 0 };
+static rs485p1 rs485p1_data;
 
 static void WINAPI timer_handler(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dwl, DWORD dw2)
 {
@@ -299,13 +303,21 @@ void* rs485p1_thread_main(void* arg)
 	//send_addr.sin_port = mc_port;
 
 	/* INI File */
+	char *port = {0};
 	CONFIG cfg = config_open((const char *)null);
 	bool rc = config_load(cfg, "config\\rs485p1.ini");
 	int nbr_sections = config_get_nbr_sections(cfg);
 	const char **section_names = config_get_sections(cfg);
 	const char *comments = config_get_comment(cfg);
 
-	printf("  %s\t= %s\n", "port", config_get_value_string(cfg, "OPTIONS", "port", ""));
+	port = (char *)config_get_value_string(cfg, "OPTIONS", "port", "");
+	printf("\n  %s\t= %s\n", "port", port);
+
+	baud[0] = config_get_value_int(cfg, "OPTIONS", "baud_0", 115200);
+	printf("  %s\t= %d\n", "(srvo) baud_0", baud[0]);
+
+	baud[1] = config_get_value_int(cfg, "OPTIONS", "baud_1", 19200);
+	printf("  %s\t= %d\n", "(temp) baud_1", baud[1]);
 
 	if (comments != null)
 	{
@@ -322,8 +334,8 @@ void* rs485p1_thread_main(void* arg)
 	uint16_t data[64];
 
 	/* for servo driver */
-	ctx[0] = modbus_new_rtu(MODBUS_SERIAL_DEV,
-		115200,
+	ctx[0] = modbus_new_rtu(port,
+		baud[0], //115200,
 		MODBUS_SERIAL_PARITY,
 		MODBUS_SERIAL_DATABITS,
 		MODBUS_SERIAL_STOPBITS);
@@ -334,8 +346,8 @@ void* rs485p1_thread_main(void* arg)
 	}
 
 	/* for PID controller */
-	ctx[1] = modbus_new_rtu(MODBUS_SERIAL_DEV,
-		19200,
+	ctx[1] = modbus_new_rtu(port,
+		baud[1], //19200,
 		MODBUS_SERIAL_PARITY,
 		MODBUS_SERIAL_DATABITS,
 		MODBUS_SERIAL_STOPBITS);
