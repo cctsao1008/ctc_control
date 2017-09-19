@@ -298,6 +298,20 @@ void* rs485p1_thread_main(void* arg)
 	//send_addr.sin_addr = mc_addr;
 	//send_addr.sin_port = mc_port;
 
+	/* INI File */
+	CONFIG cfg = config_open((const char *)null);
+	bool rc = config_load(cfg, "config\\rs485p1.ini");
+	int nbr_sections = config_get_nbr_sections(cfg);
+	const char **section_names = config_get_sections(cfg);
+	const char *comments = config_get_comment(cfg);
+
+	printf("  %s\t= %s\n", "port", config_get_value_string(cfg, "OPTIONS", "port", ""));
+
+	if (comments != null)
+	{
+		printf("#%s\n", comments);
+	}
+
 	/* MODBUS */
 	static modbus_t  *ctx[2];
 
@@ -511,7 +525,7 @@ void* rs485p1_thread_main(void* arg)
 
 			/* write new temp value to controller */
 			write_register(ctx[1], 20, 0x0, (int)(round(pd.cent.temp) * 10));
-			printf("write temp = %d\n", (int)(round(pd.cent.temp) * 10));
+			//printf("write temp = %d\n", (int)(round(pd.cent.temp) * 10));
 #else
 			// fake data
 			//double tmp = (double)((rand() / (RAND_MAX + 1.0)) * (110.0 - 90.0) + 110.0); // 1~5 us
@@ -532,6 +546,8 @@ void* rs485p1_thread_main(void* arg)
 
 		Sleep(1);
 	}
+
+	config_close(cfg);
 
 	modbus_free(ctx[0]);
 	modbus_free(ctx[1]);

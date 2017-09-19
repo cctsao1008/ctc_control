@@ -42,7 +42,7 @@ uint16_t loop_servo_4(modbus_t *ctx)
 
 	data = servo_sync(ctx, SERVO_4);
 
-	printf("s4 : data = 0x%X\n", data);
+	//printf("s4 : data = 0x%X\n", data);
 
 	return data;
 }
