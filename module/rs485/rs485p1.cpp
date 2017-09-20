@@ -147,7 +147,12 @@ int read_register(modbus_t *ctx, int slave, int addr, uint16_t *dest)
 {
 	int rc;
 
-	modbus_connect(ctx);
+	if (modbus_connect(ctx) == -1) {
+		fprintf(stderr, "Connection failed: %s\n", modbus_strerror(errno));
+		//modbus_free(ctx);
+		//return -1;
+	}
+
 	modbus_set_slave(ctx, slave);
 	rc = modbus_read_registers(ctx, addr, 1, dest);
 	modbus_close(ctx);
@@ -159,7 +164,13 @@ int read_input_register(modbus_t *ctx, int slave, int addr, uint16_t *dest)
 {
 	int rc;
 
-	modbus_connect(ctx);
+	//modbus_connect(ctx);
+	if (modbus_connect(ctx) == -1) {
+		fprintf(stderr, "Connection failed: %s\n", modbus_strerror(errno));
+		//modbus_free(ctx);
+		//return -1;
+	}
+
 	modbus_set_slave(ctx, slave);
 	rc = modbus_read_input_registers(ctx, addr, 1, dest);
 	modbus_close(ctx);
@@ -172,7 +183,13 @@ int write_register(modbus_t *ctx, int slave, int addr, int value)
 {
 	int rc;
 
-	modbus_connect(ctx);
+	//modbus_connect(ctx);
+	if (modbus_connect(ctx) == -1) {
+		fprintf(stderr, "Connection failed: %s\n", modbus_strerror(errno));
+		//modbus_free(ctx);
+		//return -1;
+	}
+
 	modbus_set_slave(ctx, slave);
 	rc = modbus_write_register(ctx, addr, value);
 	modbus_close(ctx);
@@ -439,7 +456,13 @@ void* rs485p1_thread_main(void* arg)
 			//log_info("deltaTime5Hz = %.2f ms", deltaTime5Hz/1000.0f);
 
 			/* keep servo driver connection*/
-			modbus_connect(ctx[0]);
+			//modbus_connect(ctx[0]);
+
+			if (modbus_connect(ctx[0]) == -1) {
+				fprintf(stderr, "Connection failed: %s\n", modbus_strerror(errno));
+				//modbus_free(ctx);
+				//return -1;
+			}
 
 			// Servo driver SDE-075A2 750W, MP X axis
 			if (servo_enabled[SERVO_1] == true)
