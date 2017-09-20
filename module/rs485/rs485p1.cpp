@@ -384,7 +384,7 @@ void* rs485p1_thread_main(void* arg)
 	AO[1] = 20.0;
 	write_register(ctx[1], 20, 0x0, (int)AO[1] * 10);
 #else
-	write_register(ctx[1], 20, 0x0, (int)(round(pd.cent.temp) * 10));
+	write_register(ctx[1], 20, 0x0, (int)(round(so.cent.temp) * 10));
 #endif
 
 	/* ENABLE SERVO */
@@ -559,8 +559,8 @@ void* rs485p1_thread_main(void* arg)
 			//log_info("FT3400 PV = %3.1f", (float)data[0] * 0.1);
 
 			/* write new temp value to controller */
-			write_register(ctx[1], 20, 0x0, (int)(round(pd.cent.temp) * 10));
-			//printf("write temp = %d\n", (int)(round(pd.cent.temp) * 10));
+			write_register(ctx[1], 20, 0x0, (int)(round(so.cent.temp) * 10));
+			//printf("write temp = %d\n", (int)(round(so.cent.temp) * 10));
 #else
 			// fake data
 			//double tmp = (double)((rand() / (RAND_MAX + 1.0)) * (110.0 - 90.0) + 110.0); // 1~5 us

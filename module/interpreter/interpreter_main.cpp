@@ -66,6 +66,11 @@ void* interpreter_thread_main(void* arg)
 		);
 #endif
 
+	PyRun_SimpleString(
+		"import sys\n"
+		"sys.path.append('./script')\n"
+		);
+
 	//printf("%s \n", (char *)arg);
 	//strcpy_s(command, "argv[1]");
 	char scritp_file_name[128];
