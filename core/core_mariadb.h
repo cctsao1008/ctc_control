@@ -68,7 +68,7 @@ int rsh_db_main(int argc, char *argv[]);
 
 static dbThreadMutex dbMutex;
 
-static MySQL_API mariadb;
+//static MySQL_API mariadb;
 
 
 

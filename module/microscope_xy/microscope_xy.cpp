@@ -102,6 +102,19 @@ double MicroscopeXY::getSpeed() const
 	return _speed;
 }
 
+//
+bool MicroscopeXY::initmps()
+{
+	if (!move2Pos(-100.0, -100.0))
+	{
+		return false;
+	}
+
+	_position.X = 0.0;
+	_position.Y = 0.0;
+	return true;
+}
+
 // Action
 bool MicroscopeXY::move2Pos(Position Pos)
 {
@@ -126,6 +139,7 @@ bool MicroscopeXY::move2Pos(Position Pos)
 		// Error Message
 		return false;
 	}
+	_position.X = Pos.X;
 	ReleaseMutex(_ghMutex);
 	Sleep(500);
 
@@ -145,6 +159,7 @@ bool MicroscopeXY::move2Pos(Position Pos)
 		// Error Message
 		return false;
 	}
+	_position.Y = Pos.Y;
 	ReleaseMutex(_ghMutex);
 	Sleep(500);
 
@@ -175,6 +190,7 @@ bool MicroscopeXY::move2Pos(double X, double Y)
 		// Error Message
 		return false;
 	}
+	_position.X = X;
 	Sleep(500);
 	ReleaseMutex(_ghMutex);
 
@@ -196,6 +212,60 @@ bool MicroscopeXY::move2Pos(double X, double Y)
 		// Error Message
 		return false;
 	}
+	_position.Y = Y;
+	Sleep(500);
+	ReleaseMutex(_ghMutex);
+
+	return true;
+}
+
+bool MicroscopeXY::moveXY(double X, double Y)
+{
+	double xLength = X;
+	uint8_t xDirection;
+	double yLength = Y;
+	uint8_t yDirection;
+
+	///*
+	WaitForSingleObject(_ghMutex, INFINITE);
+	if (X > 0)
+	{
+		xDirection = PositiveExecute;
+	}
+	else
+	{
+		xLength = 0 - xLength;
+		xDirection = NegativeExecute;
+	}
+
+	if (!moveX(xLength, xDirection)) // If motor did not move successfully
+	{
+		// Error Message
+		return false;
+	}
+	_position.X += X;
+	Sleep(500);
+	ReleaseMutex(_ghMutex);
+
+	//*/
+
+	WaitForSingleObject(_ghMutex, INFINITE);
+	if (Y > 0)
+	{
+		yDirection = PositiveExecute;
+	}
+	else
+	{
+		yLength = 0 - yLength;
+		yDirection = NegativeExecute;
+	}
+
+	if (!moveY(yLength, yDirection)) // If motor did not move successfully
+	{
+		// Error Message
+		return false;
+	}
+	_position.Y += Y;
 	Sleep(500);
 	ReleaseMutex(_ghMutex);
 
@@ -235,6 +305,7 @@ bool MicroscopeXY::setPort(RS485Port* PortPtr)
 // Combined with the driver
 bool MicroscopeXY::moveX(double X, uint8_t Direction)
 {
+	//uint8_t address = '\x02';
 	uint8_t address = '\x20';
 	int steps = (int)(X * 400.0);
 	Message* msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), address, Direction, NumberToString(steps).c_str(), "50", "50");
@@ -358,6 +429,7 @@ bool MicroscopeXY::moveX(double X, uint8_t Direction)
 
 bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 {
+	//uint8_t address = '\x03';
 	uint8_t address = '\x21';
 	int steps = (int)(Y * 400.0);
 	Message* msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), address, Direction, NumberToString(steps).c_str(), "50", "50");
@@ -408,18 +480,6 @@ bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 			SYSTEMTIME systemtime;
 			GetLocalTime(&systemtime);
 			printf(" currentDateTime() = %02d:%02d:%02d.%03d\n", systemtime.wHour, systemtime.wMinute, systemtime.wSecond, systemtime.wMilliseconds);
-			//ReleaseMutex(_ghMutex); // try
-
-			/*
-			if (feedback->content[0] == (uint8_t) '\xB5' && feedback->content[1] == address)
-			{
-			WaitForSingleObject(_ghMutex, INFINITE); // try
-			printf("Resend Command\n");
-			c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length);
-			ReleaseMutex(_ghMutex); // try
-			continue;
-			}
-			*/
 
 			if (feedback->content[0] == (uint8_t) '\xB1' && feedback->content[1] == address)
 			{
@@ -436,13 +496,13 @@ bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 			}
 			if (feedback->content[0] == (uint8_t) '\xA0' && feedback->content[1] == address)
 			{
-				printf("Address %.2X moveX Finished\n", address);
+				printf("Address %.2X moveY Finished\n", address);
 				_rs485Port->clearMsg(address);
 				break;
 			}
 			if (feedback->content[0] == (uint8_t) '\xA1' && feedback->content[1] == address)
 			{
-				printf("Address %.2X moveX Finished\n", address);
+				printf("Address %.2X moveY Finished\n", address);
 				_rs485Port->clearMsg(address);
 				break;
 			}

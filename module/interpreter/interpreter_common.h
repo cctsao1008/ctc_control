@@ -15,7 +15,7 @@
 #define USING_SYRI
 #define USING_MPS
 #define USING_WASH
-#define USING_DB
+//#define USING_DB
 
 PyObject*
 mp1_movj(PyObject *self, PyObject *args);
@@ -60,12 +60,17 @@ PyObject* set_wm_sh(PyObject *self, PyObject *args);
 PyObject* set_wm_rg(PyObject *self, PyObject *args);
 
 // Microscope XY Control
+PyObject* set_mps_init(PyObject *self, PyObject *args);
+
 PyObject* set_mps_wait(PyObject *self, PyObject *args);
 
 PyObject* set_mps_mov(PyObject *self, PyObject *args);
 
+PyObject* set_mps_pos(PyObject *self, PyObject *args);
 
+#if defined(USING_DB)
 // MariaDB
 PyObject* set_db_query(PyObject *self, PyObject *args);
+#endif
 
 // Joshua Add Finished

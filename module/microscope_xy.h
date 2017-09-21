@@ -38,9 +38,15 @@ public:
     double getY() const;
     double getSpeed() const;
 
-    // Action
+	// Move to (0, 0)
+	bool initmps();
+
+    // Move to specific position
     bool move2Pos(Position Pos);
     bool move2Pos(double X, double Y);
+	
+	// Move vector
+	bool moveXY(double X, double Y);
 
     // Modifier
     bool initDriver();
