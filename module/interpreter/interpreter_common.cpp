@@ -36,6 +36,7 @@ static PyMethodDef EmbMethods[] = {
 #endif
 	/* Syringe Pump Control API */
 #if defined(USING_SYRI)
+	{ "set_sp_init", set_sp_init, METH_VARARGS, "Syringe Pump Init function." },
 	{ "set_sp_ab", set_sp_ab, METH_VARARGS, "Syringe Pump Absorb function." },
 	{ "set_sp_dr", set_sp_dr, METH_VARARGS, "Syringe Pump Drain function." },
 	{ "set_sp_pip", set_sp_pip, METH_VARARGS, "Syringe Pump Pipetting function." },

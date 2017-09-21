@@ -282,6 +282,12 @@ bool SyringePump::drainVolume(double Volume)
 				printf("Address %.2X drainVolume Finished\n", address);
 				break;
 			}
+
+			if (feedback->content[0] == (uint8_t) '\xA0' && feedback->content[1] == address)
+			{
+				printf("Address %.2X drainVolume Finished\n", address);
+				break;
+			}
 			delete[] feedback->content;
 			delete feedback;
 		}

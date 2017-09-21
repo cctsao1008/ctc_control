@@ -371,6 +371,10 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 		{
 			log_info("error");
 		}
+		else if (!strcmp(argv[2], "init")) // AB stands for Absorb
+		{
+			syringepump->initPiston();
+		}
 		else if (!strcmp(argv[2], "ab")) // AB stands for Absorb
 		{
 			syringepump->absorbVolume(atof(argv[3]));

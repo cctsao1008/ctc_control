@@ -22,6 +22,21 @@ PyObject* set_sp_wait(PyObject *self, PyObject *args)
 	return Py_BuildValue("s", "[INFO] Syringe Pump Wait Finished");
 }
 
+PyObject* set_sp_init(PyObject *self, PyObject *args)
+{
+	std::string command = "rs485p2 sp init";
+
+	while (get_pumpMutex())
+	{
+		Sleep(200);
+	}
+
+	//printf("%s\n", command.c_str());
+	rsh_command(command.c_str());
+
+	return Py_BuildValue("s", "[INFO] Syringe Pump init Finished");
+}
+
 PyObject* set_sp_ab(PyObject *self, PyObject *args)
 {
 	double amount = 0.0;

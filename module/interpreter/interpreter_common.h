@@ -35,6 +35,7 @@ PyObject* set_sp_ab(PyObject *self, PyObject *args);
 PyObject* set_sp_dr(PyObject *self, PyObject *args);
 PyObject* set_sp_pip(PyObject *self, PyObject *args);
 PyObject* set_sp_wait(PyObject *self, PyObject *args);
+PyObject* set_sp_init(PyObject *self, PyObject *args);
 
 // Washer Control
 PyObject* set_wm_ma(PyObject *self, PyObject *args);
