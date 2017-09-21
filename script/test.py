@@ -31,6 +31,23 @@
 import time
 import emb
 
+emb.set_mp1_pos(10, 0, 0, 0, 0, 0x01) # x
+emb.set_mp1_pos(0, 20, 0, 0, 0, 0x02) # y
+emb.set_mp1_pos(0, 0, 30, 0, 0, 0x04) # z1
+emb.set_mp1_pos(0, 0, 0, 40, 0, 0x08) # z2
+emb.set_mp1_pos(0, 0, 0, 0, 50, 0x10) # z3
+emb.set_cen_rpm(2000)
+emb.set_cen_rcf(500)
+emb.set_cen_temp(30)
+emb.set_cen_duration(60)
+emb.set_cen_ctrl(1)
+emb.set_lgw_pos(100) # mm
+emb.set_lgw_rpm(200)
+emb.set_lgw_ramp(1000)
+emb.set_lgw_pulse(4194304)
+
+print("hello")
+
 def main():
     emb.set_mp1_pos(10, 0, 0, 0, 0, 0x01)
     emb.set_mp1_pos(0, 20, 0, 0, 0, 0x02)

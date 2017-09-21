@@ -37,13 +37,28 @@ typedef struct _cent
 	double on;
 } cent;
 
-typedef struct _platform_data
+typedef struct _lgw
+{
+	double rpm;
+	double pos_x;
+	double speed_ramp;
+	double pulse;
+	double direction;
+} lgw;
+
+typedef struct _servo
+{
+	
+} servo;
+
+typedef struct _sys_obj
 {
 	double sys_elaps;
 
 	/* motion platform 1 */
 	mp1 mp1;
 	cent cent;
-} platform_data;
+	lgw lgw;
+} sys_obj;
 
-extern platform_data pd;
+extern sys_obj so;

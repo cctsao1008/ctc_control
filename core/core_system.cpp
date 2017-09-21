@@ -10,7 +10,7 @@
 
 #include "core_common.h"
 
-platform_data pd;
+sys_obj so;
 
 uint64_t micros(void) {
 	LARGE_INTEGER freq, tick;

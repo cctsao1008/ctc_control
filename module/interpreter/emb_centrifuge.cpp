@@ -28,7 +28,7 @@ set_cen_rpm(PyObject *self, PyObject *args) {
 		return NULL;
 	}
 
-	pd.cent.rpm = rpm;
+	so.cent.rpm = rpm;
 
 	printf("%s (rpm = %f)\n", __FUNCTION__, rpm);
 
@@ -45,7 +45,7 @@ set_cen_rcf(PyObject *self, PyObject *args) {
 
 	if ((rcf > DEFAULT_RCF_MIN) && (rcf < DEFAULT_RCF_MAX)) {
 		printf("%s (rcf = %f)\n", __FUNCTION__, rcf);
-		pd.cent.rcf = rcf;
+		so.cent.rcf = rcf;
 	}
 	else {
 		printf("%s invalid rcf value! %f", __FUNCTION__, rcf);
@@ -65,7 +65,7 @@ set_cen_temp(PyObject *self, PyObject *args) {
 
 	printf("%s (temp = %f)\n", __FUNCTION__, temp);
 
-	pd.cent.temp = temp;
+	so.cent.temp = temp;
 
 	return Py_BuildValue("");
 }
@@ -81,7 +81,7 @@ set_cen_duration(PyObject *self, PyObject *args) {
 
 	printf("%s (duration = %f)\n", __FUNCTION__, duration);
 
-	pd.cent.duration = duration;
+	so.cent.duration = duration;
 
 	return Py_BuildValue("");
 }
@@ -98,10 +98,10 @@ set_cen_ctrl(PyObject *self, PyObject *args) {
 	{
 		printf("%s (on = %f)\n", __FUNCTION__, on);
 
-		pd.cent.on = 1.0f;
+		so.cent.on = 1.0f;
 	}
 	else
-		pd.cent.on = 0.0f;
+		so.cent.on = 0.0f;
 
 	return Py_BuildValue("");
 }

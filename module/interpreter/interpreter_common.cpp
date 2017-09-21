@@ -41,6 +41,13 @@ static PyMethodDef EmbMethods[] = {
 	{ "set_sp_pip", set_sp_pip, METH_VARARGS, "Syringe Pump Pipetting function." },
 	{ "set_sp_wait", set_sp_wait, METH_VARARGS, "Syringe Pump Wait function." },
 #endif
+	/* Linear Guideway Control API */
+#if defined(USING_LGW)
+	{ "set_lgw_pos", set_lgw_pos, METH_VARARGS, "set_gw_pos" },
+	{ "set_lgw_rpm", set_lgw_rpm, METH_VARARGS, "set_lgw_rpm" },
+	{ "set_lgw_ramp", set_lgw_ramp, METH_VARARGS, "set_lgw_ramp" },
+	{ "set_lgw_pulse", set_lgw_pulse, METH_VARARGS, "set_lgw_pulse" },
+#endif
 	/* Microscope XY Table Control API */
 #if defined(USING_MPS)
 	{ "set_mps_pos", set_mps_pos, METH_VARARGS, "Microscope XY Table Move to Position function." },

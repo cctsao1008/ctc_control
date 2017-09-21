@@ -156,11 +156,11 @@ static void dump(json_t const* json) {
 
 int load_param(const char * filename, char * content)
 {
-	pd.cent.rpm = 0.0f;
-	pd.cent.rcf = 0.0f;
-	pd.cent.duration = 0.0f;
-	pd.cent.on = 0.0f;
-	pd.cent.temp = 25.0f;
+	so.cent.rpm = 0.0f;
+	so.cent.rcf = 0.0f;
+	so.cent.duration = 0.0f;
+	so.cent.on = 0.0f;
+	so.cent.temp = 25.0f;
     
 #if 0
 	char str[] = "{\n"
