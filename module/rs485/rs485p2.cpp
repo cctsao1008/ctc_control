@@ -399,9 +399,13 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 	// WM stands for Washer Machine
 	if (!strcmp(argv[1], "wm"))
 	{
-		if (argc != 5)
+		if (argc != 5 && argc != 3)
 		{
 			log_info("error");
+		}
+		else if (!strcmp(argv[2], "init")) // MA stands for Move Arm
+		{
+			washer->initComponeet();
 		}
 		else if (!strcmp(argv[2], "ma")) // MA stands for Move Arm
 		{

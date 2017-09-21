@@ -329,6 +329,18 @@ bool Washer::shakeMachine(double Degree, unsigned int Times)
 	return true;
 }
 
+bool Washer::initComponeet()
+{
+	if (!moveArm(90.0, NegativeExecute))
+	{
+		return false;
+	}
+
+	_armPosition = 0;
+
+	return true;
+}
+
 // Modifier
 bool Washer::initDriver()
 {

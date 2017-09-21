@@ -41,6 +41,7 @@ PyObject* set_sp_init(PyObject *self, PyObject *args);
 PyObject* set_wm_ma(PyObject *self, PyObject *args);
 PyObject* set_wm_sh(PyObject *self, PyObject *args);
 PyObject* set_wm_rg(PyObject *self, PyObject *args);
+PyObject* set_wm_init(PyObject *self, PyObject *args);
 
 // Microscope XY Control
 PyObject* set_mps_init(PyObject *self, PyObject *args);

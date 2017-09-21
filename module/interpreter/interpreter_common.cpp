@@ -60,6 +60,7 @@ static PyMethodDef EmbMethods[] = {
 #if defined(USING_WASH)
 	{ "set_wm_ma", set_wm_ma, METH_VARARGS, "Washer Move Arm function." },
 	{ "set_wm_sh", set_wm_sh, METH_VARARGS, "Washer Shake function." },
+	{ "set_wm_init", set_wm_init, METH_VARARGS, "Washer Init function." },
 	{ "set_wm_rg", set_wm_rg, METH_VARARGS, "Washer Rotate Gripper function." },
 #endif
 	/* MariaDB API */
