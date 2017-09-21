@@ -33,6 +33,7 @@ public:
 	bool pipetteVolume(double Volume, unsigned int Times);
 
     // Modifier
+	bool initPiston();
     bool initDriver();
 	bool setSpeed(unsigned int Speed);
 	

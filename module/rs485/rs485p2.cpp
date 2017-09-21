@@ -279,7 +279,7 @@ void initRS485P2para()
 	if (!init)
 	{
 		bianneng = new BianNeng();
-		rs485p2 = new RS485Port("COM6");
+		rs485p2 = new RS485Port("COM12");
 		/*
 		if (rs485p2.openRS485Port("COM12"))
 		{
@@ -437,8 +437,8 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 		}
 		rs485p2Mutex._mpsMutex = false;
 		rs485p2_memory_clean((Argument *)ThreadParameter);
-		//std::string s = "success";
-		//mqtt_publish("CONTROL/PYC_RSP", s.length(), s.c_str());
+		std::string s = "success";
+		mqtt_publish("CONTROL/PYC_RSP", s.length(), s.c_str());
 		return 0;
 	}
 

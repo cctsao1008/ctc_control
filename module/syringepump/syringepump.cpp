@@ -358,6 +358,25 @@ bool SyringePump::pipetteVolume(double Volume, unsigned int Times)
 }
 
 // Modifier
+bool SyringePump::initPiston()
+{
+	if (!drainVolume(0.1))
+	{
+		return false;
+	}
+
+	_volume.find(5)->second = 0;
+
+	if (!drainVolume(20))
+	{
+		return false;
+	}
+
+	_volume.find(20)->second = 0;
+
+	return true;
+}
+
 bool SyringePump::initDriver()
 {
 	_address.insert(std::pair <unsigned int, uint8_t>(5,  '\x01'));
