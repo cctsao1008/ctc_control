@@ -9,6 +9,11 @@
 #ifndef _CORE_MICROSCOPE_XY_H_
 #define _CORE_MICROSCOPE_XY_H_
 
+#define MicroscopeCoordinate	  true
+#define MotionPlateFormCoordinate false
+
+#define MicroscopeRotateDegree 90.0
+
 #include "core_common.h"
 
 typedef struct _position 
@@ -38,9 +43,17 @@ public:
     double getY() const;
     double getSpeed() const;
 
-    // Action
+	// set Coordinate system
+	bool setCoordinateSystem(bool CoordinateSystem);
+	// Move to (0, 0)
+	bool initmps();
+
+    // Move to specific position
     bool move2Pos(Position Pos);
     bool move2Pos(double X, double Y);
+	
+	// Move vector
+	bool moveXY(double X, double Y);
 
     // Modifier
     bool initDriver();
@@ -54,12 +67,15 @@ private:
     // Status
     Position _position; // unit is m
     double _speed;		// unit is Hz //unit is rpm
+	bool _coordinate; // Coordinate system
 	// Ptr
 	RS485Port* _rs485Port;
 	/* mutex lock */
 	HANDLE _ghMutex;
 
 };
+
+double degrees_to_radian(double deg);
 
 static MicroscopeXY* microscopexy;
 //static MicroscopeXY microscopexy = MicroscopeXY();

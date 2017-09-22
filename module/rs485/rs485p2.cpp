@@ -114,6 +114,8 @@ bool RS485Port::initThread()
 	_recieveMap.insert(std::pair <uint8_t, std::vector<Message>>('\x03', std::vector<Message>())); // try
 	_recieveMap.insert(std::pair <uint8_t, std::vector<Message>>('\x04', std::vector<Message>())); // try
 	_recieveMap.insert(std::pair <uint8_t, std::vector<Message>>('\x05', std::vector<Message>())); // try
+	_recieveMap.insert(std::pair <uint8_t, std::vector<Message>>('\x20', std::vector<Message>())); // try
+	_recieveMap.insert(std::pair <uint8_t, std::vector<Message>>('\x21', std::vector<Message>())); // try
 
 	// init thread parameter
 	_ghMutex = CreateMutex(NULL, FALSE, (LPCSTR) _name);
@@ -214,18 +216,15 @@ DWORD WINAPI RS485Port::ReadWriteMsg(LPVOID ThreadParameter)
 
         if (Reciece.length >= 2)
         {
-			//WaitForSingleObject(((Parameter*)ThreadParameter)->_ghMutex, INFINITE);
-            //printf("Available Bytes: %d\n", Reciece.length);
+
             Reciece.length = 2;
 			c_serial_read_data(port, content, &Reciece.length, NULL);
 		
-			///*
             for (int i = 0; i < Reciece.length; i++)
             {
 				fprintf(stdout, "%.2X ", content[i]);
             }
 			fprintf(stdout, "\n");
-			//*/
 
 			for (int i = 0; i < Reciece.length; i++)
 			{
@@ -239,33 +238,11 @@ DWORD WINAPI RS485Port::ReadWriteMsg(LPVOID ThreadParameter)
 				}
 			}
 
-			/*
-			if (recieveMap->find(Reciece.content[0]) != recieveMap->end())
-			{
-				unknownAddress->push_back(Reciece.content[0]);
-			}
-			else
-			{
-				unknownAnswer->push_back(Reciece.content[0]);
-			}
-
-			if (recieveMap->find(Reciece.content[1]) != recieveMap->end())
-			{
-				unknownAddress->push_back(Reciece.content[1]);
-			}
-			else
-			{
-				unknownAnswer->push_back(Reciece.content[1]);
-			}
-			*/
-
 			for (int i = 0; i < Reciece.length; i++)
 			{
 				Reciece.content[i] = (uint8_t) '\x00';
 			}
 
-			//printf("unknownAnswer->size(): %d, unknownAddress->size(): %d\n", unknownAnswer->size(), unknownAddress->size());
-			//WaitForSingleObject(((Parameter*)ThreadParameter)->_ghMutex, INFINITE);
 			while (unknownAnswer->size() > 0 && unknownAddress->size() > 0)
 			{
 				Reciece.length = 2;
@@ -283,12 +260,11 @@ DWORD WINAPI RS485Port::ReadWriteMsg(LPVOID ThreadParameter)
 				unknownAnswer->erase(unknownAnswer->begin());
 				unknownAddress->erase(unknownAddress->begin());
 				recieveMap->find(Reciece.content[1])->second.push_back(Reciece);
-				//printf("recieveMap->find(Reciece.content[1])->second.size(): %d\n", recieveMap->find(Reciece.content[1])->second.size());
+
 				Reciece.content = NULL;
 			}
 			Reciece.content = content;
 			Reciece.content = content;
-			//ReleaseMutex(((Parameter*)ThreadParameter)->_ghMutex);
         }
 		ReleaseMutex(((Parameter*)ThreadParameter)->_ghMutex);
         Sleep(100);
@@ -297,14 +273,13 @@ DWORD WINAPI RS485Port::ReadWriteMsg(LPVOID ThreadParameter)
     return 0;
 }
 
-///*
 void initRS485P2para()
 {
 	static bool init = false;
 	if (!init)
 	{
 		bianneng = new BianNeng();
-		rs485p2 = new RS485Port("COM6");
+		rs485p2 = new RS485Port("COM12");
 		/*
 		if (rs485p2.openRS485Port("COM12"))
 		{
@@ -313,12 +288,10 @@ void initRS485P2para()
 		*/
 		syringepump = new SyringePump(rs485p2);
 		washer = new Washer(rs485p2);
-		//microscopexy.setPort(rs485p2);
 		microscopexy = new MicroscopeXY(rs485p2);
 		init = true;
 	}
 }
-//*/
 
 void rsh_rs485p2_mutex_init()
 {
@@ -361,6 +334,8 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 {
 	int argc = ((Argument *)ThreadParameter)->_argc;
 	char** argv = ((Argument *)ThreadParameter)->_argv;
+	bool result = false;
+	std::string response = "";
 
 	log_info("[commander] pub, argc = %d", argc);
 
@@ -398,13 +373,17 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 		{
 			log_info("error");
 		}
+		else if (!strcmp(argv[2], "init")) // AB stands for Absorb
+		{
+			result = syringepump->initPiston();
+		}
 		else if (!strcmp(argv[2], "ab")) // AB stands for Absorb
 		{
-			syringepump->absorbVolume(atof(argv[3]));
+			result = syringepump->absorbVolume(atof(argv[3]));
 		}
 		else if (!strcmp(argv[2], "dr")) // DR stands for Drain
 		{
-			syringepump->drainVolume(atof(argv[3]));
+			result = syringepump->drainVolume(atof(argv[3]));
 		}
 		else if (argc != 5)
 		{
@@ -412,7 +391,7 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 		}
 		else if (!strcmp(argv[2], "pip")) // PIP stands for Pipetting
 		{
-			syringepump->pipetteVolume(atof(argv[3]), atoi(argv[4]));
+			result = syringepump->pipetteVolume(atof(argv[3]), atoi(argv[4]));
 		}
 		rs485p2_memory_clean((Argument *)ThreadParameter);
 		rs485p2Mutex._pumpMutex = false;
@@ -422,21 +401,25 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 	// WM stands for Washer Machine
 	if (!strcmp(argv[1], "wm"))
 	{
-		if (argc != 5)
+		if (argc != 5 && argc != 3)
 		{
 			log_info("error");
 		}
+		else if (!strcmp(argv[2], "init")) // MA stands for Move Arm
+		{
+			result = washer->initComponeet();
+		}
 		else if (!strcmp(argv[2], "ma")) // MA stands for Move Arm
 		{
-			washer->moveArm(atof(argv[3]), (uint8_t)atoi(argv[4]));
+			result = washer->moveArm(atof(argv[3]), (uint8_t)atoi(argv[4]));
 		}
 		else if (!strcmp(argv[2], "sh")) // SH stands for Shake
 		{
-			washer->shakeMachine(atof(argv[3]), (unsigned int)atoi(argv[4]));
+			result = washer->shakeMachine(atof(argv[3]), (unsigned int)atoi(argv[4]));
 		}
 		else if (!strcmp(argv[2], "rg")) // RG stands for Rotate Gripper
 		{
-			washer->rotateGripper(atof(argv[3]), (uint8_t)atoi(argv[4]));
+			result = washer->rotateGripper(atof(argv[3]), (uint8_t)atoi(argv[4]));
 		}
 		rs485p2_memory_clean((Argument *)ThreadParameter);
 		rs485p2Mutex._washerMutex = false;
@@ -446,16 +429,45 @@ DWORD WINAPI rs485p2_thread_main(LPVOID ThreadParameter)
 	// MXY stands for Microscope XY Table
 	if (!strcmp(argv[1], "mps"))
 	{
-		if (argc != 5)
+		if (argc < 3)
 		{
 			log_info("error");
 		}
+		else if (!strcmp(argv[2], "init"))
+		{
+			result = microscopexy->initmps();
+		}
+		else if (!strcmp(argv[2], "coordinate"))
+		{
+			bool coordinate = false;
+			if (atof(argv[3]) > 0)
+			{
+				coordinate = true;
+			}
+			result = microscopexy->setCoordinateSystem(atof(argv[3]));
+		}
 		else if (!strcmp(argv[2], "mov")) // MV stands for Move to (X, Y)
 		{
-			microscopexy->move2Pos(atof(argv[3]), atof(argv[4]));
+			result = microscopexy->moveXY(atof(argv[3]), atof(argv[4]));
+		}
+		else if (!strcmp(argv[2], "pos")) // MV stands for Move to (X, Y)
+		{
+			result = microscopexy->move2Pos(atof(argv[3]), atof(argv[4]));
 		}
 		rs485p2Mutex._mpsMutex = false;
 		rs485p2_memory_clean((Argument *)ThreadParameter);
+		
+		if (result)
+		{
+			response = "00 success " + NumberToString(microscopexy->getX()) + " " + NumberToString(microscopexy->getY());
+		}
+		else
+		{
+			response = "00 fail " + NumberToString(microscopexy->getX()) + " " + NumberToString(microscopexy->getY());
+		}
+		
+		
+		mqtt_publish("CONTROL/PYC_RSP", response.length(), response.c_str());
 		return 0;
 	}
 

@@ -8,6 +8,11 @@
 
 #include "core_common.h"
 
+double degrees_to_radian(double deg)
+{
+	return deg * std::_Pi / 180.0;
+}
+
 // Constructor
 MicroscopeXY::MicroscopeXY()
 {
@@ -102,6 +107,26 @@ double MicroscopeXY::getSpeed() const
 	return _speed;
 }
 
+// set Coordinate System
+bool MicroscopeXY::setCoordinateSystem(bool CoordinateSystem)
+{
+	_coordinate = CoordinateSystem;
+	return true;
+}
+
+// init motion plate form position
+bool MicroscopeXY::initmps()
+{
+	if (!move2Pos(-1000.0, -1000.0))
+	{
+		return false;
+	}
+
+	_position.X = 0.0;
+	_position.Y = 0.0;
+	return true;
+}
+
 // Action
 bool MicroscopeXY::move2Pos(Position Pos)
 {
@@ -110,14 +135,24 @@ bool MicroscopeXY::move2Pos(Position Pos)
 	double yLength = _position.Y - Pos.Y;
 	uint8_t yDirection;
 
+	if (Pos.X > 37.0)
+	{
+		xLength = 37.0 - _position.X;
+	}
+
+	if (Pos.Y > 97.0)
+	{
+		yLength = 97.0 - _position.Y;
+	}
+
 	WaitForSingleObject(_ghMutex, INFINITE);
-	if (xLength > 0)
+	if (xLength > 0.0)
 	{
 		xDirection = NegativeExecute;
 	}
 	else
 	{
-		xLength = 0 - xLength;
+		xLength = 0.0 - xLength;
 		xDirection = PositiveExecute;
 	}
 
@@ -126,17 +161,18 @@ bool MicroscopeXY::move2Pos(Position Pos)
 		// Error Message
 		return false;
 	}
+	_position.X = Pos.X;
 	ReleaseMutex(_ghMutex);
 	Sleep(500);
 
 	WaitForSingleObject(_ghMutex, INFINITE);
-	if (yLength > 0)
+	if (yLength > 0.0)
 	{
 		yDirection = NegativeExecute;
 	}
 	else
 	{
-		yLength = 0 - yLength;
+		yLength = 0.0 - yLength;
 		yDirection = PositiveExecute;
 	}
 
@@ -145,6 +181,7 @@ bool MicroscopeXY::move2Pos(Position Pos)
 		// Error Message
 		return false;
 	}
+	_position.Y = Pos.Y;
 	ReleaseMutex(_ghMutex);
 	Sleep(500);
 
@@ -158,15 +195,25 @@ bool MicroscopeXY::move2Pos(double X, double Y)
 	double yLength = _position.Y - Y;
 	uint8_t yDirection;
 
+	if (X > 37.0)
+	{
+		xLength = 37.0 - _position.X;
+	}
+
+	if (Y > 97.0)
+	{
+		yLength = 97.0 - _position.Y;
+	}
+
 	///*
 	WaitForSingleObject(_ghMutex, INFINITE);
-	if (xLength > 0)
+	if (xLength > 0.0)
 	{
 		xDirection = NegativeExecute;
 	}
 	else
 	{
-		xLength = 0 - xLength;
+		xLength = 0.0 - xLength;
 		xDirection = PositiveExecute;
 	}
 
@@ -175,19 +222,20 @@ bool MicroscopeXY::move2Pos(double X, double Y)
 		// Error Message
 		return false;
 	}
+	_position.X = X;
 	Sleep(500);
 	ReleaseMutex(_ghMutex);
 
 	//*/
 
 	WaitForSingleObject(_ghMutex, INFINITE);
-	if (yLength > 0)
+	if (yLength > 0.0)
 	{
 		yDirection = NegativeExecute;
 	}
 	else
 	{
-		yLength = 0 - yLength;
+		yLength = 0.0 - yLength;
 		yDirection = PositiveExecute;
 	}
 
@@ -196,6 +244,77 @@ bool MicroscopeXY::move2Pos(double X, double Y)
 		// Error Message
 		return false;
 	}
+	_position.Y = Y;
+	Sleep(500);
+	ReleaseMutex(_ghMutex);
+
+	return true;
+}
+
+bool MicroscopeXY::moveXY(double X, double Y)
+{
+	double xLength = X;
+	uint8_t xDirection;
+	double yLength = Y;
+	uint8_t yDirection;
+
+	if (_coordinate)
+	{
+		xLength = X * cos(degrees_to_radian(MicroscopeRotateDegree)) - Y * sin(degrees_to_radian(MicroscopeRotateDegree));
+		yLength = X * sin(degrees_to_radian(MicroscopeRotateDegree)) + Y * cos(degrees_to_radian(MicroscopeRotateDegree));
+	}
+
+	if (_position.X + xLength > 37.0)
+	{
+		xLength = 37.0 - _position.X;
+	}
+
+	if (_position.Y + yLength > 97.0)
+	{
+		yLength = 97.0 - _position.Y;
+	}
+
+
+	///*
+	WaitForSingleObject(_ghMutex, INFINITE);
+	if (xLength > 0.0)
+	{
+		xDirection = PositiveExecute;
+	}
+	else
+	{
+		xLength = 0.0 - xLength;
+		xDirection = NegativeExecute;
+	}
+
+	if (!moveX(xLength, xDirection)) // If motor did not move successfully
+	{
+		// Error Message
+		return false;
+	}
+	_position.X += xLength;
+	Sleep(500);
+	ReleaseMutex(_ghMutex);
+
+	//*/
+
+	WaitForSingleObject(_ghMutex, INFINITE);
+	if (yLength > 0.0)
+	{
+		yDirection = PositiveExecute;
+	}
+	else
+	{
+		yLength = 0.0 - yLength;
+		yDirection = NegativeExecute;
+	}
+
+	if (!moveY(yLength, yDirection)) // If motor did not move successfully
+	{
+		// Error Message
+		return false;
+	}
+	_position.Y += yLength;
 	Sleep(500);
 	ReleaseMutex(_ghMutex);
 
@@ -235,28 +354,16 @@ bool MicroscopeXY::setPort(RS485Port* PortPtr)
 // Combined with the driver
 bool MicroscopeXY::moveX(double X, uint8_t Direction)
 {
-	uint8_t address = '\x20';
+	uint8_t address = '\x02';
+	//uint8_t address = '\x20';
 	int steps = (int)(X * 400.0);
 	Message* msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), address, Direction, NumberToString(steps).c_str(), "50", "50");
-
-	/*
-	if (Direction == PositiveExecute && (_position.X + X) > 90.0)
-	{
-	printf("ShakeMachine: moveArm Error, Over 90.0 degree\n");
-	return false;
-	}
-	else if (Direction == NegativeExecute && (_armPosition - Degree) < 0.0)
-	{
-	printf("ShakeMachine: moveArm Error, Over 90.0 degree\n");
-	return false;
-	}
-	*/
 
 	Message* feedback = NULL;
 	SYSTEMTIME msgSend;
 	clock_t dwMsgSend = clock();
 
-	//WaitForSingleObject(_ghMutex, INFINITE); // try
+	// Send Command 
 	_rs485Port->clearMsg(address);
 	if (c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length) < 0)
 	{
@@ -267,8 +374,8 @@ bool MicroscopeXY::moveX(double X, uint8_t Direction)
 		GetLocalTime(&msgSend);
 		printf("Address %.2X Message Send at %02d:%02d:%02d.%03d\n", address, msgSend.wHour, msgSend.wMinute, msgSend.wSecond, msgSend.wMilliseconds);
 	}
-	//ReleaseMutex(_ghMutex); // try
 
+	// Check the Return Value
 	bool controlRecieved = false;
 	while (true)
 	{
@@ -276,7 +383,7 @@ bool MicroscopeXY::moveX(double X, uint8_t Direction)
 
 		if (feedback != NULL)
 		{
-			//WaitForSingleObject(_ghMutex, INFINITE); // try
+
 			printf("Address %.2X recieve: ", address);
 			for (int i = 0; i < feedback->length; i++)
 			{
@@ -285,38 +392,29 @@ bool MicroscopeXY::moveX(double X, uint8_t Direction)
 			SYSTEMTIME systemtime;
 			GetLocalTime(&systemtime);
 			printf(" currentDateTime() = %02d:%02d:%02d.%03d\n", systemtime.wHour, systemtime.wMinute, systemtime.wSecond, systemtime.wMilliseconds);
-			//ReleaseMutex(_ghMutex); // try
 
-			/*
-			if (feedback->content[0] == (uint8_t) '\xB5' && feedback->content[1] == address)
-			{
-			WaitForSingleObject(_ghMutex, INFINITE); // try
-			printf("Resend Command\n");
-			c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length);
-			ReleaseMutex(_ghMutex); // try
-			continue;
-			}
-			*/
-
+			// Controler Recieved the Message
 			if (feedback->content[0] == (uint8_t) '\xB1' && feedback->content[1] == address)
 			{
 				controlRecieved = true;
 				printf("Address %.2X Controler Received\n", address);
 				continue;
 			}
-
+			// Finished the Command
 			if (feedback->content[0] == (uint8_t) '\xB0' && feedback->content[1] == address)
 			{
 				printf("Address %.2X moveX Finished\n", address);
 				_rs485Port->clearMsg(address);
 				break;
 			}
+			// Reached the Positive Limit
 			if (feedback->content[0] == (uint8_t) '\xA0' && feedback->content[1] == address)
 			{
 				printf("Address %.2X moveX Finished\n", address);
 				_rs485Port->clearMsg(address);
 				break;
 			}
+			// Reached the Negative Limit
 			if (feedback->content[0] == (uint8_t) '\xA1' && feedback->content[1] == address)
 			{
 				printf("Address %.2X moveX Finished\n", address);
@@ -326,8 +424,8 @@ bool MicroscopeXY::moveX(double X, uint8_t Direction)
 			delete[] feedback->content;
 			delete feedback;
 		}
-		///*
-		//WaitForSingleObject(_ghMutex, INFINITE); // try
+
+		// Check Controler Recieved Command or Not
 		if (!controlRecieved)
 		{
 			clock_t dwCurrent = clock();
@@ -347,8 +445,7 @@ bool MicroscopeXY::moveX(double X, uint8_t Direction)
 				}
 			}
 		}
-		//ReleaseMutex(_ghMutex); // try
-		//*/
+
 		Sleep(100);
 	}
 	delete[]  msgPtr->content;
@@ -358,28 +455,15 @@ bool MicroscopeXY::moveX(double X, uint8_t Direction)
 
 bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 {
-	uint8_t address = '\x21';
+	uint8_t address = '\x03';
+	//uint8_t address = '\x21';
 	int steps = (int)(Y * 400.0);
 	Message* msgPtr = trans2RTCMD(NumberToString(_speed).c_str(), address, Direction, NumberToString(steps).c_str(), "50", "50");
-
-	/*
-	if (Direction == PositiveExecute && (_position.X + X) > 90.0)
-	{
-	printf("ShakeMachine: moveArm Error, Over 90.0 degree\n");
-	return false;
-	}
-	else if (Direction == NegativeExecute && (_armPosition - Degree) < 0.0)
-	{
-	printf("ShakeMachine: moveArm Error, Over 90.0 degree\n");
-	return false;
-	}
-	*/
 
 	Message* feedback = NULL;
 	SYSTEMTIME msgSend;
 	clock_t dwMsgSend = clock();
-
-	//WaitForSingleObject(_ghMutex, INFINITE); // try
+	// Send Command 
 	_rs485Port->clearMsg(address);
 	if (c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length) < 0)
 	{
@@ -390,8 +474,7 @@ bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 		GetLocalTime(&msgSend);
 		printf("Address %.2X Message Send at %02d:%02d:%02d.%03d\n", address, msgSend.wHour, msgSend.wMinute, msgSend.wSecond, msgSend.wMilliseconds);
 	}
-	//ReleaseMutex(_ghMutex); // try
-
+	// Check the Return Value
 	bool controlRecieved = false;
 	while (true)
 	{
@@ -399,7 +482,6 @@ bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 
 		if (feedback != NULL)
 		{
-			//WaitForSingleObject(_ghMutex, INFINITE); // try
 			printf("Address %.2X recieve: ", address);
 			for (int i = 0; i < feedback->length; i++)
 			{
@@ -408,49 +490,38 @@ bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 			SYSTEMTIME systemtime;
 			GetLocalTime(&systemtime);
 			printf(" currentDateTime() = %02d:%02d:%02d.%03d\n", systemtime.wHour, systemtime.wMinute, systemtime.wSecond, systemtime.wMilliseconds);
-			//ReleaseMutex(_ghMutex); // try
-
-			/*
-			if (feedback->content[0] == (uint8_t) '\xB5' && feedback->content[1] == address)
-			{
-			WaitForSingleObject(_ghMutex, INFINITE); // try
-			printf("Resend Command\n");
-			c_serial_write_data(_rs485Port->getPortHandle(), msgPtr->content, &msgPtr->length);
-			ReleaseMutex(_ghMutex); // try
-			continue;
-			}
-			*/
-
+			// Controler Recieved the Message
 			if (feedback->content[0] == (uint8_t) '\xB1' && feedback->content[1] == address)
 			{
 				controlRecieved = true;
 				printf("Address %.2X Controler Received\n", address);
 				continue;
 			}
-
+			// Finished the Command
 			if (feedback->content[0] == (uint8_t) '\xB0' && feedback->content[1] == address)
 			{
 				printf("Address %.2X moveY Finished\n", address);
 				_rs485Port->clearMsg(address);
 				break;
 			}
+			// Reached the Positive Limit
 			if (feedback->content[0] == (uint8_t) '\xA0' && feedback->content[1] == address)
 			{
-				printf("Address %.2X moveX Finished\n", address);
+				printf("Address %.2X moveY Finished\n", address);
 				_rs485Port->clearMsg(address);
 				break;
 			}
+			// Reached the Negative Limit
 			if (feedback->content[0] == (uint8_t) '\xA1' && feedback->content[1] == address)
 			{
-				printf("Address %.2X moveX Finished\n", address);
+				printf("Address %.2X moveY Finished\n", address);
 				_rs485Port->clearMsg(address);
 				break;
 			}
 			delete[] feedback->content;
 			delete feedback;
 		}
-		///*
-		//WaitForSingleObject(_ghMutex, INFINITE); // try
+		// Check Controler Recieved Command or Not
 		if (!controlRecieved)
 		{
 			clock_t dwCurrent = clock();
@@ -470,8 +541,7 @@ bool MicroscopeXY::moveY(double Y, uint8_t Direction)
 				}
 			}
 		}
-		//ReleaseMutex(_ghMutex); // try
-		//*/
+
 		Sleep(100);
 	}
 	delete[]  msgPtr->content;

@@ -36,6 +36,7 @@ static PyMethodDef EmbMethods[] = {
 #endif
 	/* Syringe Pump Control API */
 #if defined(USING_SYRI)
+	{ "set_sp_init", set_sp_init, METH_VARARGS, "Syringe Pump Init function." },
 	{ "set_sp_ab", set_sp_ab, METH_VARARGS, "Syringe Pump Absorb function." },
 	{ "set_sp_dr", set_sp_dr, METH_VARARGS, "Syringe Pump Drain function." },
 	{ "set_sp_pip", set_sp_pip, METH_VARARGS, "Syringe Pump Pipetting function." },
@@ -55,13 +56,17 @@ static PyMethodDef EmbMethods[] = {
 #endif
 	/* Microscope XY Table Control API */
 #if defined(USING_MPS)
-	{ "set_mps_mov", set_mps_mov, METH_VARARGS, "Microscope XY Table Move to Position function." },
+	{ "set_mps_pos", set_mps_pos, METH_VARARGS, "Microscope XY Table Move to Position function." },
+	{ "set_mps_mov", set_mps_mov, METH_VARARGS, "Microscope XY Table Move the vector function." },
 	{ "set_mps_wait", set_mps_wait, METH_VARARGS, "Microscope XY Table Wait Move function." },
+	{ "set_mps_init", set_mps_init, METH_VARARGS, "Microscope XY Table Init function." },
+	{ "set_mps_coordinate", set_mps_coordinate, METH_VARARGS, "Microscope XY Table Set coordinate function." },
 #endif
 	/* Microscope XY Table Control API */
 #if defined(USING_WASH)
 	{ "set_wm_ma", set_wm_ma, METH_VARARGS, "Washer Move Arm function." },
 	{ "set_wm_sh", set_wm_sh, METH_VARARGS, "Washer Shake function." },
+	{ "set_wm_init", set_wm_init, METH_VARARGS, "Washer Init function." },
 	{ "set_wm_rg", set_wm_rg, METH_VARARGS, "Washer Rotate Gripper function." },
 #endif
 	/* MariaDB API */

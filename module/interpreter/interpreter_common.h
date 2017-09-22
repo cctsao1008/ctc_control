@@ -15,7 +15,7 @@
 #define USING_SYRI
 #define USING_MPS
 #define USING_WASH
-#define USING_DB
+//#define USING_DB
 #define USING_LGW
 #define USING_GRIP
 
@@ -36,19 +36,25 @@ PyObject* set_sp_ab(PyObject *self, PyObject *args);
 PyObject* set_sp_dr(PyObject *self, PyObject *args);
 PyObject* set_sp_pip(PyObject *self, PyObject *args);
 PyObject* set_sp_wait(PyObject *self, PyObject *args);
+PyObject* set_sp_init(PyObject *self, PyObject *args);
 
 // Washer Control
 PyObject* set_wm_ma(PyObject *self, PyObject *args);
 PyObject* set_wm_sh(PyObject *self, PyObject *args);
 PyObject* set_wm_rg(PyObject *self, PyObject *args);
+PyObject* set_wm_init(PyObject *self, PyObject *args);
 
 // Microscope XY Control
+PyObject* set_mps_init(PyObject *self, PyObject *args);
 PyObject* set_mps_wait(PyObject *self, PyObject *args);
 PyObject* set_mps_mov(PyObject *self, PyObject *args);
+PyObject* set_mps_pos(PyObject *self, PyObject *args);
+PyObject* set_mps_coordinate(PyObject *self, PyObject *args);
 
-
+#if defined(USING_DB)
 // MariaDB
 PyObject* set_db_query(PyObject *self, PyObject *args);
+#endif
 
 // Joshua Add Finished
 

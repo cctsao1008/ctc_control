@@ -345,6 +345,7 @@ void rsh_db_mutex_init()
 	}
 }
 
+#if defined(USING_DB)
 // rsh db main
 int rsh_db_main(int argc, char *argv[])
 {
@@ -392,3 +393,4 @@ int rsh_db_main(int argc, char *argv[])
 
 	return 0;
 }
+#endif

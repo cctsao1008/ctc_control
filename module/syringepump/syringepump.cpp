@@ -282,6 +282,12 @@ bool SyringePump::drainVolume(double Volume)
 				printf("Address %.2X drainVolume Finished\n", address);
 				break;
 			}
+
+			if (feedback->content[0] == (uint8_t) '\xA0' && feedback->content[1] == address)
+			{
+				printf("Address %.2X drainVolume Finished\n", address);
+				break;
+			}
 			delete[] feedback->content;
 			delete feedback;
 		}
@@ -358,6 +364,25 @@ bool SyringePump::pipetteVolume(double Volume, unsigned int Times)
 }
 
 // Modifier
+bool SyringePump::initPiston()
+{
+	if (!drainVolume(0.1))
+	{
+		return false;
+	}
+
+	_volume.find(5)->second = 0;
+
+	if (!drainVolume(20))
+	{
+		return false;
+	}
+
+	_volume.find(20)->second = 0;
+
+	return true;
+}
+
 bool SyringePump::initDriver()
 {
 	_address.insert(std::pair <unsigned int, uint8_t>(5,  '\x01'));

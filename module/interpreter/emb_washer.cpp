@@ -12,6 +12,21 @@
 #if defined(USING_WASH)
 
 // Washer Control
+PyObject* set_wm_init(PyObject *self, PyObject *args)
+{
+	std::string command = "rs485p2 wm init";
+
+	while (get_washerMutex())
+	{
+		Sleep(200);
+	}
+
+	//printf("%s\n", command.c_str());
+	rsh_command(command.c_str());
+
+	return Py_BuildValue("s", "[INFO] Washer Init Finished");
+}
+
 PyObject* set_wm_ma(PyObject *self, PyObject *args) 
 {
 	double degree = 0.0;

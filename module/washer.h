@@ -35,6 +35,7 @@ public:
 	bool shakeMachine(double Degree, unsigned int Times);
 	
 	// Modifier
+	bool initComponeet();
 	bool initDriver();
 	bool setRotateSpeed(unsigned int RotateSpeed);
 	bool setShakeSpeed(unsigned int ShakeSpeed);

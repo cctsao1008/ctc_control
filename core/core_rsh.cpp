@@ -32,7 +32,9 @@ char *builtin_str[] = {
 	"commander",
 	"rs485p1",
 	"rs485p2", // Added by Joshua
+#if defined(USING_DB)
 	"db", // Added by Joshua
+#endif
 	"mqtt",
 	//
     "testopt",
@@ -49,7 +51,9 @@ int(*builtin_func[]) (int argc, char *argv[]) = {
 	&rsh_core_commander_main,
 	&rsh_rs485p1_main,
 	&rsh_rs485p2_main, // Added by Joshua
+#if defined(USING_DB)
 	&rsh_db_main, // Added by Joshua
+#endif
 	&rsh_mqtt_main,
 	//
 	&rsh_testopt,
