@@ -17,6 +17,7 @@
 #define USING_WASH
 #define USING_DB
 #define USING_LGW
+#define USING_GRIP
 
 PyObject* mp1_movj(PyObject *self, PyObject *args);
 PyObject* mp1_movl(PyObject *self, PyObject *args);
@@ -56,3 +57,9 @@ PyObject* set_lgw_pos(PyObject *self, PyObject *args);
 PyObject* set_lgw_rpm(PyObject *self, PyObject *args);
 PyObject* set_lgw_ramp(PyObject *self, PyObject *args);
 PyObject* set_lgw_pulse(PyObject *self, PyObject *args);
+
+/* Gripper Control API */
+PyObject* set_2f_grip_on(PyObject *self, PyObject *args);
+PyObject* set_2f_grip_off(PyObject *self, PyObject *args);
+PyObject* set_3f_grip_on(PyObject *self, PyObject *args);
+PyObject* set_3f_grip_off(PyObject *self, PyObject *args);

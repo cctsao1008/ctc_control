@@ -168,6 +168,9 @@
     <ClCompile Include="module\config\config.c">
       <Filter>Source Files\module\config</Filter>
     </ClCompile>
+    <ClCompile Include="module\interpreter\emb_gripper.cpp">
+      <Filter>Source Files\module\interpreter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="module\cserial\c_serial.h">

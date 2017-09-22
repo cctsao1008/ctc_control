@@ -45,6 +45,10 @@ emb.set_lgw_pos(100) # mm
 emb.set_lgw_rpm(200)
 emb.set_lgw_ramp(1000)
 emb.set_lgw_pulse(4194304)
+emb.set_grip_on(1)
+emb.set_grip_off(1)
+emb.set_grip_on(1)
+emb.set_grip_off(1)
 
 print("hello")
 

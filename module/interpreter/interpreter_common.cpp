@@ -48,6 +48,11 @@ static PyMethodDef EmbMethods[] = {
 	{ "set_lgw_ramp", set_lgw_ramp, METH_VARARGS, "set_lgw_ramp" },
 	{ "set_lgw_pulse", set_lgw_pulse, METH_VARARGS, "set_lgw_pulse" },
 #endif
+	/* Gripper Control API */
+#if defined(USING_GRIP)
+	{ "set_2f_grip_ctrl", set_2f_grip_on, METH_VARARGS, "set_2f_grip_on" },
+	{ "set_3f_grip_ctrl", set_2f_grip_off, METH_VARARGS, "set_2f_grip_off" },
+#endif
 	/* Microscope XY Table Control API */
 #if defined(USING_MPS)
 	{ "set_mps_mov", set_mps_mov, METH_VARARGS, "Microscope XY Table Move to Position function." },

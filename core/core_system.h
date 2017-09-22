@@ -48,7 +48,7 @@ typedef struct _lgw
 
 typedef struct _servo
 {
-	
+	uint16_t io;
 } servo;
 
 typedef struct _sys_obj
