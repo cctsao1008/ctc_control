@@ -8,6 +8,11 @@
 
 #include "core_common.h"
 
+double degrees_to_radian(double deg)
+{
+	return deg * std::_Pi / 180.0;
+}
+
 // Constructor
 MicroscopeXY::MicroscopeXY()
 {
@@ -103,9 +108,10 @@ double MicroscopeXY::getSpeed() const
 }
 
 // set Coordinate System
-void MicroscopeXY::setCoordinateSystem(bool CoordinateSystem)
+bool MicroscopeXY::setCoordinateSystem(bool CoordinateSystem)
 {
 	_coordinate = CoordinateSystem;
+	return true;
 }
 
 // init motion plate form position
@@ -129,24 +135,24 @@ bool MicroscopeXY::move2Pos(Position Pos)
 	double yLength = _position.Y - Pos.Y;
 	uint8_t yDirection;
 
-	if (Pos.X > 370)
+	if (Pos.X > 37.0)
 	{
-		xLength = 370 - _position.X;
+		xLength = 37.0 - _position.X;
 	}
 
-	if (Pos.Y > 970)
+	if (Pos.Y > 97.0)
 	{
-		yLength = 970 - _position.Y;
+		yLength = 97.0 - _position.Y;
 	}
 
 	WaitForSingleObject(_ghMutex, INFINITE);
-	if (xLength > 0)
+	if (xLength > 0.0)
 	{
 		xDirection = NegativeExecute;
 	}
 	else
 	{
-		xLength = 0 - xLength;
+		xLength = 0.0 - xLength;
 		xDirection = PositiveExecute;
 	}
 
@@ -160,13 +166,13 @@ bool MicroscopeXY::move2Pos(Position Pos)
 	Sleep(500);
 
 	WaitForSingleObject(_ghMutex, INFINITE);
-	if (yLength > 0)
+	if (yLength > 0.0)
 	{
 		yDirection = NegativeExecute;
 	}
 	else
 	{
-		yLength = 0 - yLength;
+		yLength = 0.0 - yLength;
 		yDirection = PositiveExecute;
 	}
 
@@ -189,26 +195,25 @@ bool MicroscopeXY::move2Pos(double X, double Y)
 	double yLength = _position.Y - Y;
 	uint8_t yDirection;
 
-
-	if (X > 370)
+	if (X > 37.0)
 	{
-		xLength = 370 - _position.X;
+		xLength = 37.0 - _position.X;
 	}
 
-	if (Y > 970)
+	if (Y > 97.0)
 	{
-		yLength = 970 - _position.Y;
+		yLength = 97.0 - _position.Y;
 	}
 
 	///*
 	WaitForSingleObject(_ghMutex, INFINITE);
-	if (xLength > 0)
+	if (xLength > 0.0)
 	{
 		xDirection = NegativeExecute;
 	}
 	else
 	{
-		xLength = 0 - xLength;
+		xLength = 0.0 - xLength;
 		xDirection = PositiveExecute;
 	}
 
@@ -224,13 +229,13 @@ bool MicroscopeXY::move2Pos(double X, double Y)
 	//*/
 
 	WaitForSingleObject(_ghMutex, INFINITE);
-	if (yLength > 0)
+	if (yLength > 0.0)
 	{
 		yDirection = NegativeExecute;
 	}
 	else
 	{
-		yLength = 0 - yLength;
+		yLength = 0.0 - yLength;
 		yDirection = PositiveExecute;
 	}
 
@@ -253,26 +258,32 @@ bool MicroscopeXY::moveXY(double X, double Y)
 	double yLength = Y;
 	uint8_t yDirection;
 
-	if (_position.X + X > 370)
+	if (_coordinate)
 	{
-		xLength = 370 - _position.X;
+		xLength = X * cos(degrees_to_radian(MicroscopeRotateDegree)) - Y * sin(degrees_to_radian(MicroscopeRotateDegree));
+		yLength = X * sin(degrees_to_radian(MicroscopeRotateDegree)) + Y * cos(degrees_to_radian(MicroscopeRotateDegree));
 	}
 
-	if (_position.Y + Y > 970)
+	if (_position.X + xLength > 37.0)
 	{
-		yLength = 970 - _position.Y;
+		xLength = 37.0 - _position.X;
+	}
+
+	if (_position.Y + yLength > 97.0)
+	{
+		yLength = 97.0 - _position.Y;
 	}
 
 
 	///*
 	WaitForSingleObject(_ghMutex, INFINITE);
-	if (X > 0)
+	if (xLength > 0.0)
 	{
 		xDirection = PositiveExecute;
 	}
 	else
 	{
-		xLength = 0 - xLength;
+		xLength = 0.0 - xLength;
 		xDirection = NegativeExecute;
 	}
 
@@ -288,13 +299,13 @@ bool MicroscopeXY::moveXY(double X, double Y)
 	//*/
 
 	WaitForSingleObject(_ghMutex, INFINITE);
-	if (Y > 0)
+	if (yLength > 0.0)
 	{
 		yDirection = PositiveExecute;
 	}
 	else
 	{
-		yLength = 0 - yLength;
+		yLength = 0.0 - yLength;
 		yDirection = NegativeExecute;
 	}
 

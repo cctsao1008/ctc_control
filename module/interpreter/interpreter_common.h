@@ -45,11 +45,10 @@ PyObject* set_wm_init(PyObject *self, PyObject *args);
 
 // Microscope XY Control
 PyObject* set_mps_init(PyObject *self, PyObject *args);
-
 PyObject* set_mps_wait(PyObject *self, PyObject *args);
 PyObject* set_mps_mov(PyObject *self, PyObject *args);
-
 PyObject* set_mps_pos(PyObject *self, PyObject *args);
+PyObject* set_mps_coordinate(PyObject *self, PyObject *args);
 
 #if defined(USING_DB)
 // MariaDB

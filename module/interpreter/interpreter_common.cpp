@@ -55,6 +55,7 @@ static PyMethodDef EmbMethods[] = {
 	{ "set_mps_mov", set_mps_mov, METH_VARARGS, "Microscope XY Table Move the vector function." },
 	{ "set_mps_wait", set_mps_wait, METH_VARARGS, "Microscope XY Table Wait Move function." },
 	{ "set_mps_init", set_mps_init, METH_VARARGS, "Microscope XY Table Init function." },
+	{ "set_mps_coordinate", set_mps_coordinate, METH_VARARGS, "Microscope XY Table Set coordinate function." },
 #endif
 	/* Microscope XY Table Control API */
 #if defined(USING_WASH)

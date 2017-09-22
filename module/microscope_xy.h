@@ -12,6 +12,8 @@
 #define MicroscopeCoordinate	  true
 #define MotionPlateFormCoordinate false
 
+#define MicroscopeRotateDegree 90.0
+
 #include "core_common.h"
 
 typedef struct _position 
@@ -42,7 +44,7 @@ public:
     double getSpeed() const;
 
 	// set Coordinate system
-	void setCoordinateSystem(bool CoordinateSystem);
+	bool setCoordinateSystem(bool CoordinateSystem);
 	// Move to (0, 0)
 	bool initmps();
 
@@ -72,6 +74,8 @@ private:
 	HANDLE _ghMutex;
 
 };
+
+double degrees_to_radian(double deg);
 
 static MicroscopeXY* microscopexy;
 //static MicroscopeXY microscopexy = MicroscopeXY();
