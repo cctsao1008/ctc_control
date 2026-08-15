@@ -43,10 +43,10 @@ Equipment-oriented modules visible in the project include components for a washe
           |                     |                     |
 +---------v---------+ +---------v---------+ +---------v---------+
 | Device Modules    | | Communications    | | Runtime / Support |
-| washer            | | serial / RS-485   | | config           |
-| syringe pump      | | Modbus            | | logging          |
-| microscope XY     | | MQTT              | | Python           |
-| scanner / servo   | | LCM-lite          | | interpreter      |
+| washer            | | serial / RS-485   | | config            |
+| syringe pump      | | Modbus            | | logging           |
+| microscope XY     | | MQTT              | | Python            |
+| scanner / servo   | | LCM-lite          | | interpreter       |
 +-------------------+ +-------------------+ +-------------------+
                                 |
                      +----------v-----------+
