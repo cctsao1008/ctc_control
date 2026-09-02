@@ -1,20 +1,16 @@
 # Instrument Automation Control
 
-Instrument Automation Control is a legacy Windows-based C/C++ automation and equipment-orchestration system for coordinating heterogeneous instruments, actuators, communication interfaces, scripting logic, and data services within a multi-stage automated workflow.
+Instrument Automation Control is a Windows-based C/C++ automation and equipment-orchestration system for coordinating heterogeneous instruments, actuators, communication interfaces, scripting logic, and data services within a multi-stage automated workflow.
 
-The repository preserves a Visual Studio Win32 application together with equipment-control modules, scheduling and command infrastructure, Python integration, MQTT, Modbus/RS-485 communication, MariaDB access, configuration handling, logging, and machine-specific interfaces.
-
-> **Project status:** Legacy / reference project. The codebase reflects its original Windows development environment and bundled third-party dependencies. Some toolchains, libraries, paths, and runtime assumptions may require restoration or modernization before the project can be built and used on a current system.
+The repository contains a Visual Studio Win32 application together with equipment-control modules, scheduling and command infrastructure, Python integration, MQTT, Modbus/RS-485 communication, MariaDB access, configuration handling, logging, and machine-specific interfaces.
 
 ## Overview
 
-This project is structured as a supervisory automation system rather than a single device driver.
+The software is structured as a supervisory automation system rather than a single device driver.
 
-The software separates higher-level orchestration from equipment-specific control. Core services coordinate commands, scheduling, system state, configuration, logging, database access, and automation logic, while modular device and communication components expose lower-level machine capabilities.
+Higher-level orchestration is separated from equipment-specific control. Core services coordinate commands, scheduling, system state, configuration, logging, database access, and automation logic, while modular device and communication components expose lower-level machine capabilities.
 
-This allows individual device operations to be composed into higher-level automated procedures through a combination of native C/C++ control logic and scripting.
-
-The checked-in project contains support for areas including:
+The codebase includes support for:
 
 - equipment control and actuation
 - command and service handling
@@ -28,7 +24,7 @@ The checked-in project contains support for areas including:
 - Python / embedded interpreter integration
 - memory and data handling
 
-Equipment-oriented modules visible in the repository include components for:
+Equipment-oriented modules include components for:
 
 - washer control
 - syringe pump control
@@ -40,7 +36,7 @@ Equipment-oriented modules visible in the repository include components for:
 - gripper bindings
 - guideway / motion bindings
 
-## System Architecture
+## System architecture
 
 ```text
                  Automated Workflow / Scripts
@@ -66,7 +62,7 @@ Equipment-oriented modules visible in the repository include components for:
                    Physical Equipment
 ```
 
-The architecture reflects a layered automation model:
+The architecture follows a layered automation model:
 
 ```text
 Workflow / script
@@ -80,7 +76,7 @@ Device / motion / communication modules
 Physical equipment and external services
 ```
 
-## Repository Layout
+## Repository layout
 
 ```text
 instrument-automation-control/
@@ -89,14 +85,14 @@ instrument-automation-control/
 ├── lib/                     Bundled third-party libraries and binaries
 ├── module/                  Protocol, interpreter, and equipment modules
 ├── script/                  Python and control scripts
-├── ctc_control.vcxproj      Historical Visual Studio C++ project
+├── ctc_control.vcxproj      Visual Studio C++ project
 ├── ctc_control.vcxproj.filters
 └── ctc_control.vcxproj.user
 ```
 
-The repository has been renamed for clearer public positioning, but historical internal project and source names such as `ctc_control.vcxproj` are intentionally preserved.
+Historical internal project and source names such as `ctc_control.vcxproj` are preserved in the source tree.
 
-## Core Layer
+## Core layer
 
 The `core/` layer provides shared system-level services and coordination.
 
@@ -112,9 +108,9 @@ Representative files include:
 - `core_memorywriter.cpp` — memory / data handling
 - `core_rsh.cpp` — remote-shell-related functionality
 
-`core_common.h` acts as a central integration header and brings together Windows APIs, serial communication, pthreads, Modbus, MQTT / Mosquitto, JSON, LCM-lite, configuration support, Python, database access, and equipment modules.
+`core_common.h` brings together Windows APIs, serial communication, pthreads, Modbus, MQTT / Mosquitto, JSON, LCM-lite, configuration support, Python, database access, and equipment modules.
 
-## Equipment and Support Modules
+## Equipment and support modules
 
 The `module/` directory contains both reusable support components and equipment-specific modules.
 
@@ -136,25 +132,11 @@ Examples include:
 - `getopt` / `wingetopt`
 - `micropython`
 
-The separation between the core layer and equipment modules allows hardware-specific operations to remain distinct from higher-level orchestration and workflow logic.
+## Interpreter and automation
 
-## Interpreter and Automation
-
-The repository contains an interpreter layer and Python integration used to expose and coordinate machine functions above device-level control.
-
-Interpreter-related sources include bindings or components for equipment such as:
-
-- centrifuge
-- gripper
-- guideway
-- microscope XY stage
-- syringe pump
-- washer
-- MariaDB
+Interpreter-related sources expose equipment functions above device-level control. Bindings or components exist for equipment such as centrifuge, gripper, guideway, microscope XY stage, syringe pump, washer, and MariaDB.
 
 The `script/` directory contains Python-side automation and control scripts.
-
-This structure reflects a separation between:
 
 ```text
 Device primitives
@@ -166,9 +148,7 @@ Interpreter bindings
 Scripted automation / workflow logic
 ```
 
-## Communication and Integration
-
-The codebase contains integration points for multiple communication and service mechanisms.
+## Communication and integration
 
 | Interface | Evidence in repository |
 |---|---|
@@ -180,8 +160,6 @@ The codebase contains integration points for multiple communication and service 
 | Python | CPython embedding / interpreter modules |
 | Windows APIs | Win32 headers and synchronization primitives |
 
-These interfaces support communication between the orchestration layer, physical equipment, scripts, and external data or messaging services.
-
 ## Configuration
 
 The `config/` directory contains INI-style configuration files, including:
@@ -192,27 +170,21 @@ config/output.ini
 config/rs485p1.ini
 ```
 
-`default.ini` demonstrates section/key-based configuration handling.
-
-Some code also references JSON-based runtime configuration. For example, `core_control.cpp` contains logic that reads:
+Some code also references JSON-based runtime configuration. For example, `core_control.cpp` reads:
 
 ```text
 Debug\ctc-config.json
 ```
 
-This path is part of the historical runtime environment and may need adjustment depending on the execution directory.
+## Build environment
 
-## Original Build Environment
-
-The checked-in Visual Studio project identifies the historical build target as:
+The checked-in Visual Studio project identifies:
 
 - **Application type:** Win32 console application
 - **Visual Studio toolset:** `v120`
 - **Configurations:** `Debug|Win32` and `Release|Win32`
 
-`v120` corresponds to the Visual Studio 2013-era MSVC toolchain.
-
-The project file contains direct include and library references to bundled or expected dependencies such as:
+The project file references dependencies including:
 
 - pthreads-win32
 - libmodbus 3.1.4
@@ -229,32 +201,11 @@ modbus.lib
 libmysql.lib
 ```
 
-The Visual Studio project also uses pre-build copy commands to place required DLLs, Python runtime files, scripts, and configuration files into the output directory.
+The Visual Studio project also contains pre-build copy commands for required DLLs, Python runtime files, scripts, and configuration files.
 
-## Building
+## Design characteristics
 
-The repository preserves an older Windows / Visual Studio environment. The most faithful starting point is therefore the checked-in project:
-
-```text
-ctc_control.vcxproj
-```
-
-A historical build would require the corresponding Win32 MSVC toolchain and the dependency layout expected by the project file.
-
-For a modern rebuild, review at least:
-
-1. Visual Studio platform toolset migration
-2. 32-bit versus 64-bit dependency compatibility
-3. Python embedding API and version compatibility
-4. Mosquitto, MariaDB, libmodbus, and pthread library versions
-5. hard-coded relative runtime paths
-6. DLL deployment and configuration-file locations
-
-No claim is made that the repository currently builds unmodified with a modern Visual Studio installation.
-
-## Design Characteristics
-
-The repository demonstrates several architectural patterns that remain useful as a reference:
+The repository captures several architectural patterns:
 
 - supervisory orchestration above heterogeneous equipment
 - separation between core coordination and device-specific modules
@@ -266,63 +217,12 @@ The repository demonstrates several architectural patterns that remain useful as
 - interpreter bindings above machine-control interfaces
 - modular equipment integration rather than a single monolithic driver
 
-The design also reflects the constraints of its original environment and is tightly coupled in places to Win32 APIs, bundled binaries, legacy dependency versions, and historical filesystem assumptions.
+## Project history
 
-## Modernization Notes
-
-If the project is revived, a practical modernization path would be:
-
-```text
-1. Reproduce the original Win32 build
-          ↓
-2. Document runtime dependencies and equipment interfaces
-          ↓
-3. Establish a known-good behavioral baseline
-          ↓
-4. Separate third-party libraries from project source
-          ↓
-5. Replace hard-coded paths with runtime configuration
-          ↓
-6. Upgrade toolchain and dependencies incrementally
-          ↓
-7. Add repeatable build and smoke-test procedures
-```
-
-The first priority should be reproducibility and behavioral understanding rather than immediately rewriting the architecture. Once the original system behavior and device boundaries are documented, individual modules can be replaced or modernized with lower risk.
-
-## Getting the Source
-
-```bash
-git clone https://github.com/cctsao1008/instrument-automation-control.git
-cd instrument-automation-control
-```
-
-## Project History
-
-This is a historical engineering project retained as a reference implementation of a modular instrument-automation and equipment-orchestration system.
+This repository preserves a historical engineering implementation of a modular instrument-automation and equipment-orchestration system.
 
 Source files identify **Ricardo Tsao** as the original author on multiple core components.
 
-The repository is useful primarily as a record of system architecture and integration patterns involving:
-
-- multi-device coordination
-- hardware abstraction
-- communication protocols
-- scheduling
-- scripting
-- database integration
-- higher-level automation
-
-## Scope and Naming
-
-The current repository name, **Instrument Automation Control**, describes the software architecture and engineering scope visible in the source tree.
-
-Historical internal identifiers and filenames are preserved where changing them would alter or obscure the original source history.
-
-The README intentionally describes only functionality and architecture that can be supported by the repository itself.
-
 ## License
 
-No explicit top-level license was identified while preparing this README. Unless a license is added, normal copyright rules apply to the original project code.
-
-Bundled third-party components may have their own licenses and terms. Consult their respective source directories before reuse or redistribution.
+No explicit top-level license is identified. Bundled third-party components may have their own licenses and terms.
